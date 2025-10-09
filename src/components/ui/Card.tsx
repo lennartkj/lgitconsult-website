@@ -10,6 +10,7 @@ import { isValidElement } from "react";
 const hasChildren = (
     element: React.ReactElement
 ): element is React.ReactElement<{ children: React.ReactNode }> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (element.props as any).children !== undefined;
 };
 

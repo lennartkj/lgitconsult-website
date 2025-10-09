@@ -4,18 +4,17 @@ import React from "react";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link";
-import { Card, CardContent } from "@/components/ui/Card";
+// Importiere CardLink, da sie in der übergeordneten Komponente verwendet wird
+import { Card, CardContent, CardLink } from "@/components/ui/Card";
 import {
     ProjectHero,
     ProjectHeroImage,
-    ProjectDetails,
-    ProjectSidebar,
     RelatedProjectsHeader,
     RelatedProjectCard,
     CTASection
 } from "@/components/motion/MotionSection";
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { Project } from "@/lib/data/types"; // Stellen Sie sicher, dass Sie die Typen aus types.ts importieren
+import { Project } from "@/lib/data/types"; // Importiere den Project Typ
 
 interface ProjectContentProps {
     project: Project;
@@ -83,10 +82,11 @@ export default function ProjectContent({ project, mdxSource, relatedProjects }: 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {relatedProjects.map((relatedProject, index) => (
                             <RelatedProjectCard
-                                key={relatedProject.id}
+                                key={relatedProject.slug} // Verwende slug als key
                                 custom={index + 1}
                             >
-                                <Card href={`/work/${relatedProject.slug}`} className="h-full">
+                                {/* FIX: Card durch CardLink ersetzt, da der href Prop verwendet wird */}
+                                <CardLink href={`/work/${relatedProject.slug}`} className="h-full">
                                     <div className="relative h-48 w-full mb-4 rounded overflow-hidden">
                                         <Placeholder
                                             text={relatedProject.title}
@@ -102,7 +102,7 @@ export default function ProjectContent({ project, mdxSource, relatedProjects }: 
                                             View Case Study
                                         </Link>
                                     </CardContent>
-                                </Card>
+                                </CardLink>
                             </RelatedProjectCard>
                         ))}
                     </div>

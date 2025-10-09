@@ -1,7 +1,5 @@
 "use client";
 
-
-import { ContactForm } from "@/components/forms/ContactForm";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Placeholder } from "@/components/ui/Placeholder";
 
@@ -107,19 +105,7 @@ export default function ContactPage() {
               </div>
             </motion.div>
 
-            <motion.div
-              initial="hidden"
-              animate="visible"
-              variants={fadeIn}
-              custom={2}
-            >
-              <Card>
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
-                  <ContactForm />
-                </CardContent>
-              </Card>
-            </motion.div>
+
           </div>
         </div>
       </section>

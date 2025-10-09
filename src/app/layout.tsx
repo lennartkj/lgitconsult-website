@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import React, { Suspense } from 'react';
 
 import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/navigation/Footer";
@@ -38,7 +39,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
-      >
+      >  <Suspense fallback={<div>Loading app shell...</div>}>
         <PreviewProvider>
           <div className="flex min-h-screen flex-col">
             <Navbar />
@@ -46,6 +47,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </PreviewProvider>
+          </Suspense>
       </body>
     </html>
   );

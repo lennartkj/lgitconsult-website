@@ -1,13 +1,14 @@
-// src/components/mdx/MdxContent.tsx
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 
-// You can use a direct type for the prop itself
+// Import MDXRemoteProps ist nicht nötig und wurde entfernt.
+
+// Define the props with the correct type for mdxSource.
+// MDXRemoteSerializeResult ist der Typ, den die serialize-Funktion zurückgibt.
 interface MdxContentProps {
     mdxSource: MDXRemoteSerializeResult;
 }
 
 export function MdxContent({ mdxSource }: MdxContentProps) {
-    // Pass the entire serialized object as the prop
-    // The MDXRemote component expects the serialized object directly
+    // Wenn Sie den {...mdxSource} Spread verwenden, ist dies der richtige Weg.
     return <MDXRemote {...mdxSource} />;
 }

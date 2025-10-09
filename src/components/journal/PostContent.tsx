@@ -4,13 +4,13 @@ import React from "react";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Card, CardContent, CardLink } from "@/components/ui/Card"; // CardLink für Related Posts hinzugefügt
 import { Post, Category } from "@/lib/data/types";
-import { motion, easeOut } from "framer-motion";
+import { motion, type Easing, type Variants } from "framer-motion"; // Easing und Variants importiert
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 // Animation variants
-const fadeIn = {
+const fadeIn: Variants = { // Typisierung zu Variants geändert
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
         opacity: 1,
@@ -18,7 +18,8 @@ const fadeIn = {
         transition: {
             delay: i * 0.1,
             duration: 0.5,
-            ease: easeOut as "easeOut", // Korrekte Typisierung für framer-motion
+            // FIX: Verwendung des String-Literals mit expliziter Easing-Typisierung
+            ease: "easeOut" as Easing,
         },
     }),
 };
@@ -57,8 +58,8 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                 {post.category}
               </span>
                             <span className="text-sm text-fg/60">
-                {post.date}
-              </span>
+                                {post.date}
+                            </span>
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
                             {post.title}
@@ -112,7 +113,6 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                             className="lg:col-span-3"
                         >
                             <article className="prose prose-lg max-w-none">
-                                {/* Korrigiertes MDX-Rendering */}
                                 <MDXRemote {...mdxSource} />
                             </article>
 
@@ -209,17 +209,15 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             {relatedPosts.map((relatedPost, index) => (
                                 <motion.div
-                                    key={relatedPost.id}
+                                    key={relatedPost.slug} // key auf slug geändert (stabiler)
                                     initial="hidden"
                                     whileInView="visible"
                                     viewport={{ once: true }}
                                     variants={fadeIn}
                                     custom={index + 1}
                                 >
-                                    {/* Die CardLink-Komponente wäre hier besser geeignet, ich verwende jedoch die Card-Komponente
-                      und setze den Link im Footer, um die ursprüngliche Struktur beizubehalten, aber die
-                      Semantik zu verbessern. */}
-                                    <Card className="h-full">
+                                    {/* FIX: CardLink anstelle von Card, da verlinkt */}
+                                    <CardLink href={`/journal/${relatedPost.slug}`} className="h-full">
                                         <div className="relative h-48 w-full mb-4 rounded overflow-hidden">
                                             <Placeholder
                                                 text={relatedPost.title}
@@ -240,7 +238,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                                                 Read More
                                             </Link>
                                         </CardContent>
-                                    </Card>
+                                    </CardLink>
                                 </motion.div>
                             ))}
                         </div>

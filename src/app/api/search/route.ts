@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { 
-  getAllProjects, 
-  getAllPosts, 
-  getAllServices 
-} from "@/lib/content";
+import {
+  getAllProjects,
+  getAllPosts,
+  getAllServices,
+  Project,
+  Post,
+  Service // Importiere alle Typen, falls sie noch nicht in types.ts sind
+} from "@/lib/data"; // Korrekter Importpfad
 
-// Define the search result interface
+// Definiere die SearchResult-Schnittstelle zentral (Sollte in types.ts sein, aber hier zur Klarheit definiert)
 interface SearchResult {
   type: 'project' | 'post' | 'service';
   id: number;
@@ -21,98 +24,95 @@ interface SearchResult {
 // GET handler for search functionality
 export async function GET(request: NextRequest) {
   try {
-    // Get the URL and parse query parameters
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
     const type = searchParams.get('type');
     const limit = searchParams.get('limit');
 
-    // If no query is provided, return an empty array
+    // ... (Logik zur Behandlung leerer Abfragen bleibt gleich) ...
     if (!query || query.trim() === '') {
       return NextResponse.json([]);
     }
 
-    // Normalize the query for case-insensitive search
     const normalizedQuery = query.toLowerCase();
-
-    // Initialize results array
     let results: SearchResult[] = [];
 
-    // Search in projects if type is not specified or type is 'project'
+    // --- Suche in Projekten ---
     if (!type || type === 'project') {
-      // Get all projects from the content library
+      // FIX: Ruft die korrekt typisierte Funktion aus lib/data auf
       const projects = await getAllProjects();
 
       const projectResults = projects
-        .filter(project => 
-          project.title.toLowerCase().includes(normalizedQuery) ||
-          (project.description && project.description.toLowerCase().includes(normalizedQuery)) ||
-          (project.tags && project.tags.some(tag => tag.toLowerCase().includes(normalizedQuery)))
-        )
-        .map(project => ({
-          type: 'project' as const,
-          id: project.id,
-          title: project.title,
-          description: project.description || '',
-          slug: project.slug,
-          url: `/work/${project.slug}`,
-          tags: project.tags
-        }));
+          .filter((project: Project) => // Typisierung hinzugefügt
+              project.title.toLowerCase().includes(normalizedQuery) ||
+              (project.description && project.description.toLowerCase().includes(normalizedQuery)) ||
+              (project.tags && project.tags.some(tag => tag.toLowerCase().includes(normalizedQuery)))
+          )
+          .map((project: Project) => ({
+            type: 'project' as const,
+            id: project.id,
+            title: project.title,
+            description: project.description || '',
+            slug: project.slug,
+            url: `/work/${project.slug}`,
+            tags: project.tags
+          }));
 
       results = [...results, ...projectResults];
     }
 
-    // Search in posts if type is not specified or type is 'post'
+    // --- Suche in Posts ---
     if (!type || type === 'post') {
-      // Get all posts from the content library
+      // FIX: Ruft die korrekt typisierte Funktion aus lib/data auf
       const posts = await getAllPosts();
 
       const postResults = posts
-        .filter(post => 
-          post.title.toLowerCase().includes(normalizedQuery) ||
-          post.excerpt.toLowerCase().includes(normalizedQuery) ||
-          (post.tags && post.tags.some(tag => tag.toLowerCase().includes(normalizedQuery))) ||
-          (post.category && post.category.toLowerCase().includes(normalizedQuery))
-        )
-        .map(post => ({
-          type: 'post' as const,
-          id: post.id,
-          title: post.title,
-          description: post.excerpt,
-          slug: post.slug,
-          url: `/journal/${post.slug}`,
-          tags: post.tags,
-          category: post.category,
-          excerpt: post.excerpt
-        }));
+          .filter((post: Post) => // Typisierung hinzugefügt
+              post.title.toLowerCase().includes(normalizedQuery) ||
+              post.excerpt.toLowerCase().includes(normalizedQuery) ||
+              (post.tags && post.tags.some(tag => tag.toLowerCase().includes(normalizedQuery))) ||
+              (post.category && post.category.toLowerCase().includes(normalizedQuery))
+          )
+          .map((post: Post) => ({
+            type: 'post' as const,
+            id: post.id,
+            title: post.title,
+            description: post.excerpt,
+            slug: post.slug,
+            url: `/journal/${post.slug}`,
+            tags: post.tags,
+            category: post.category,
+            excerpt: post.excerpt
+          }));
 
       results = [...results, ...postResults];
     }
 
-    // Search in services if type is not specified or type is 'service'
+    // --- Suche in Services ---
     if (!type || type === 'service') {
-      // Get all services from the content library
+      // FIX: Ruft die korrekt typisierte Funktion aus lib/data auf
       const services = await getAllServices();
 
       const serviceResults = services
-        .filter(service => 
-          service.title.toLowerCase().includes(normalizedQuery) ||
-          service.description.toLowerCase().includes(normalizedQuery) ||
-          (service.features && service.features.some(feature => feature.toLowerCase().includes(normalizedQuery)))
-        )
-        .map(service => ({
-          type: 'service' as const,
-          id: service.id,
-          title: service.title,
-          description: service.description,
-          slug: service.title.toLowerCase().replace(/\s+/g, '-'),
-          url: `/services#${service.title.toLowerCase().replace(/\s+/g, '-')}`,
-        }));
+          .filter((service: Service) => // Typisierung hinzugefügt
+              service.title.toLowerCase().includes(normalizedQuery) ||
+              service.description.toLowerCase().includes(normalizedQuery) ||
+              (service.features && service.features.some(feature => feature.toLowerCase().includes(normalizedQuery)))
+          )
+          .map((service: Service) => ({
+            type: 'service' as const,
+            id: service.id,
+            title: service.title,
+            description: service.description,
+            // SLUG-Erstellung basiert auf dem Titel (wie zuvor)
+            slug: service.title.toLowerCase().replace(/\s+/g, '-'),
+            url: `/services#${service.title.toLowerCase().replace(/\s+/g, '-')}`,
+          }));
 
       results = [...results, ...serviceResults];
     }
 
-    // Apply limit if provided
+    // ... (Begrenzung der Ergebnisse bleibt gleich) ...
     if (limit) {
       const limitNum = parseInt(limit, 10);
       if (!isNaN(limitNum) && limitNum > 0) {
@@ -124,8 +124,8 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error handling search request:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+        { error: 'Internal server error' },
+        { status: 500 }
     );
   }
 }

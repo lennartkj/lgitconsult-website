@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getAllProjects, getProjectBySlug, getRelatedProjects } from "@/lib/data";
 import ProjectContent from "@/components/work/ProjectContent"; // Import the new Client Component
-
+import type { Metadata } from 'next'; // <-- WICHTIG: Dies behebt TS71008
 // Generate static paths for all projects
 export async function generateStaticParams() {
   const projects = await getAllProjects();

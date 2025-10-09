@@ -2,28 +2,9 @@
 
 import React from "react";
 import NextLink from "next/link";
-import { motion, type Variants, type Easing } from "framer-motion";
-import { isValidElement } from "react";
+import { motion, type Easing, type Variants } from "framer-motion";
 
-// --- Helper Function (fixed and improved) ---
-// This function checks for nested links more reliably.
-const containsLinkComponent = (children: React.ReactNode): boolean => {
-    return React.Children.toArray(children).some(child => {
-        if (React.isValidElement(child)) {
-            // Direct comparison is the most reliable way to check component type
-            if (child.type === NextLink) {
-                return true;
-            }
-            // Use the 'in' operator for a safe check on props
-            if ('children' in child.props && child.props.children) {
-                return containsLinkComponent(child.props.children);
-            }
-        }
-        return false;
-    });
-};
-
-// --- Link Component ---
+// --- Typen ---
 interface LinkProps {
     href: string;
     children: React.ReactNode;
@@ -34,18 +15,22 @@ interface LinkProps {
     onClick?: () => void;
 }
 
+// --- Konstanten ---
+
+// Framer Motion Variants für die Unterstreichung
 const underlineVariants: Variants = {
     hidden: { width: 0 },
     visible: {
         width: "100%",
         transition: {
             duration: 0.2,
-            ease: "easeInOut" as Easing, // Use a type assertion to satisfy Framer Motion's strict types
+            ease: "easeInOut" as Easing, // Type Assertion zur Behebung des Framer Motion Fehlers
         },
     },
 };
 
-const externalIcon = (
+// SVG Icon für externe Links
+const ExternalIcon = (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -62,6 +47,8 @@ const externalIcon = (
     </svg>
 );
 
+// --- Link Component ---
+
 export function Link({
                          href,
                          children,
@@ -72,58 +59,84 @@ export function Link({
                          onClick,
                          ...props
                      }: LinkProps) {
-    // Check for nested links to prevent an invalid HTML structure.
-    if (containsLinkComponent(children)) {
-        console.error("Link component cannot contain a nested Next.js <Link> or <a> tag. This is invalid HTML and can cause hydration errors.");
-        return (
-            <a href={href} className={className} {...props}>
-                {children}
-                {external && externalIcon}
-            </a>
-        );
-    }
 
-    // Base styles for all variants
+    // Basis-Stile für alle Varianten
     const baseStyles = "inline-flex items-center transition-colors";
 
-    // Variant-specific styles
+    // Variant-spezifische Stile
     const variantStyles = {
         default: "text-accent hover:text-accent/80",
-        underline: "text-fg hover:text-accent relative",
+        underline: "text-fg hover:text-accent relative group", // Gruppe für Hover-Effekt
         button: "bg-accent text-accent-contrast hover:bg-accent/90 px-4 py-2 rounded-md font-medium",
         nav: "text-fg hover:text-accent font-medium",
     };
 
-    // External link attributes
+    // Externe Link-Attribute
     const externalProps = external ? {
         target: "_blank",
         rel: "noopener noreferrer",
         "aria-label": `${children} (opens in a new tab)`
     } : {};
 
+    // Kombinierter Klassenname
+    const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${className}`;
+
+    // Wenn es sich um einen externen Link handelt ODER wenn Animationen gewünscht sind,
+    // verwenden wir ein einfaches <a>-Tag, andernfalls NextLink.
+    // Da NextLink jetzt automatisch das <a>-Tag rendert, können wir es direkt verwenden.
+
+    const isAnimatedUnderline = variant === "underline" && underlineAnimation;
+
+    const linkContent = (
+        <motion.span className="inline-flex items-center">
+            {children}
+            {isAnimatedUnderline && (
+                // Fügt die animierte Unterstreichung hinzu
+                <motion.span
+                    className="absolute bottom-0 left-0 h-0.5 bg-accent"
+                    initial="hidden"
+                    variants={underlineVariants}
+                />
+            )}
+            {external && ExternalIcon}
+        </motion.span>
+    );
+
+    // Wenn eine Unterstrich-Animation vorhanden ist, wird die motion-Logik an den NextLink delegiert.
+    if (isAnimatedUnderline) {
+        return (
+            <NextLink
+                href={href}
+                className={combinedClassName}
+                onClick={onClick}
+                {...externalProps}
+                {...props}
+            >
+                <motion.div
+                    className="relative inline-flex items-center"
+                    whileHover="visible"
+                    initial="hidden"
+                    variants={{ visible: {}, hidden: {} }} // Dummy variants für den Hover-Container
+                >
+                    {/* Das Link-Target, das die Animation auslöst */}
+                    {linkContent}
+                </motion.div>
+            </NextLink>
+        );
+    }
+
+
+    // Standardfall (keine Animation oder button/default variant)
     return (
         <NextLink
             href={href}
-            className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+            className={combinedClassName}
             onClick={onClick}
             {...externalProps}
             {...props}
         >
-            <motion.span
-                className="relative"
-                initial="hidden"
-                whileHover="visible"
-                variants={underlineAnimation ? underlineVariants : undefined}
-            >
-                {children}
-                {variant === "underline" && underlineAnimation && (
-                    <motion.span
-                        className="absolute bottom-0 left-0 h-0.5 bg-accent"
-                        variants={underlineVariants}
-                    />
-                )}
-            </motion.span>
-            {external && externalIcon}
+            {children}
+            {external && ExternalIcon}
         </NextLink>
     );
 }

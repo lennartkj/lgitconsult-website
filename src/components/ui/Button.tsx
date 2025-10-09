@@ -16,6 +16,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const hasChildren = (
     element: React.ReactElement
 ): element is React.ReactElement<{ children: React.ReactNode }> => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (element.props as any).children !== undefined;
 };
 
@@ -103,6 +104,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                     window.location.href = href;
                   }
                 }}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 {...(props as any)}
             >
               {children}
@@ -124,6 +126,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               ref={ref}
               className={combinedClassName}
               {...motionProps}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               {...(props as any)}
           >
             {children}

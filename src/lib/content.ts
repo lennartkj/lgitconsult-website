@@ -8,7 +8,8 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 // Base interface for all content items
 export interface RawContentItem {
   slug: string;
-  content: string;
+  content: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any; // For dynamic frontmatter properties
 }
 
