@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Easing } from "framer-motion";
 import { isValidElement } from "react";
 
 // --- Helper Function ---
@@ -69,7 +69,7 @@ export function CardLink({
             y: -5,
             transition: {
                 duration: 0.2,
-                ease: "easeOut",
+                ease: "easeOut" as Easing, // Explicitly cast the string literal as Easing
             },
         },
     };
