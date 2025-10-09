@@ -1,88 +1,103 @@
 import { NextRequest, NextResponse } from "next/server";
-import { 
-  getContentByType, 
-  getContentBySlug, 
-  ContentType,
-  ContentOptions
-} from "@/lib/content";
+import {
+  getAllPosts,
+  getFeaturedPosts,
+  getPostBySlug,
+  getPostsByCategory,
+  getAllProjects,
+  getFeaturedProjects,
+  getProjectBySlug,
+  getAllServices,
+  getServiceById,
+  getAllPricingTiers,
+  getPricingTierById,
+  getAllProcessSteps
+} from "@/lib/data";
 
 // GET handler for fetching content
 export async function GET(request: NextRequest) {
   try {
-    // Get the URL and parse query parameters
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get('type') as ContentType | null;
+    const type = searchParams.get('type');
     const slug = searchParams.get('slug');
-    
-    // If no type is provided, return an error
-    if (!type) {
-      return NextResponse.json(
-        { error: 'Content type is required' },
-        { status: 400 }
-      );
-    }
-    
-    // Validate content type
-    const validTypes: ContentType[] = ['projects', 'posts', 'services', 'pricing', 'process'];
-    if (!validTypes.includes(type)) {
-      return NextResponse.json(
-        { error: `Invalid content type: ${type}. Valid types are: ${validTypes.join(', ')}` },
-        { status: 400 }
-      );
-    }
-    
-    // Build content options from query parameters
-    const options: ContentOptions = {};
-    
-    // Parse featured parameter
-    const featured = searchParams.get('featured');
-    if (featured === 'true') {
-      options.featured = true;
-    }
-    
-    // Parse limit parameter
-    const limit = searchParams.get('limit');
-    if (limit) {
-      const limitNum = parseInt(limit, 10);
-      if (!isNaN(limitNum) && limitNum > 0) {
-        options.limit = limitNum;
-      }
-    }
-    
-    // Parse category parameter
-    const category = searchParams.get('category');
-    if (category) {
-      options.category = category;
-    }
-    
-    // Parse tag parameter
-    const tag = searchParams.get('tag');
-    if (tag) {
-      options.tag = tag;
-    }
-    
-    // If slug is provided, return a specific content item
+
+    // If a slug is provided, handle a single item request
     if (slug) {
-      const content = await getContentBySlug(type, slug);
-      
-      if (!content) {
-        return NextResponse.json(
-          { error: `${type} with slug '${slug}' not found` },
-          { status: 404 }
-        );
+      switch (type) {
+        case 'projects': {
+          const content = await getProjectBySlug(slug);
+          if (!content) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+          return NextResponse.json(content);
+        }
+        case 'posts': {
+          const content = await getPostBySlug(slug);
+          if (!content) return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+          return NextResponse.json(content);
+        }
+        case 'services': {
+          const id = parseInt(slug, 10);
+          if (isNaN(id)) return NextResponse.json({ error: 'Service ID must be a number' }, { status: 400 });
+          const content = await getServiceById(id);
+          if (!content) return NextResponse.json({ error: 'Service not found' }, { status: 404 });
+          return NextResponse.json(content);
+        }
+        case 'pricing': {
+          const id = parseInt(slug, 10);
+          if (isNaN(id)) return NextResponse.json({ error: 'Pricing tier ID must be a number' }, { status: 400 });
+          const content = await getPricingTierById(id);
+          if (!content) return NextResponse.json({ error: 'Pricing tier not found' }, { status: 404 });
+          return NextResponse.json(content);
+        }
+        default:
+          return NextResponse.json({ error: `Invalid content type: ${type}` }, { status: 400 });
       }
-      
-      return NextResponse.json(content);
     }
-    
-    // Otherwise, return all content of the specified type with the given options
-    const content = await getContentByType(type, options);
-    return NextResponse.json(content);
+
+    // Handle all items based on type and filters
+    switch (type) {
+      case 'projects': {
+        const featured = searchParams.get('featured');
+        const content = featured === 'true' ? await getFeaturedProjects() : await getAllProjects();
+        return NextResponse.json(content);
+      }
+      case 'posts': {
+        const featured = searchParams.get('featured');
+        const category = searchParams.get('category');
+
+        if (category) {
+          const content = await getPostsByCategory(category);
+          return NextResponse.json(content);
+        } else if (featured === 'true') {
+          const content = await getFeaturedPosts();
+          return NextResponse.json(content);
+        } else {
+          const content = await getAllPosts();
+          return NextResponse.json(content);
+        }
+      }
+      case 'services': {
+        const content = await getAllServices();
+        return NextResponse.json(content);
+      }
+      case 'pricing': {
+        const content = await getAllPricingTiers();
+        return NextResponse.json(content);
+      }
+      case 'process': {
+        const content = await getAllProcessSteps();
+        return NextResponse.json(content);
+      }
+      default:
+        return NextResponse.json(
+            { error: 'Content type is required or invalid' },
+            { status: 400 }
+        );
+    }
   } catch (error) {
     console.error('Error handling content request:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+        { error: 'Internal server error' },
+        { status: 500 }
     );
   }
 }

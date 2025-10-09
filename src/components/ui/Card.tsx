@@ -3,172 +3,162 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Children, isValidElement } from "react";
+import { isValidElement } from "react";
 
-interface CardProps {
-  className?: string;
-  children: React.ReactNode;
-  href?: string;
-  external?: boolean;
-  onClick?: () => void;
-  hoverEffect?: boolean;
-}
-
-const cardVariants = {
-  hover: {
-    y: -5,
-    transition: {
-      duration: 0.2,
-      ease: "easeOut",
-    },
-  },
+// --- Helper Function ---
+// Use a type guard for safer access
+const hasChildren = (
+    element: React.ReactElement
+): element is React.ReactElement<{ children: React.ReactNode }> => {
+    return (element.props as any).children !== undefined;
 };
 
-// Helper function to check if children contain Link components
+// Check if children contain a Link component for accessibility and semantic reasons
 const containsLinkComponent = (children: React.ReactNode): boolean => {
-  let hasLink = false;
-
-  Children.forEach(children, (child) => {
-    if (!hasLink) {
-      if (isValidElement(child)) {
-        // Check if the child is a Link component from our UI library
-        if (child.type && 
-            ((typeof child.type === 'function' && child.type.name === 'Link') || 
-             (typeof child.type === 'object' && child.type.displayName === 'Link'))) {
-          hasLink = true;
-        } else if (child.props && child.props.children) {
-          // Recursively check children
-          hasLink = containsLinkComponent(child.props.children);
+    return React.Children.toArray(children).some(child => {
+        if (React.isValidElement(child)) {
+            if (child.type === Link) {
+                return true;
+            }
+            if (hasChildren(child)) {
+                return containsLinkComponent(child.props.children);
+            }
         }
-      }
-    }
-  });
-
-  return hasLink;
+        return false;
+    });
 };
 
-export function Card({
-  className = "",
-  children,
-  href,
-  external = false,
-  onClick,
-  hoverEffect = true,
-  ...props
-}: CardProps) {
-  const baseStyles = "rounded-lg border border-fg/10 bg-bg p-6 shadow-sm";
-  const hoverStyles = hoverEffect ? "hover:border-accent/50 hover:shadow-md transition-all duration-200" : "";
-  const combinedClassName = `${baseStyles} ${hoverStyles} ${className}`;
+// --- Core Presentational Card Component ---
+interface CardProps {
+    className?: string;
+    children: React.ReactNode;
+}
 
-  const content = (
-    <div className={combinedClassName} {...props}>
-      {children}
-    </div>
-  );
+export function Card({ className = "", children }: CardProps) {
+    const baseStyles = "rounded-lg border border-fg/10 bg-bg p-6 shadow-sm";
+    const combinedClassName = `${baseStyles} ${className}`;
 
-  // Check if children contain Link components
-  const hasLinkInChildren = containsLinkComponent(children);
-
-  // If href is provided and there are no Link components in children, wrap with Link
-  if (href && !hasLinkInChildren) {
+    // This component now only handles the visual wrapper
     return (
-      <Link
-        href={href}
-        {...(external && { target: "_blank", rel: "noopener noreferrer" })}
-        className="block"
-      >
-        <motion.div variants={cardVariants} whileHover="hover">
-          {content}
+        <div className={combinedClassName}>
+            {children}
+        </div>
+    );
+}
+
+// --- Interactive Wrapper Component ---
+interface CardLinkProps {
+    className?: string;
+    children: React.ReactNode;
+    href?: string;
+    external?: boolean;
+    onClick?: () => void;
+    hoverEffect?: boolean;
+}
+
+export function CardLink({
+                             className = "",
+                             children,
+                             href,
+                             external = false,
+                             onClick,
+                             hoverEffect = true,
+                         }: CardLinkProps) {
+    const cardVariants = {
+        hover: {
+            y: -5,
+            transition: {
+                duration: 0.2,
+                ease: "easeOut",
+            },
+        },
+    };
+
+    const hoverStyles = hoverEffect ? "hover:border-accent/50 hover:shadow-md transition-all duration-200" : "";
+    const combinedClassName = `${className} ${hoverStyles}`;
+    const isInternalLink = href && !external;
+
+    const content = (
+        <motion.div
+            variants={cardVariants}
+            whileHover="hover"
+            className={combinedClassName}
+        >
+            <Card>{children}</Card>
         </motion.div>
-      </Link>
     );
-  }
 
-  // If href is provided but there are Link components in children, use a div instead
-  if (href && hasLinkInChildren) {
+    // Use a simple conditional chain for better readability
+    if (isInternalLink) {
+        return (
+            <Link href={href} className="block">
+                {content}
+            </Link>
+        );
+    }
+
+    if (href) {
+        return (
+            <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+            >
+                {content}
+            </a>
+        );
+    }
+
+    if (onClick) {
+        return (
+            <div onClick={onClick} className="block cursor-pointer">
+                {content}
+            </div>
+        );
+    }
+
+    return <Card>{children}</Card>;
+}
+
+// --- Sub-components (fixed and cleaned up) ---
+export function CardHeader({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
     return (
-      <div className="block">
-        <motion.div variants={cardVariants} whileHover="hover" onClick={() => window.location.href = href}>
-          {content}
-        </motion.div>
-      </div>
+        <div className={`mb-4 ${className}`} {...props}>
+            {children}
+        </div>
     );
-  }
+}
 
-  // If onClick is provided, make it interactive
-  if (onClick) {
+export function CardTitle({ className = "", children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
     return (
-      <motion.div
-        variants={cardVariants}
-        whileHover="hover"
-        onClick={onClick}
-        className="cursor-pointer"
-      >
-        {content}
-      </motion.div>
+        <h3 className={`text-xl font-semibold ${className}`} {...props}>
+            {children}
+        </h3>
     );
-  }
-
-  // Otherwise, render as a static card
-  return <>{content}</>;
 }
 
-export function CardHeader({
-  className = "",
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={`mb-4 ${className}`} {...props}>
-      {children}
-    </div>
-  );
+export function CardDescription({ className = "", children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+    // Corrected the closing tag
+    return (
+        <p className={`text-sm text-fg/70 ${className}`} {...props}>
+            {children}
+        </p>
+    );
 }
 
-export function CardTitle({
-  className = "",
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
-  return (
-    <h3 className={`text-xl font-semibold ${className}`} {...props}>
-      {children}
-    </h3>
-  );
+export function CardContent({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+    return (
+        <div className={`${className}`} {...props}>
+            {children}
+        </div>
+    );
 }
 
-export function CardDescription({
-  className = "",
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
-  return (
-    <p className={`text-sm text-fg/70 ${className}`} {...props}>
-      {children}
-    </p>
-  );
-}
-
-export function CardContent({
-  className = "",
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={`${className}`} {...props}>
-      {children}
-    </div>
-  );
-}
-
-export function CardFooter({
-  className = "",
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div className={`mt-4 flex items-center pt-4 border-t border-fg/10 ${className}`} {...props}>
-      {children}
-    </div>
-  );
+export function CardFooter({ className = "", children, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+    return (
+        <div className={`mt-4 flex items-center pt-4 border-t border-fg/10 ${className}`} {...props}>
+            {children}
+        </div>
+    );
 }

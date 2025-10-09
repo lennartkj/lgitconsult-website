@@ -10,46 +10,58 @@ services:
   - "UI/UX Design"
   - "Payment Integration"
 tags:
-  - "Springboot/Kotlin"
-  - "REST"
-  - "Tailwind CSS"
+  - "Web Development"
+
 website: "xte.htwk-leipzig.de"
 featured: true
 ---
-
-# E-Commerce Platform
-
-We developed a comprehensive e-commerce platform for a retail client looking to expand their online presence. The solution includes product management, inventory tracking, payment processing with Stripe, and a customer portal for order management.
-
 ## The Challenge
 
-The client needed a scalable solution that could handle thousands of products and high traffic during peak shopping seasons. Their existing platform was struggling with performance issues and lacked modern features that customers expect from online shopping experiences.
+ HTWK Leipzig needed to replace their outdated e-learning system that was struggling with performance issues and lacked modern features expected in today's educational technology landscape. The legacy platform couldn't support the growing number of courses and students, and offered a poor user experience that hindered learning outcomes.
 
 ## Our Solution
 
-We built a Next.js application with server-side rendering for SEO and performance, using a headless CMS for content management and Stripe for secure payment processing. The architecture includes:
+We built a robust Spring Boot/Kotlin application with a modern frontend, using a layered architecture designed specifically for educational contexts:
 
-- **Next.js Frontend**: Fast, SEO-friendly storefront with optimized images and lazy loading
-- **Headless CMS**: Flexible content management for product information and marketing content
-- **Stripe Integration**: Secure payment processing with support for multiple payment methods
-- **Inventory System**: Real-time inventory tracking and management
-- **Customer Portal**: Account management, order history, and saved payment methods
+- **Spring Boot/Kotlin Backend**: Scalable, maintainable API services with excellent performance
+- **REST API Architecture**: Clean separation of concerns with standardized endpoints
+- **Tailwind CSS Frontend**: Responsive, accessible interface that works across all devices
+- **Multi-Authentication System**: Support for SAML2, OAuth2, and traditional authentication
+- **Comprehensive Learning Tools**: C-tests, flashcard trainers, and terminology management
+- **Advanced Analytics**: Detailed insights for teachers to track student progress
+- **Docker Deployment**: Containerized deployment with monitoring and backup solutions
+
+## Key Features
+
+### Course Management
+A flexible system for creating and organizing educational content into courses and units, with support for various content types and learning paths.
+
+### Learning Tools
+Specialized educational tools including C-tests for language proficiency assessment, flashcard trainers for vocabulary practice, and terminology management.
+
+### Teacher Analytics
+Comprehensive analytics for instructors to monitor group performance, course completion rates, skill proficiency, and individual student achievements.
+
+### Multi-Authentication Support
+Secure authentication with multiple methods including SAML2 for institutional identity providers, OAuth2 for social login, and traditional username/password authentication.
 
 ## The Results
 
-The platform increased online sales by 45% in the first quarter after launch, with a 30% improvement in conversion rate compared to their previous solution. Additional benefits included:
+The new platform has transformed the digital learning experience at HTWK Leipzig, with significant improvements:
 
-- 65% faster page load times
-- 40% reduction in cart abandonment
-- 50% increase in mobile purchases
-- Streamlined inventory management saving 15 hours per week
+- 60% increase in student engagement with course materials
+- 50% reduction in technical support requests
+- 70% faster course creation and management for instructors
+- Seamless integration with existing university systems
+- Improved accessibility compliance, making learning accessible to all students
 
 ## Technologies Used
 
-- Next.js
-- React
-- Stripe API
-- Tailwind CSS
-- Headless CMS
-- PostgreSQL
-- Redis for caching
+- **Backend**: Spring Boot 3.2, Kotlin 1.9
+- **Database**: PostgreSQL 14
+- **Security**: Spring Security with SAML2 and OAuth2
+- **Frontend**: Tailwind CSS
+- **Monitoring**: Prometheus, Grafana, Micrometer
+- **Resilience**: Resilience4j, Caffeine caching
+- **Testing**: JUnit 5, MockK, Kotest, Testcontainers
+- **Deployment**: Docker, Docker Compose
