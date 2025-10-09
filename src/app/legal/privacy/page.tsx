@@ -122,7 +122,7 @@ export default function PrivacyPolicyPage() {
 
             <h2>Cookies</h2>
             <p>
-              Our website uses only one strictly necessary cookie called "isPreviewMode". This cookie is essential for the proper functioning of our content management system's preview functionality and is only set when using the preview feature. This cookie does not track user activity or collect personal information.
+              Our website uses only one strictly necessary cookie called &apos;isPreviewMode&apos;. This cookie is essential for the proper functioning of our content management system&apos;s preview functionality and is only set when using the preview feature. This cookie does not track user activity or collect personal information.
             </p>
             <p>
               As this cookie is strictly necessary for the functioning of our website, it is exempt from the consent requirement under applicable data protection laws. The cookie is automatically removed when you exit the preview mode or expires after 24 hours.

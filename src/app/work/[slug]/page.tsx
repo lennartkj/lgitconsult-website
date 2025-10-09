@@ -52,8 +52,8 @@ export default async function ProjectPage({ params }: { params: { slug: string }
     notFound();
   }
 
-  // Extract project and mdxSource from the response
-  const { project, mdxSource } = projectData;
+  // Extract project from the response
+  const { project } = projectData;
 
   // Related projects (excluding current project)
   const relatedProjects = await getRelatedProjects(params.slug, 3);

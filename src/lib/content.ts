@@ -7,6 +7,14 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { Project } from './data/projects';
 import { Post } from './data/posts';
 import { Service } from './data/services';
+import { PricingTier, ProcessStep } from './data/services';
+
+// Base interface for all content items
+export interface ContentItem {
+  slug: string;
+  content?: string;
+  [key: string]: string | number | boolean | string[] | Date | undefined | null; // For dynamic properties
+}
 
 // Define the content types
 export type ContentType = 'projects' | 'posts' | 'services' | 'pricing' | 'process';
@@ -38,7 +46,7 @@ export const getContentFiles = (type: ContentType): string[] => {
 };
 
 // Read and parse content file
-export const parseContentFile = (type: ContentType, filename: string): any => {
+export const parseContentFile = (type: ContentType, filename: string): ContentItem => {
   const filePath = path.join(getContentDirectory(type), filename);
 
   try {
@@ -58,7 +66,7 @@ export const parseContentFile = (type: ContentType, filename: string): any => {
 };
 
 // Get all content of a specific type
-export async function getContentByType(type: ContentType, options: ContentOptions = {}): Promise<any[]> {
+export async function getContentByType(type: ContentType, options: ContentOptions = {}): Promise<ContentItem[]> {
   const files = getContentFiles(type);
   const allContent = files
     .map(file => parseContentFile(type, file))
@@ -109,7 +117,7 @@ export async function getContentByType(type: ContentType, options: ContentOption
 }
 
 // Get a specific content item by slug
-export async function getContentBySlug(type: ContentType, slug: string): Promise<{ content: any, mdxSource: MDXRemoteSerializeResult } | null> {
+export async function getContentBySlug(type: ContentType, slug: string): Promise<{ content: ContentItem, mdxSource: MDXRemoteSerializeResult } | null> {
   const files = getContentFiles(type);
   const filename = files.find(file => file.replace(/\.mdx$/, '') === slug);
 
@@ -126,7 +134,8 @@ export async function getContentBySlug(type: ContentType, slug: string): Promise
   // Serialize MDX content
   const mdxSource = await serialize(fileData.content);
 
-  // Remove the raw content from the returned data
+  // Remove the raw content from the returned data to avoid duplication
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { content, ...metadata } = fileData;
 
   return {
@@ -218,16 +227,16 @@ export async function getServiceById(id: number): Promise<Service | undefined> {
 }
 
 // Pricing
-export async function getAllPricingTiers(): Promise<any[]> {
-  return getContentByType('pricing');
+export async function getAllPricingTiers(): Promise<PricingTier[]> {
+  return getContentByType('pricing') as Promise<PricingTier[]>;
 }
 
-export async function getPricingTierById(id: number): Promise<any | undefined> {
+export async function getPricingTierById(id: number): Promise<PricingTier | undefined> {
   const pricingTiers = await getAllPricingTiers();
   return pricingTiers.find(tier => tier.id === id);
 }
 
 // Process
-export async function getAllProcessSteps(): Promise<any[]> {
-  return getContentByType('process');
+export async function getAllProcessSteps(): Promise<ProcessStep[]> {
+  return getContentByType('process') as Promise<ProcessStep[]>;
 }

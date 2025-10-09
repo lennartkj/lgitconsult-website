@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Placeholder } from "@/components/ui/Placeholder";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
@@ -21,9 +20,8 @@ const fadeIn = {
 };
 
 export default function ServicesPage() {
-  // State for services, pricing tiers, and process steps
+  // State for services and process steps
   const [services, setServices] = useState([]);
-  const [pricingTiers, setPricingTiers] = useState([]);
   const [processSteps, setProcessSteps] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,17 +33,12 @@ export default function ServicesPage() {
         const servicesResponse = await fetch('/api/content?type=services');
         const servicesData = await servicesResponse.json();
 
-        // Fetch pricing tiers
-        const pricingResponse = await fetch('/api/content?type=pricing');
-        const pricingData = await pricingResponse.json();
-
         // Fetch process steps
         const processResponse = await fetch('/api/content?type=process');
         const processData = await processResponse.json();
 
         // Update state
         setServices(servicesData);
-        setPricingTiers(pricingData);
         setProcessSteps(processData);
         setLoading(false);
       } catch (error) {

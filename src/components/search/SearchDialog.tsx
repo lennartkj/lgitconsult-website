@@ -137,7 +137,7 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
           transition={{ duration: 0.2 }}
         >
           <div className="fixed inset-0 bg-fg/20 backdrop-blur-sm" />
-          
+
           <motion.div
             ref={dialogRef}
             className="relative w-full max-w-lg rounded-lg border border-fg/10 bg-bg shadow-lg"
@@ -237,7 +237,7 @@ export function SearchDialog({ isOpen, onClose }: SearchDialogProps) {
                 </ul>
               ) : query.trim() !== "" ? (
                 <div className="py-8 text-center text-sm text-fg/60">
-                  No results found for "{query}"
+                  No results found for &quot;{query}&quot;
                 </div>
               ) : (
                 <div className="py-8 text-center text-sm text-fg/60">

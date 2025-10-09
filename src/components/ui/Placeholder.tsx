@@ -39,7 +39,7 @@ export function Placeholder({
     const lightness = 75 + Math.floor(Math.random() * 15); // 75-90%
 
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  }, [randomColors, bgColor, seed]);
+  }, [randomColors, bgColor]);
 
   const randomTextColor = useMemo(() => {
     if (!randomColors) return textColor;
@@ -56,7 +56,7 @@ export function Placeholder({
     }
 
     return `hsl(${hue}, 80%, 30%)`; // Dark, saturated color for contrast
-  }, [randomColors, textColor, randomBgColor, seed]);
+  }, [randomColors, textColor, randomBgColor]);
 
   // Determine the pattern to use
   const selectedPattern = useMemo(() => {
@@ -75,13 +75,6 @@ export function Placeholder({
     return pattern as PatternType;
   }, [pattern, seed]);
 
-  // Generate a secondary color for some patterns
-  const secondaryColor = useMemo(() => {
-    const hue = randomTextColor.startsWith('#') 
-      ? parseInt(randomTextColor.substring(1, 3), 16) + 120
-      : Math.random() * 360;
-    return `hsl(${hue % 360}, 70%, 50%)`;
-  }, [randomTextColor]);
 
   // Define pattern elements
   const patternElements = useMemo(() => {
@@ -262,8 +255,6 @@ export function Placeholder({
 
   // Generate decorative elements based on the pattern
   const decorativeElements = useMemo(() => {
-    // Create a hash from the text to get consistent decorative elements
-    const hash = text.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
     switch (selectedPattern) {
       case 'circles':
@@ -316,7 +307,7 @@ export function Placeholder({
           </linearGradient>
         );
     }
-  }, [selectedPattern, width, height, randomBgColor, randomTextColor, text, uniqueId]);
+  }, [selectedPattern, width, height, randomBgColor, randomTextColor, uniqueId]);
 
   return (
     <div

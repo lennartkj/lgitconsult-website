@@ -23,7 +23,6 @@ const fadeIn = {
 
 export default function JournalPage() {
   // State for posts and categories
-  const [posts, setPosts] = useState([]);
   const [featuredPosts, setFeaturedPosts] = useState([]);
   const [regularPosts, setRegularPosts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -59,7 +58,6 @@ export default function JournalPage() {
         ];
 
         // Update state
-        setPosts(postsData);
         setFeaturedPosts(featured);
         setRegularPosts(regular);
         setCategories(categoryList);
@@ -192,7 +190,7 @@ export default function JournalPage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-4">Categories</h3>
                   <ul className="space-y-2">
-                    {categories.map((category, index) => (
+                    {categories.map((category) => (
                       <li key={category.name}>
                         <Link 
                           href={`/journal?category=${category.name === "All" ? "" : category.name}`}

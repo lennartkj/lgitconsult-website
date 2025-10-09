@@ -101,7 +101,7 @@ export const services: Service[] = servicesCache.length > 0 ? servicesCache : [
 ];
 
 // Pricing tiers data
-export const pricingTiers: PricingTier[] = [
+export const pricingTiers: PricingTier[] = pricingTiersCache.length > 0 ? pricingTiersCache : [
   {
     id: 1,
     name: "Basic",
@@ -153,7 +153,7 @@ export const pricingTiers: PricingTier[] = [
 ];
 
 // Process steps data
-export const processSteps: ProcessStep[] = [
+export const processSteps: ProcessStep[] = processStepsCache.length > 0 ? processStepsCache : [
   { 
     step: 1, 
     title: "Discovery", 

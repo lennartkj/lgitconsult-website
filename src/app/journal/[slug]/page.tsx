@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { notFound } from "next/navigation";
-import { motion } from "framer-motion";
 import { Placeholder } from "@/components/ui/Placeholder";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/components/ui/Link";
 import { Card, CardContent } from "@/components/ui/Card";
+import { Post } from "@/lib/data/posts";
 
 // Animation variants
+import { motion, easeOut } from "framer-motion";
+
+// Then use it in your fadeIn object
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
@@ -17,7 +20,7 @@ const fadeIn = {
     transition: {
       delay: i * 0.1,
       duration: 0.5,
-      ease: "easeOut",
+      ease: easeOut,  // Using the imported easing function
     },
   }),
 };
@@ -50,7 +53,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
         // Filter out the current post and limit to 3 related posts
         const filteredRelatedPosts = relatedData
-          .filter(relatedPost => relatedPost.slug !== params.slug)
+
+            .filter((relatedPost: Post) => relatedPost.slug !== params.slug)
           .slice(0, 3);
 
         // Update state

@@ -1,11 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
+
 import { ContactForm } from "@/components/forms/ContactForm";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Placeholder } from "@/components/ui/Placeholder";
 
-// Animation variants
+
+import { motion, easeOut } from "framer-motion";
+
+// Then use it in your fadeIn object
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
@@ -14,7 +17,7 @@ const fadeIn = {
     transition: {
       delay: i * 0.1,
       duration: 0.5,
-      ease: "easeOut",
+      ease: easeOut,  // Using the imported easing function
     },
   }),
 };
