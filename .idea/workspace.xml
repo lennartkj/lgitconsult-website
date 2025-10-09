@@ -5,36 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="content and fixes">
-      <change afterPath="$PROJECT_DIR$/src/app/_not-found/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/not-found.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/about/AboutContent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/home/HomeContent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/journal/JournalContent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/services/ServicesContent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/work/WorkContent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/lgitconsult-website-build.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/lgitconsult-website-build.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/about/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/about/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/search/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/search/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/contact/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/journal/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/journal/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/legal/impressum/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/legal/impressum/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/legal/privacy/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/legal/privacy/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/legal/terms/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/legal/terms/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/services/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/services/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/work/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/work/[slug]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/work/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/work/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/forms/ContactForm.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/journal/PostContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/journal/PostContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/mdx/MdxComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/mdx/MdxComponent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/motion/MotionSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/motion/MotionSection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/Button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Button.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/Card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Card.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/Link.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Link.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/work/ProjectContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/work/ProjectContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/content.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/content.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,7 +121,7 @@
       <workItem from="1759838266980" duration="4364000" />
       <workItem from="1759843160951" duration="4505000" />
       <workItem from="1760003708268" duration="6622000" />
-      <workItem from="1760013487151" duration="15592000" />
+      <workItem from="1760013487151" duration="16704000" />
     </task>
     <task id="LOCAL-00001" summary="lmao lmao">
       <option name="closed" value="true" />
@@ -199,7 +171,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760021644288</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="content and fixes">
+      <option name="closed" value="true" />
+      <created>1760033181476</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1760033181476</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
