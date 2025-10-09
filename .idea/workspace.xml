@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="lmao lmao">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/contact/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/contact/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/legal/privacy/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/legal/privacy/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/services/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/services/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/work/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/work/[slug]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/forms/ContactForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/ContactForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/contact/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/journal/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/journal/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/Placeholder.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/Placeholder.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +117,7 @@
       <workItem from="1759489490743" duration="5033000" />
       <workItem from="1759838266980" duration="4364000" />
       <workItem from="1759843160951" duration="4505000" />
-      <workItem from="1760003708268" duration="3338000" />
+      <workItem from="1760003708268" duration="4420000" />
     </task>
     <task id="LOCAL-00001" summary="lmao lmao">
       <option name="closed" value="true" />
@@ -129,7 +127,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760006093135</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="lmao lmao">
+      <option name="closed" value="true" />
+      <created>1760007104454</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1760007104454</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

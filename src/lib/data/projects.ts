@@ -123,7 +123,7 @@ export const getRelatedProjects = async (currentSlug: string, limit: number = 3)
     return allProjects
       .filter(project => 
         project.slug !== currentSlug && 
-        project.tags.some(tag => currentProject.tags.includes(tag))
+        (project.tags ?? []).some(tag => (currentProject.tags ?? []).includes(tag))
       )
       .slice(0, limit);
   } catch (error) {
@@ -136,7 +136,7 @@ export const getRelatedProjects = async (currentSlug: string, limit: number = 3)
     return projects
       .filter(project => 
         project.slug !== currentSlug && 
-        project.tags.some(tag => currentProject.tags.includes(tag))
+        (project.tags ?? []).some(tag => (currentProject.tags ?? []).includes(tag))
       )
       .slice(0, limit);
   }

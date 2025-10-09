@@ -1,0 +1,105 @@
+# Decap CMS Configuration
+backend:
+  name: git-gateway
+  branch: main
+  commit_messages:
+    create: "Content: Create {{collection}} "{{slug}}""
+    update: "Content: Update {{collection}} "{{slug}}""
+    delete: "Content: Delete {{collection}} "{{slug}}""
+    uploadMedia: "Assets: Upload "{{path}}""
+    deleteMedia: "Assets: Delete "{{path}}""
+
+# Enable local backend for development
+local_backend: true
+
+# Media and public folders
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+# Editorial workflow (drafts, review, publish)
+publish_mode: editorial_workflow
+
+# Collections (content types)
+collections:
+  # Projects collection
+  - name: "projects"
+    label: "Projects"
+    folder: "content/projects"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "ID", name: "id", widget: "number" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Full Description", name: "fullDescription", widget: "markdown", required: false }
+      - { label: "Challenge", name: "challenge", widget: "markdown", required: false }
+      - { label: "Solution", name: "solution", widget: "markdown", required: false }
+      - { label: "Results", name: "results", widget: "markdown", required: false }
+      - { label: "Image", name: "image", widget: "image", required: false }
+      - { label: "Tags", name: "tags", widget: "list" }
+      - { label: "Slug", name: "slug", widget: "string" }
+      - { label: "Client", name: "client", widget: "string", required: false }
+      - { label: "Year", name: "year", widget: "string", required: false }
+      - { label: "Services", name: "services", widget: "list", required: false }
+      - { label: "Website", name: "website", widget: "string", required: false }
+      - { label: "Featured", name: "featured", widget: "boolean", default: false }
+      - { label: "Content", name: "body", widget: "markdown" }
+
+  # Posts collection
+  - name: "posts"
+    label: "Blog Posts"
+    folder: "content/posts"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "ID", name: "id", widget: "number" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "Author", name: "author", widget: "string" }
+      - { label: "Author Bio", name: "authorBio", widget: "text", required: false }
+      - { label: "Author Image", name: "authorImage", widget: "image", required: false }
+      - { label: "Category", name: "category", widget: "string" }
+      - { label: "Tags", name: "tags", widget: "list" }
+      - { label: "Featured", name: "featured", widget: "boolean", default: false }
+      - { label: "Content", name: "body", widget: "markdown" }
+
+  # Services collection
+  - name: "services"
+    label: "Services"
+    folder: "content/services"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "ID", name: "id", widget: "number" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Icon", name: "icon", widget: "string" }
+      - { label: "Features", name: "features", widget: "list" }
+      - { label: "CTA", name: "cta", widget: "string" }
+
+  # Pricing Tiers collection
+  - name: "pricing"
+    label: "Pricing Tiers"
+    folder: "content/pricing"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "ID", name: "id", widget: "number" }
+      - { label: "Name", name: "name", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Price", name: "price", widget: "string" }
+      - { label: "Features", name: "features", widget: "list" }
+      - { label: "CTA", name: "cta", widget: "string" }
+      - { label: "Popular", name: "popular", widget: "boolean", default: false }
+
+  # Process Steps collection
+  - name: "process"
+    label: "Process Steps"
+    folder: "content/process"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Step", name: "step", widget: "number" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }

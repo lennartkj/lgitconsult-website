@@ -66,7 +66,7 @@ export default async function ProjectPage({ params }: { params: { slug: string }
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <ProjectHero custom={0}>
               <div className="flex flex-wrap gap-2 mb-4">
-                {project.tags?.map((tag) => (
+                {(project.tags ?? []).map((tag) => (
                   <span
                     key={tag}
                     className="text-xs bg-fg/10 text-fg/80 px-2 py-1 rounded-full"
@@ -152,7 +152,7 @@ export default async function ProjectPage({ params }: { params: { slug: string }
                     <div>
                       <h4 className="text-sm font-semibold text-fg/60">Technologies</h4>
                       <div className="flex flex-wrap gap-2 mt-2">
-                        {project.tags?.map((tag) => (
+                        {(project.tags ?? []).map((tag) => (
                           <span
                             key={tag}
                             className="text-xs bg-fg/10 text-fg/80 px-2 py-1 rounded-full"

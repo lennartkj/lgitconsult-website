@@ -11,6 +11,7 @@ interface PlaceholderProps {
   textColor?: string;
   className?: string;
   pattern?: PatternType | 'random';
+  randomColors?: boolean; // Enable random colors
   seed?: number; // For consistent randomization
 }
 
@@ -22,10 +23,40 @@ export function Placeholder({
   textColor = "#333333",
   className = "",
   pattern = 'random',
+  randomColors = false,
   seed,
 }: PlaceholderProps) {
   // Generate a unique ID for this placeholder to avoid pattern ID conflicts
   const uniqueId = useMemo(() => Math.random().toString(36).substring(2, 11), []);
+
+  // Generate random colors if randomColors is true
+  const randomBgColor = useMemo(() => {
+    if (!randomColors) return bgColor;
+
+    // Generate a random pastel color for background
+    const hue = Math.floor(Math.random() * 360);
+    const saturation = 70 + Math.floor(Math.random() * 20); // 70-90%
+    const lightness = 75 + Math.floor(Math.random() * 15); // 75-90%
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+  }, [randomColors, bgColor, seed]);
+
+  const randomTextColor = useMemo(() => {
+    if (!randomColors) return textColor;
+
+    // Generate a contrasting color for text
+    // Extract hue from randomBgColor if it's HSL
+    const hslMatch = randomBgColor.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    let hue = 0;
+
+    if (hslMatch) {
+      hue = (parseInt(hslMatch[1]) + 180) % 360; // Opposite hue
+    } else {
+      hue = Math.floor(Math.random() * 360);
+    }
+
+    return `hsl(${hue}, 80%, 30%)`; // Dark, saturated color for contrast
+  }, [randomColors, textColor, randomBgColor, seed]);
 
   // Determine the pattern to use
   const selectedPattern = useMemo(() => {
@@ -46,11 +77,11 @@ export function Placeholder({
 
   // Generate a secondary color for some patterns
   const secondaryColor = useMemo(() => {
-    const hue = textColor.startsWith('#') 
-      ? parseInt(textColor.substring(1, 3), 16) + 120
+    const hue = randomTextColor.startsWith('#') 
+      ? parseInt(randomTextColor.substring(1, 3), 16) + 120
       : Math.random() * 360;
     return `hsl(${hue % 360}, 70%, 50%)`;
-  }, [textColor]);
+  }, [randomTextColor]);
 
   // Define pattern elements
   const patternElements = useMemo(() => {
@@ -71,7 +102,7 @@ export function Placeholder({
               y1="0"
               x2="0"
               y2="10"
-              stroke={textColor}
+              stroke={randomTextColor}
               strokeWidth="1.5"
               strokeOpacity="0.2"
             />
@@ -90,7 +121,7 @@ export function Placeholder({
               cx="10"
               cy="10"
               r="2"
-              fill={textColor}
+              fill={randomTextColor}
               fillOpacity="0.3"
             />
           </pattern>
@@ -107,7 +138,7 @@ export function Placeholder({
             <path
               d="M 0 10 Q 10 5, 20 10 Q 30 15, 40 10"
               fill="none"
-              stroke={textColor}
+              stroke={randomTextColor}
               strokeWidth="1.5"
               strokeOpacity="0.3"
             />
@@ -125,7 +156,7 @@ export function Placeholder({
             <path
               d="M 20 0 L 0 0 0 20"
               fill="none"
-              stroke={textColor}
+              stroke={randomTextColor}
               strokeWidth="1"
               strokeOpacity="0.2"
             />
@@ -143,7 +174,7 @@ export function Placeholder({
             <path
               d="M 0 0 L 15 30 L 30 0 Z"
               fill="none"
-              stroke={textColor}
+              stroke={randomTextColor}
               strokeWidth="1"
               strokeOpacity="0.2"
             />
@@ -163,7 +194,7 @@ export function Placeholder({
               cy="20"
               r="15"
               fill="none"
-              stroke={textColor}
+              stroke={randomTextColor}
               strokeWidth="1"
               strokeOpacity="0.2"
             />
@@ -181,7 +212,7 @@ export function Placeholder({
             <path
               d="M 0 10 L 10 0 L 20 10 L 30 0 L 40 10"
               fill="none"
-              stroke={textColor}
+              stroke={randomTextColor}
               strokeWidth="1.5"
               strokeOpacity="0.3"
             />
@@ -199,7 +230,7 @@ export function Placeholder({
             <path
               d="M15,2 L28,15 L28,37 L15,50 L2,37 L2,15 Z"
               fill="none"
-              stroke={textColor}
+              stroke={randomTextColor}
               strokeWidth="1"
               strokeOpacity="0.2"
             />
@@ -220,14 +251,14 @@ export function Placeholder({
               y1="0"
               x2="0"
               y2="10"
-              stroke={textColor}
+              stroke={randomTextColor}
               strokeWidth="1"
               strokeOpacity="0.2"
             />
           </pattern>
         );
     }
-  }, [selectedPattern, textColor, uniqueId]);
+  }, [selectedPattern, randomTextColor, uniqueId]);
 
   // Generate decorative elements based on the pattern
   const decorativeElements = useMemo(() => {
@@ -243,14 +274,14 @@ export function Placeholder({
               cx={width * 0.2} 
               cy={height * 0.2} 
               r={Math.min(width, height) * 0.15} 
-              fill={textColor} 
+              fill={randomTextColor} 
               fillOpacity="0.05" 
             />
             <circle 
               cx={width * 0.8} 
               cy={height * 0.8} 
               r={Math.min(width, height) * 0.1} 
-              fill={textColor} 
+              fill={randomTextColor} 
               fillOpacity="0.05" 
             />
           </>
@@ -261,7 +292,7 @@ export function Placeholder({
         return (
           <path 
             d={`M0 ${height * 0.8} Q ${width * 0.25} ${height * 0.7}, ${width * 0.5} ${height * 0.8} T ${width} ${height * 0.7}`} 
-            fill={textColor} 
+            fill={randomTextColor} 
             fillOpacity="0.05" 
           />
         );
@@ -271,7 +302,7 @@ export function Placeholder({
         return (
           <polygon 
             points={`${width * 0.5},${height * 0.2} ${width * 0.8},${height * 0.7} ${width * 0.2},${height * 0.7}`} 
-            fill={textColor} 
+            fill={randomTextColor} 
             fillOpacity="0.05" 
           />
         );
@@ -280,12 +311,12 @@ export function Placeholder({
         // For other patterns, use a simple gradient overlay
         return (
           <linearGradient id={`gradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={textColor} stopOpacity="0.05" />
-            <stop offset="100%" stopColor={bgColor} stopOpacity="0" />
+            <stop offset="0%" stopColor={randomTextColor} stopOpacity="0.05" />
+            <stop offset="100%" stopColor={randomBgColor} stopOpacity="0" />
           </linearGradient>
         );
     }
-  }, [selectedPattern, width, height, bgColor, textColor, text, uniqueId]);
+  }, [selectedPattern, width, height, randomBgColor, randomTextColor, text, uniqueId]);
 
   return (
     <div
@@ -293,8 +324,8 @@ export function Placeholder({
       style={{
         width: width,
         height: height,
-        backgroundColor: bgColor,
-        color: textColor,
+        backgroundColor: randomBgColor,
+        color: randomTextColor,
         position: "relative",
       }}
     >
@@ -309,14 +340,14 @@ export function Placeholder({
             {patternElements}
             {selectedPattern === 'diagonal' && (
               <linearGradient id={`gradient-${uniqueId}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor={textColor} stopOpacity="0.05" />
-                <stop offset="100%" stopColor={bgColor} stopOpacity="0" />
+                <stop offset="0%" stopColor={randomTextColor} stopOpacity="0.05" />
+                <stop offset="100%" stopColor={randomBgColor} stopOpacity="0" />
               </linearGradient>
             )}
           </defs>
 
           {/* Background */}
-          <rect width="100%" height="100%" fill={bgColor} />
+          <rect width="100%" height="100%" fill={randomBgColor} />
 
           {/* Decorative elements */}
           {decorativeElements}
