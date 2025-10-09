@@ -6,6 +6,7 @@ const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   message: z.string().min(10, { message: "Message must be at least 10 characters" }),
+  consent: z.boolean().refine(val => val === true, { message: "You must agree to the privacy policy" }),
 });
 
 export async function POST(request: NextRequest) {
@@ -28,15 +29,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract the validated data
-    const { name, email, message } = result.data;
+    const { name, email, message, consent } = result.data;
 
     // In a real application, you would:
     // 1. Send an email notification
     // 2. Store the message in a database
     // 3. Send to a CRM or other external service
+    // 4. Record the consent for GDPR compliance
 
     // For now, we'll just log the data and return a success response
-    console.log("Contact form submission:", { name, email, message });
+    console.log("Contact form submission:", { name, email, message, consent });
 
     // Simulate a delay to mimic external API calls
     await new Promise((resolve) => setTimeout(resolve, 500));

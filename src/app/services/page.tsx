@@ -178,70 +178,70 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeIn}
-            custom={0}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold mb-4">Pricing Plans</h2>
-            <p className="text-fg/70 max-w-2xl mx-auto">
-              Transparent pricing options to fit businesses of all sizes.
-            </p>
-          </motion.div>
+      {/*/!* Pricing Section *!/*/}
+      {/*<section className="py-16">*/}
+      {/*  <div className="container mx-auto px-4 sm:px-6 lg:px-8">*/}
+      {/*    <motion.div*/}
+      {/*      initial="hidden"*/}
+      {/*      whileInView="visible"*/}
+      {/*      viewport={{ once: true }}*/}
+      {/*      variants={fadeIn}*/}
+      {/*      custom={0}*/}
+      {/*      className="text-center mb-12"*/}
+      {/*    >*/}
+      {/*      <h2 className="text-3xl font-bold mb-4">Pricing Plans</h2>*/}
+      {/*      <p className="text-fg/70 max-w-2xl mx-auto">*/}
+      {/*        Transparent pricing options to fit businesses of all sizes.*/}
+      {/*      </p>*/}
+      {/*    </motion.div>*/}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pricingTiers.map((tier, index) => (
-              <motion.div
-                key={tier.id}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeIn}
-                custom={index + 1}
-                className="relative"
-              >
-                <Card className={`h-full flex flex-col ${tier.popular ? 'border-accent shadow-lg' : ''}`}>
-                  {tier.popular && (
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-accent text-accent-contrast text-xs px-3 py-1 rounded-full">
-                      Most Popular
-                    </div>
-                  )}
-                  <CardContent className="p-8 flex-grow">
-                    <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                    <p className="text-fg/70 mb-4">{tier.description}</p>
-                    <div className="text-3xl font-bold mb-6">{tier.price}</div>
+      {/*    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">*/}
+      {/*      {pricingTiers.map((tier, index) => (*/}
+      {/*        <motion.div*/}
+      {/*          key={tier.id}*/}
+      {/*          initial="hidden"*/}
+      {/*          whileInView="visible"*/}
+      {/*          viewport={{ once: true }}*/}
+      {/*          variants={fadeIn}*/}
+      {/*          custom={index + 1}*/}
+      {/*          className="relative"*/}
+      {/*        >*/}
+      {/*          <Card className={`h-full flex flex-col ${tier.popular ? 'border-accent shadow-lg' : ''}`}>*/}
+      {/*            {tier.popular && (*/}
+      {/*              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-accent text-accent-contrast text-xs px-3 py-1 rounded-full">*/}
+      {/*                Most Popular*/}
+      {/*              </div>*/}
+      {/*            )}*/}
+      {/*            <CardContent className="p-8 flex-grow">*/}
+      {/*              <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>*/}
+      {/*              <p className="text-fg/70 mb-4">{tier.description}</p>*/}
+      {/*              <div className="text-3xl font-bold mb-6">{tier.price}</div>*/}
 
-                    <ul className="space-y-3 mb-8">
-                      {tier.features.map((feature) => (
-                        <li key={feature} className="flex items-start">
-                          <span className="text-accent mr-2">✓</span>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+      {/*              <ul className="space-y-3 mb-8">*/}
+      {/*                {tier.features.map((feature) => (*/}
+      {/*                  <li key={feature} className="flex items-start">*/}
+      {/*                    <span className="text-accent mr-2">✓</span>*/}
+      {/*                    <span>{feature}</span>*/}
+      {/*                  </li>*/}
+      {/*                ))}*/}
+      {/*              </ul>*/}
 
-                    <div className="mt-auto pt-4">
-                      <Button 
-                        href="/contact" 
-                        variant={tier.popular ? "primary" : "outline"}
-                        className="w-full"
-                      >
-                        {tier.cta}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/*              <div className="mt-auto pt-4">*/}
+      {/*                <Button */}
+      {/*                  href="/contact" */}
+      {/*                  variant={tier.popular ? "primary" : "outline"}*/}
+      {/*                  className="w-full"*/}
+      {/*                >*/}
+      {/*                  {tier.cta}*/}
+      {/*                </Button>*/}
+      {/*              </div>*/}
+      {/*            </CardContent>*/}
+      {/*          </Card>*/}
+      {/*        </motion.div>*/}
+      {/*      ))}*/}
+      {/*    </div>*/}
+      {/*  </div>*/}
+      {/*</section>*/}
 
       {/* CTA Section */}
       <section className="py-16 bg-accent text-accent-contrast">

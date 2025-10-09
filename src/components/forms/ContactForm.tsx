@@ -10,6 +10,7 @@ const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   message: z.string().min(10, { message: "Message must be at least 10 characters" }),
+  consent: z.boolean().refine(val => val === true, { message: "You must agree to the privacy policy" }),
 });
 
 type ContactFormData = z.infer<typeof contactFormSchema>;
@@ -20,6 +21,7 @@ export function ContactForm() {
     name: "",
     email: "",
     message: "",
+    consent: false,
   });
 
   // Form submission state
@@ -29,10 +31,13 @@ export function ContactForm() {
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target as HTMLInputElement;
 
-    // Clear error when user starts typing
+    // Handle checkbox inputs differently
+    const inputValue = type === 'checkbox' ? checked : value;
+    setFormData((prev) => ({ ...prev, [name]: inputValue }));
+
+    // Clear error when user starts typing or changes checkbox
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -193,6 +198,28 @@ export function ContactForm() {
           <p className="mt-1 text-sm text-red-600">{errors.message}</p>
         )}
       </div>
+
+      <div className="flex items-start gap-2">
+        <input
+          id="consent"
+          name="consent"
+          type="checkbox"
+          checked={formData.consent}
+          onChange={handleChange}
+          className={`mt-1 ${errors.consent ? "border-red-500" : ""}`}
+          disabled={isSubmitting}
+        />
+        <label htmlFor="consent" className="text-sm">
+          I agree to the processing of my personal data as described in the{" "}
+          <a href="/legal/privacy" className="text-accent underline" target="_blank" rel="noopener noreferrer">
+            Privacy Policy
+          </a>
+          .
+        </label>
+      </div>
+      {errors.consent && (
+        <p className="mt-1 text-sm text-red-600">{errors.consent}</p>
+      )}
 
       {errors.form && (
         <div className="bg-red-50 border border-red-200 rounded-md p-4">

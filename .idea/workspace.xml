@@ -4,55 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="init commit">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eslint.config.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/next.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/postcss.config.mjs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/file.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/globe.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/hero_image_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/next.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/vercel.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/window.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/about/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/about/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/api/contact/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/contact/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/contact/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/favicon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/globals.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/journal/[slug]/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/journal/[slug]/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/journal/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/journal/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/legal/privacy/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/legal/privacy/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/legal/terms/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/legal/terms/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/services/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/services/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/work/[slug]/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/work/[slug]/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/work/metadata.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/work/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/forms/ContactForm.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/navigation/Footer.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/navigation/Navbar.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ui/Button.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ui/Card.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ui/Link.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/ui/Placeholder.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/data/posts.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/data/projects.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/data/services.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+    <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="lmao lmao">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/contact/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/contact/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/legal/privacy/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/legal/privacy/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/services/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/services/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/work/[slug]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/work/[slug]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/forms/ContactForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/forms/ContactForm.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,8 +119,17 @@
       <workItem from="1759489490743" duration="5033000" />
       <workItem from="1759838266980" duration="4364000" />
       <workItem from="1759843160951" duration="4505000" />
-      <workItem from="1760003708268" duration="2297000" />
+      <workItem from="1760003708268" duration="3338000" />
     </task>
+    <task id="LOCAL-00001" summary="lmao lmao">
+      <option name="closed" value="true" />
+      <created>1760006093135</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1760006093135</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -170,6 +137,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="init commit" />
+    <MESSAGE value="lmao lmao" />
+    <option name="LAST_COMMIT_MESSAGE" value="lmao lmao" />
   </component>
 </project>

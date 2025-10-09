@@ -119,9 +119,9 @@ export default async function ProjectPage({ params }: { params: { slug: string }
                 {project?.results}
               </p>
 
-              {project.website && (
+              {project?.website && (
                 <div className="mt-8">
-                  <Button href={project.website} external variant="primary">
+                  <Button href={project?.website} external variant="primary">
                     Visit Website
                   </Button>
                 </div>
@@ -135,11 +135,11 @@ export default async function ProjectPage({ params }: { params: { slug: string }
                   <div className="space-y-4">
                     <div>
                       <h4 className="text-sm font-semibold text-fg/60">Client</h4>
-                      <p>{project.client}</p>
+                      <p>{project?.client}</p>
                     </div>
                     <div>
                       <h4 className="text-sm font-semibold text-fg/60">Year</h4>
-                      <p>{project.year}</p>
+                      <p>{project?.year}</p>
                     </div>
                     <div>
                       <h4 className="text-sm font-semibold text-fg/60">Services</h4>
