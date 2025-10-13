@@ -6,7 +6,7 @@ This document outlines the plan for migrating the LGIT Consult website from Cont
 
 The website currently uses a hybrid content management approach:
 
-1. **Contentful Headless CMS** - Primary content source
+1. **Contentful Heawdless CMS** - Primary content source
 2. **Local MDX Files** - Fallback content source
 3. **API Routes** - For content delivery and search
 4. **Preview Mode** - For reviewing draft content
