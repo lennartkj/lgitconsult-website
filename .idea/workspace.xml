@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="deploy now">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="commented out pricing" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -121,7 +119,7 @@
       <workItem from="1759843160951" duration="4505000" />
       <workItem from="1760003708268" duration="6622000" />
       <workItem from="1760013487151" duration="16704000" />
-      <workItem from="1760190949684" duration="5932000" />
+      <workItem from="1760190949684" duration="6578000" />
     </task>
     <task id="LOCAL-00001" summary="lmao lmao">
       <option name="closed" value="true" />
@@ -211,7 +209,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760351007540</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="commented out pricing">
+      <option name="closed" value="true" />
+      <created>1760362536132</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1760362536132</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -234,7 +240,8 @@
     <MESSAGE value="content and fixes" />
     <MESSAGE value="standalone export" />
     <MESSAGE value="deploy now" />
-    <option name="LAST_COMMIT_MESSAGE" value="deploy now" />
+    <MESSAGE value="commented out pricing" />
+    <option name="LAST_COMMIT_MESSAGE" value="commented out pricing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
