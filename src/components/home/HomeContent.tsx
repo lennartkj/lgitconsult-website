@@ -4,7 +4,6 @@ import Image from "next/image";
 import React from "react";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/Button";
-// WICHTIG: Importiere CardLink aus dem UI-File, um Interaktivität zu ermöglichen
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardLink } from "@/components/ui/Card";
 import { Link } from "@/components/ui/Link";
 import { Placeholder } from "@/components/ui/Placeholder";
@@ -31,9 +30,6 @@ const fadeIn: Variants = {
 
 // Component erhält die Daten direkt über Props vom Server
 export default function HomeContent({ projects, services }: HomeContentProps) {
-
-    // Die Hooks useState, useEffect und die Lade-Logik wurden entfernt, da der Server die Daten liefert.
-
     return (
         <>
             {/* Hero Section */}
@@ -70,7 +66,6 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                             className="relative h-[300px] md:h-[400px] rounded-lg overflow-hidden"
                         >
                             <div className="w-full h-full">
-                                {/* Image Component muss width/height oder layout="fill" verwenden */}
                                 <Image
                                     src="/hero_image_1.png"
                                     alt="Hero Image"
@@ -104,14 +99,13 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {projects.map((project, index) => (
                             <motion.div
-                                key={project.slug} // Verwende slug als key für bessere Stabilität
+                                key={project.slug}
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: true, margin: "-50px" }}
                                 variants={fadeIn}
                                 custom={index + 1}
                             >
-                                {/* FIX: Verwende CardLink für interaktive Karten */}
                                 <CardLink href={`/work/${project.slug}`} className="h-full flex flex-col">
                                     <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden">
                                         <Placeholder
@@ -138,9 +132,7 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                                         </div>
                                     </CardContent>
                                     <CardFooter>
-                                        <Link href={`/work/${project.slug}`} variant="underline">
-                                            View Case Study
-                                        </Link>
+                                        {/* FIX: Link wurde entfernt, da die gesamte Karte bereits ein Link ist */}
                                     </CardFooter>
                                 </CardLink>
                             </motion.div>
@@ -175,14 +167,13 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {services.map((service, index) => (
                             <motion.div
-                                key={service.id} // FIX: Verwende nur die vorhandene 'id' als key
+                                key={service.id}
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: true, margin: "-50px" }}
                                 variants={fadeIn}
                                 custom={index + 1}
                             >
-                                {/* Die Card bleibt hier statisch, da sie nur Inhalt zeigt. */}
                                 <Card className="h-full flex flex-col">
                                     <CardHeader>
                                         <div className="text-4xl mb-4">{service.icon}</div>
@@ -203,7 +194,7 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                     </div>
                 </div>
             </section>
-            a
+
             {/* CTA Section */}
             <section className="py-16 bg-accent text-accent-contrast">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">

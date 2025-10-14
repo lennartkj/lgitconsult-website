@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="commented out pricing" />
+    <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="commented out pricing">
+      <change afterPath="$PROJECT_DIR$/src/components/glitch/GlitchCoreCanvas.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/glitch/GlitchCoreProvider.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/home/HomeContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/home/HomeContent.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -119,7 +125,8 @@
       <workItem from="1759843160951" duration="4505000" />
       <workItem from="1760003708268" duration="6622000" />
       <workItem from="1760013487151" duration="16704000" />
-      <workItem from="1760190949684" duration="6578000" />
+      <workItem from="1760190949684" duration="7872000" />
+      <workItem from="1760435596254" duration="1497000" />
     </task>
     <task id="LOCAL-00001" summary="lmao lmao">
       <option name="closed" value="true" />
@@ -217,7 +224,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760362536132</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="commented out pricing">
+      <option name="closed" value="true" />
+      <created>1760362643983</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1760362643983</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

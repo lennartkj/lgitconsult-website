@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import React, { Suspense } from 'react';
 
 import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/navigation/Footer";
 import { PreviewProvider } from "@/components/preview/PreviewProvider";
+import React, { Suspense } from 'react';
+import GlitchCoreProvider from '@/components/glitch/GlitchCoreProvider';
+import GlitchCoreCanvas from '@/components/glitch/GlitchCoreCanvas';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,24 +33,38 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+                                     children,
+                                   }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+      <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
-      >  <Suspense fallback={<div>Loading app shell...</div>}>
-        <PreviewProvider>
+          className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+      >
+      <PreviewProvider>
+        {/* We wrap the entire application content with the glitch provider */}
+        <GlitchCoreProvider>
           <div className="flex min-h-screen flex-col">
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <Footer />
+
+            <Suspense fallback={null}>
+              <Navbar />
+            </Suspense>
+
+            <main className="flex-grow">
+              {children}
+            </main>
+
+            <Suspense fallback={null}>
+              <Footer />
+            </Suspense>
+
           </div>
-        </PreviewProvider>
-          </Suspense>
+          {/* The canvas is rendered outside the main content to float over everything */}
+          <GlitchCoreCanvas />
+        </GlitchCoreProvider>
+      </PreviewProvider>
       </body>
-    </html>
+      </html>
   );
 }
