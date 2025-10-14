@@ -44,7 +44,7 @@ export default function GlitchCoreCanvas() {
 
     setEffects(prev => [...prev, ...newEffects]);
     clearQueue();
-  }, [effectQueue]);
+  }, [effectQueue, clearQueue, effects.length]);
 
   // Hook für das Zeichnen und die Lebensdauer der Effekte
   useEffect(() => {
@@ -88,7 +88,7 @@ export default function GlitchCoreCanvas() {
 
       const timeout = setTimeout(() => {
         setEffects([]);
-      }, 100);
+      }, 10);
 
       return () => clearTimeout(timeout);
     }
