@@ -17,8 +17,8 @@ export default function GlitchCoreCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [effects, setEffects] = useState<EffectTarget[]>([]);
   const { effectQueue, clearQueue } = useGlitchCore();
-  // @ts-expect-error testing
-  const animationRef = useRef<number>();
+
+  const animationRef = useRef<number>(null);
 
   // Hook zur Anpassung der Canvas-Größe bei Fensteränderungen
   useEffect(() => {
@@ -129,8 +129,8 @@ export default function GlitchCoreCanvas() {
     } else if (effects.length === 0 && animationRef.current) {
       // Stoppt die Schleife, wenn keine Effekte mehr vorhanden sind
       cancelAnimationFrame(animationRef.current);
-      // @ts-expect-error testing
-      animationRef.current = undefined;
+
+      animationRef.current = null;
 
       // Letzte Aufräumarbeiten (Canvas endgültig löschen)
       const ctx = canvasRef.current?.getContext('2d');
@@ -142,8 +142,8 @@ export default function GlitchCoreCanvas() {
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
-        // @ts-expect-error testing
-        animationRef.current = undefined;
+
+        animationRef.current = null;
       }
     };
   }, [effects.length, animate]); // Abhängig von der Anzahl der Effekte und der animate-Funktion
