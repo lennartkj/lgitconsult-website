@@ -95,15 +95,11 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
             }
 
             timeoutRef.current = setTimeout(() => {
-                // Trigger-Schwelle: Löst aus, wenn man genug gescrollt hat
                 if (scrollDeltaRef.current > 1) {
-                    const elements = findTextElements();
-                    const randomElement = getRandomElement(elements);
-                    if (randomElement) {
-                        triggerEffect(randomElement);
-                    }
+                    // FIX: Trigger multiple effects instead of just one
+                    triggerMultipleEffects(10); // This will add 3 new lines/circles
                 }
-                scrollDeltaRef.current = 0; // Setze Delta zurück
+                scrollDeltaRef.current = 0;
             }, 10);
         };
 

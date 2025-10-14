@@ -1,18 +1,19 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useGlitchCore } from './GlitchCoreProvider';
 
-// Typ für den Effekt (aktualisiert)
+// Definieren des Typs für den Effekt
 interface EffectTarget {
   element: HTMLElement;
   position: DOMRect;
+  index: number;
 }
 
 export default function GlitchCoreCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [effects, setEffects] = useState<EffectTarget[]>([]);
   const { effectQueue, clearQueue } = useGlitchCore();
-  const positionRef = useRef<EffectTarget[]>([]);
 
   // Anpassung der Canvas-Größe bei Fensteränderungen
   useEffect(() => {
@@ -33,65 +34,73 @@ export default function GlitchCoreCanvas() {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
-    if (!ctx) return;
+    if (!ctx || effectQueue.length === 0) return;
 
-    // Funktion zum Zeichnen der Effekte
-    const drawEffects = (effectsToDraw: EffectTarget[]) => {
-      // Löscht den vorherigen Canvas-Inhalt
-      if (!canvas) return;
+    // Verarbeitet die Effekt-Warteschlange
+    const newEffects = effectQueue.map((el, index) => {
+      const position = el.getBoundingClientRect();
+      return { element: el, position, index: effects.length + index + 1 };
+    });
+
+    setEffects(prev => [...prev, ...newEffects]);
+    clearQueue();
+
+    // Zeichne alle Effekte (in einer separaten Funktion)
+    const drawEffects = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      effectsToDraw.forEach(({ position }) => {
-        // Zeichne den Kreis
+      effects.forEach(({ element, position, index }) => {
+        // Bestimme die Größe des zufälligen Buchstabens (oder Elements)
+        const fontSize = parseFloat(window.getComputedStyle(element).fontSize);
+        const textMetrics = ctx.measureText(element.textContent.charAt(0));
+        const letterWidth = textMetrics.width;
+        const letterHeight = fontSize;
+
+        const letterX = position.left + letterWidth / 2;
+        const letterY = position.top + letterHeight / 2;
+
+        // Zeichne den Kreis um den Buchstaben
         ctx.beginPath();
         ctx.arc(
-            position.left + position.width / 2,
-            position.top + position.height / 2,
-            position.width / 2 + 5,
+            letterX,
+            letterY,
+            letterWidth / 2 + 5,
             0,
             2 * Math.PI
         );
-        ctx.strokeStyle = '#00ffc3'; // Glitchcore-Farbe
+        ctx.strokeStyle = '#00ffc3';
         ctx.lineWidth = 1;
         ctx.stroke();
 
-        // Zeichne die Linie
+        // Zeichne die Linie zur Zahl
         ctx.beginPath();
-        ctx.moveTo(
-            position.left + position.width / 2,
-            position.top + position.height / 2
-        );
-        ctx.lineTo(position.left + 50, position.top - 50);
+        ctx.moveTo(letterX, letterY);
+        ctx.lineTo(letterX + 50, letterY - 50);
         ctx.strokeStyle = '#00ffc3';
         ctx.stroke();
 
-        // Zeichne die Nummer (entfernt, um den Fehler zu beheben)
-        // ctx.fillStyle = '#00ffc3';
-        // ctx.font = '12px "Geist Mono", monospace';
-        // ctx.fillText(index.toString(), position.left + 50, position.top - 50);
+        // Zeichne die Nummer
+        ctx.fillStyle = '#00ffc3';
+        ctx.font = '12px "Geist Mono", monospace';
+        ctx.fillText(index.toString(), letterX + 50, letterY - 50);
       });
     };
 
-    // Verarbeitet die Effekt-Warteschlange
-    if (effectQueue.length > 0) {
-      const newEffects = effectQueue.map(el => {
-        const position = el.getBoundingClientRect();
-        return { element: el, position };
-      });
-      positionRef.current = newEffects;
-      drawEffects(newEffects);
-      clearQueue();
+    // Zeichne die Effekte
+    drawEffects();
+
+  }, [effectQueue, clearQueue, effects]);
+
+  // Dieser Hook verwaltet die Lebensdauer der Effekte
+  useEffect(() => {
+    if (effects.length > 0) {
+      const timeout = setTimeout(() => {
+        setEffects([]);
+      }, 500); // 500ms, bis die Effekte verschwinden
+
+      return () => clearTimeout(timeout);
     }
-
-    // Löscht Effekte nach einer kurzen Zeit
-    const timeout = setTimeout(() => {
-      if (!canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      positionRef.current = [];
-    }, 500);
-
-    return () => clearTimeout(timeout);
-  }, [effectQueue, clearQueue]);
+  }, [effects]);
 
   return <canvas ref={canvasRef} className="fixed top-0 left-0 z-50 pointer-events-none" />;
 }
