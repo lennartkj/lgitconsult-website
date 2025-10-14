@@ -42,9 +42,10 @@ export default function RootLayout({
       <body
           className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
+      <Suspense fallback={null}>
       <PreviewProvider>
         {/* We wrap the entire application content with the glitch provider */}
-        <GlitchCoreProvider>
+
           <div className="flex min-h-screen flex-col">
 
             <Suspense fallback={null}>
@@ -62,8 +63,9 @@ export default function RootLayout({
           </div>
           {/* The canvas is rendered outside the main content to float over everything */}
           <GlitchCoreCanvas />
-        </GlitchCoreProvider>
+
       </PreviewProvider>
+          </Suspense>
       </body>
       </html>
   );
