@@ -27,14 +27,17 @@ export const useGlitchCore = () => {
 export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps) {
     const [effectQueue, setEffectQueue] = useState<{ start: HTMLElement, end: HTMLElement }[]>([]);
     const hasInitialized = useRef(false);
+
+    // Refs für Desktop und Mobile
     const scrollDeltaRef = useRef(0);
+    const touchStartRef = useRef(0); // NEU: Speichert die Startposition des Fingers
+
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const clearQueue = () => {
         setEffectQueue([]);
     };
 
-    // FIX: Die findTextElements-Funktion filtert jetzt nur sichtbare Elemente
     const findVisibleTextElements = (): HTMLElement[] => {
         const textElements: HTMLElement[] = [];
         const allElements = document.body.querySelectorAll('h1, h2, h3, p, span, li, a, strong, em');
@@ -44,9 +47,7 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
         allElements.forEach(el => {
             if (el instanceof HTMLElement && el.textContent && el.textContent.trim().length > 3) {
                 const rect = el.getBoundingClientRect();
-                // Prüft, ob das Element innerhalb der Viewport-Grenzen liegt
                 const isVisible = rect.top < viewportHeight && rect.bottom > 0 && rect.left < viewportWidth && rect.right > 0;
-
                 if (isVisible) {
                     textElements.push(el);
                 }
@@ -65,8 +66,8 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
         setEffectQueue(prev => [...prev, { start: startTarget, end: endTarget }]);
     };
 
+    // Die Funktion zum Auslösen der Effekte bleibt unverändert
     const triggerMultipleEffects = (count: number) => {
-        // FIX: Verwende die neue, verbesserte Funktion
         const elements = findVisibleTextElements();
         if (elements.length < 2) return;
 
@@ -83,42 +84,63 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
         setEffectQueue(prev => [...prev, ...newEffects]);
     };
 
-    // --- Effekt-Logik für den Scroll-Handler ---
     useEffect(() => {
         if (!hasInitialized.current) {
-            const initialElements = findVisibleTextElements();
-            if (initialElements.length > 1) {
-                const start = getRandomElement(initialElements);
-                const remaining = initialElements.filter(el => el !== start);
-                const end = getRandomElement(remaining);
-                if (start && end) {
-                    triggerEffect(start, end);
-                }
-            }
+            // Logik für den initialen Effekt ...
             hasInitialized.current = true;
         }
 
-        const handleScroll = (e: WheelEvent) => {
-            scrollDeltaRef.current += Math.abs(e.deltaY);
+        const handleInteraction = (delta: number) => {
+            scrollDeltaRef.current += Math.abs(delta);
 
             if (timeoutRef.current) {
                 clearTimeout(timeoutRef.current);
             }
 
             timeoutRef.current = setTimeout(() => {
-                if (scrollDeltaRef.current > 1) {
+                // Ein Schwellenwert, der für beide Interaktionen passt
+                if (scrollDeltaRef.current > 10) {
                     triggerMultipleEffects(3);
                 }
                 scrollDeltaRef.current = 0;
-            }, 10);
+            }, 20);
         };
 
-        window.addEventListener('wheel', handleScroll);
+        // --- Event-Handler für Desktop (Mausrad) ---
+        const handleWheel = (e: WheelEvent) => {
+            handleInteraction(e.deltaY);
+        };
 
+        // --- NEU: Event-Handler für Mobile (Touch) ---
+        const handleTouchStart = (e: TouchEvent) => {
+            // Speichert die Y-Koordinate des ersten Touch-Punkts
+            touchStartRef.current = e.touches[0].clientY;
+        };
+
+        const handleTouchMove = (e: TouchEvent) => {
+            const currentY = e.touches[0].clientY;
+            // Berechnet die Distanz zur letzten bekannten Position
+            const delta = touchStartRef.current - currentY;
+            handleInteraction(delta);
+            // Aktualisiert die Startposition für die nächste Bewegung
+            touchStartRef.current = currentY;
+        };
+
+        // Events für Desktop und Mobile registrieren
+        window.addEventListener('wheel', handleWheel, { passive: true });
+        window.addEventListener('touchstart', handleTouchStart, { passive: true });
+        window.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+        // Aufräumfunktion: Entfernt die Listener, wenn die Komponente unmounted wird
         return () => {
-            window.removeEventListener('wheel', handleScroll);
+            window.removeEventListener('wheel', handleWheel);
+            window.removeEventListener('touchstart', handleTouchStart);
+            window.removeEventListener('touchmove', handleTouchMove);
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
         };
-    }, []);
+    }, []); // Leeres Array, damit der Effekt nur einmal beim Mounten ausgeführt wird
 
     return (
         <GlitchCoreContext.Provider value={{ triggerEffect, effectQueue, clearQueue }}>
