@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="glitch core v3">
-      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+    <list default="true" id="b58a22dc-3b6d-48d6-b827-303ecb471d0d" name="Changes" comment="glitch core v4">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/glitch/GlitchCoreCanvas.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/glitch/GlitchCoreCanvas.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/glitch/GlitchCoreProvider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/glitch/GlitchCoreProvider.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -305,7 +307,23 @@
       <option name="project" value="LOCAL" />
       <updated>1760443855972</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="glitch core v3">
+      <option name="closed" value="true" />
+      <created>1760443961696</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1760443961696</updated>
+    </task>
+    <task id="LOCAL-00024" summary="glitch core v4">
+      <option name="closed" value="true" />
+      <created>1760450495098</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1760450495098</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -333,7 +351,8 @@
     <MESSAGE value="glitch core v2" />
     <MESSAGE value="glitch core v2.5" />
     <MESSAGE value="glitch core v3" />
-    <option name="LAST_COMMIT_MESSAGE" value="glitch core v3" />
+    <MESSAGE value="glitch core v4" />
+    <option name="LAST_COMMIT_MESSAGE" value="glitch core v4" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

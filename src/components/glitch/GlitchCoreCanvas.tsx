@@ -3,24 +3,22 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useGlitchCore } from './GlitchCoreProvider';
 
-// Definieren des Typs für den Effekt
-interface EffectTarget {
-  start: HTMLElement;
-  end: HTMLElement;
-  positionStart: DOMRect;
-  positionEnd: DOMRect;
+// KORREKTUR 1: Der Typ ist jetzt viel einfacher, da wir direkt Koordinaten erhalten.
+interface CanvasEffect {
+  start: { x: number; y: number };
+  end: { x: number; y: number };
   index: number;
-  expiresAt: number; // NEU: Zeitstempel für das Ablaufen
+  expiresAt: number; // Zeitstempel für das Ausblenden
 }
 
 export default function GlitchCoreCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [effects, setEffects] = useState<EffectTarget[]>([]);
+  const [effects, setEffects] = useState<CanvasEffect[]>([]);
   const { effectQueue, clearQueue } = useGlitchCore();
 
-  const animationRef = useRef<number>(null);
+  const animationRef = useRef<number | null>(null);
 
-  // Hook zur Anpassung der Canvas-Größe bei Fensteränderungen
+  // Hook zur Anpassung der Canvas-Größe (unverändert)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -40,21 +38,18 @@ export default function GlitchCoreCanvas() {
     };
   }, []);
 
-  // Hook zum Hinzufügen neuer Effekte zur Liste (wird durch Provider getriggert)
+  // KORREKTUR 2: Verarbeitung der effectQueue. Wir übernehmen die Koordinaten direkt.
   useEffect(() => {
     if (effectQueue.length === 0) return;
 
     const currentTime = Date.now();
     const newEffects = effectQueue.map((el, index) => {
-      const positionStart = el.start.getBoundingClientRect();
-      const positionEnd = el.end.getBoundingClientRect();
+      // Kein getBoundingClientRect() mehr nötig!
       return {
         start: el.start,
         end: el.end,
-        positionStart,
-        positionEnd,
         index: effects.length + index + 1,
-        expiresAt: currentTime + 100, // Leben nur 100ms
+        expiresAt: currentTime + 500, // Leben nur 100ms
       };
     });
 
@@ -70,83 +65,78 @@ export default function GlitchCoreCanvas() {
     if (!ctx || !canvas) return;
 
     const currentTime = Date.now();
-    let needsUpdate = false;
 
-    // 1. Filtere abgelaufene Effekte im Render-Zyklus
+    // Filtere abgelaufene Effekte
     const activeEffects = effects.filter(effect => effect.expiresAt > currentTime);
 
-    // 2. Zustand nur aktualisieren, wenn sich die Liste der aktiven Effekte geändert hat
+    // Zustand nur aktualisieren, wenn sich etwas geändert hat
     if (activeEffects.length !== effects.length) {
       setEffects(activeEffects);
-      needsUpdate = true; // Markiere, dass ein Neuzeichnen nötig ist
     }
 
-    // 3. Zeichne und lösche den Canvas
+    // Canvas für den neuen Frame leeren
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    activeEffects.forEach(({ positionStart, positionEnd, index }) => {
-      const startX = positionStart.left + positionStart.width / 2;
-      const startY = positionStart.top + positionStart.height / 2;
-      const endX = positionEnd.left + positionEnd.width / 2;
-      const endY = positionEnd.top + positionEnd.height / 2;
+    // Zeichne alle aktiven Effekte
+    activeEffects.forEach(({ start, end, index }) => {
+      // KORREKTUR 3: Die Koordinaten sind bereits die Mittelpunkte.
+      const startX = start.x;
+      const startY = start.y;
+      const endX = end.x;
+      const endY = end.y;
+
+      const color = '#00ffc3'; // Farbe zentral definieren
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 1;
 
       // Zeichne den Kreis um den Startpunkt
       ctx.beginPath();
       ctx.arc(startX, startY, 10, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#00ffc3';
-      ctx.lineWidth = 1;
       ctx.stroke();
 
       // Zeichne den Kreis um den Endpunkt
       ctx.beginPath();
       ctx.arc(endX, endY, 10, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#00ffc3';
       ctx.stroke();
 
-      // Zeichne die Linie, die die beiden Elemente verbindet
+      // Zeichne die Linie, die die beiden Punkte verbindet
       ctx.beginPath();
       ctx.moveTo(startX, startY);
       ctx.lineTo(endX, endY);
-      ctx.strokeStyle = '#00ffc3';
       ctx.stroke();
 
-      // Zeichne die Nummer
-      ctx.fillStyle = '#00ffc3';
+      // Zeichne die Index-Nummer
       ctx.font = '12px "Geist Mono", monospace';
       ctx.fillText(index.toString(), endX + 15, endY - 15);
     });
 
-    // 4. Starte die nächste Animations-Frame
     animationRef.current = requestAnimationFrame(animate);
+  }, [effects]); // Die Abhängigkeit ist jetzt nur noch 'effects'
 
-  }, [effects, setEffects]); // Der Hook hängt nur von effects ab
-
-  // Hook, der die Animationsschleife startet, wenn Effekte hinzukommen
+  // Hook, der die Animationsschleife startet und stoppt (Logik bleibt gleich)
   useEffect(() => {
+    // Wenn es Effekte gibt und die Animation nicht läuft -> starte sie
     if (effects.length > 0 && !animationRef.current) {
-      // Startet die Schleife nur, wenn sie nicht bereits läuft
       animationRef.current = requestAnimationFrame(animate);
-    } else if (effects.length === 0 && animationRef.current) {
-      // Stoppt die Schleife, wenn keine Effekte mehr vorhanden sind
+    }
+    // Wenn es keine Effekte mehr gibt und die Animation noch läuft -> stoppe sie
+    else if (effects.length === 0 && animationRef.current) {
       cancelAnimationFrame(animationRef.current);
-
       animationRef.current = null;
-
-      // Letzte Aufräumarbeiten (Canvas endgültig löschen)
+      // Letzte Aufräumarbeiten
       const ctx = canvasRef.current?.getContext('2d');
       if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     }
 
-    // WICHTIG: Die Cleanup-Funktion stellt sicher, dass requestAnimationFrame gestoppt wird,
-    // wenn die Komponente unmountet wird.
+    // Cleanup-Funktion für den Fall, dass die Komponente unmounted wird
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
-
         animationRef.current = null;
       }
     };
-  }, [effects.length, animate]); // Abhängig von der Anzahl der Effekte und der animate-Funktion
+  }, [effects.length, animate]);
 
   return <canvas ref={canvasRef} className="fixed top-0 left-0 z-50 pointer-events-none" />;
 }

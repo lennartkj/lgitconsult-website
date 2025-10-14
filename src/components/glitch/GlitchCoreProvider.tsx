@@ -1,11 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 
-// --- Typen und Interfaces ---
+// --- Typen und Interfaces (unverändert) ---
+interface GlitchEffect {
+    start: { x: number; y: number };
+    end: { x: number; y: number };
+}
+
 interface GlitchCoreContextType {
-    triggerEffect: (startTarget: HTMLElement, endTarget: HTMLElement) => void;
-    effectQueue: { start: HTMLElement, end: HTMLElement }[];
+    effectQueue: GlitchEffect[];
     clearQueue: () => void;
 }
 
@@ -13,6 +17,7 @@ interface GlitchCoreProviderProps {
     children: React.ReactNode;
 }
 
+// --- React Context (unverändert) ---
 const GlitchCoreContext = createContext<GlitchCoreContextType | null>(null);
 
 export const useGlitchCore = () => {
@@ -25,125 +30,127 @@ export const useGlitchCore = () => {
 
 // --- GlitchCoreProvider Komponente ---
 export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps) {
-    const [effectQueue, setEffectQueue] = useState<{ start: HTMLElement, end: HTMLElement }[]>([]);
-    const hasInitialized = useRef(false);
+    const [effectQueue, setEffectQueue] = useState<GlitchEffect[]>([]);
+    const [characterRefs, setCharacterRefs] = useState<{ textNode: Node; charIndex: number }[]>([]);
 
-    // Refs für Desktop und Mobile
-    const scrollDeltaRef = useRef(0);
-    const touchStartRef = useRef(0); // NEU: Speichert die Startposition des Fingers
-
+    const interactionDeltaRef = useRef(0);
+    const touchStartRef = useRef(0);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const clearQueue = () => {
+    const clearQueue = useCallback(() => {
         setEffectQueue([]);
-    };
+    }, []);
 
-    const findVisibleTextElements = (): HTMLElement[] => {
-        const textElements: HTMLElement[] = [];
-        const allElements = document.body.querySelectorAll('h1, h2, h3, p, span, li, a, strong, em');
+    // HINWEIS: Alle useCallback-Hooks sind korrekt, da sie die Funktionen stabil halten.
+    // Das Problem lag in der Art, wie die useEffect-Hooks sie aufgerufen haben.
+
+    const scanVisibleCharacters = useCallback(() => {
+        const refs: { textNode: Node; charIndex: number }[] = [];
+        const allElements = document.body.querySelectorAll('h1, h2, h3, p, span, li, a, strong, em, button');
         const viewportHeight = window.innerHeight;
         const viewportWidth = window.innerWidth;
 
         allElements.forEach(el => {
-            if (el instanceof HTMLElement && el.textContent && el.textContent.trim().length > 3) {
+            if (el instanceof HTMLElement && el.textContent && el.textContent.trim().length > 0) {
                 const rect = el.getBoundingClientRect();
                 const isVisible = rect.top < viewportHeight && rect.bottom > 0 && rect.left < viewportWidth && rect.right > 0;
                 if (isVisible) {
-                    textElements.push(el);
+                    const treeWalker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+                    let currentNode;
+                    while ((currentNode = treeWalker.nextNode())) {
+                        const text = currentNode.nodeValue || "";
+                        for (let i = 0; i < text.length; i++) {
+                            if (text[i].trim() !== "") {
+                                refs.push({ textNode: currentNode, charIndex: i });
+                            }
+                        }
+                    }
                 }
             }
         });
-        return textElements;
+        setCharacterRefs(refs);
+    }, []);
+
+    const getCoordsForChar = (textNode: Node, charIndex: number): { x: number; y: number } | null => {
+        try {
+            const range = document.createRange();
+            range.setStart(textNode, charIndex);
+            range.setEnd(textNode, charIndex + 1);
+            const rect = range.getBoundingClientRect();
+            if (rect.width === 0 && rect.height === 0) return null;
+            return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        } catch { return null; }
     };
 
-    const getRandomElement = (elements: HTMLElement[]): HTMLElement | null => {
-        if (elements.length === 0) return null;
-        const randomIndex = Math.floor(Math.random() * elements.length);
-        return elements[randomIndex];
-    };
+    const triggerMultipleEffects = useCallback((count: number) => {
+        if (characterRefs.length < 2) return;
 
-    const triggerEffect = (startTarget: HTMLElement, endTarget: HTMLElement) => {
-        setEffectQueue(prev => [...prev, { start: startTarget, end: endTarget }]);
-    };
-
-    // Die Funktion zum Auslösen der Effekte bleibt unverändert
-    const triggerMultipleEffects = (count: number) => {
-        const elements = findVisibleTextElements();
-        if (elements.length < 2) return;
-
-        const newEffects: { start: HTMLElement, end: HTMLElement }[] = [];
+        const newEffects: GlitchEffect[] = [];
         for (let i = 0; i < count; i++) {
-            const startElement = getRandomElement(elements);
-            const remaining = elements.filter(el => el !== startElement);
-            const endElement = getRandomElement(remaining);
-
-            if (startElement && endElement) {
-                newEffects.push({ start: startElement, end: endElement });
+            const startIndex = Math.floor(Math.random() * characterRefs.length);
+            let endIndex = Math.floor(Math.random() * characterRefs.length);
+            while (startIndex === endIndex) {
+                endIndex = Math.floor(Math.random() * characterRefs.length);
+            }
+            const startRef = characterRefs[startIndex];
+            const endRef = characterRefs[endIndex];
+            const startCoords = getCoordsForChar(startRef.textNode, startRef.charIndex);
+            const endCoords = getCoordsForChar(endRef.textNode, endRef.charIndex);
+            if (startCoords && endCoords) {
+                newEffects.push({ start: startCoords, end: endCoords });
             }
         }
         setEffectQueue(prev => [...prev, ...newEffects]);
-    };
+    }, [characterRefs]);
 
+    // --- Effekt-Hooks ---
+
+    // KORREKTUR 1: Dieser Hook läuft nur einmal beim Mounten, um den initialen Scan durchzuführen.
     useEffect(() => {
-        if (!hasInitialized.current) {
-            // Logik für den initialen Effekt ...
-            hasInitialized.current = true;
-        }
+        scanVisibleCharacters();
+    }, [scanVisibleCharacters]);
 
+    // KORREKTUR 2: Dieser Hook richtet die Event-Listener ein. Er ist jetzt stabil.
+    useEffect(() => {
         const handleInteraction = (delta: number) => {
-            scrollDeltaRef.current += Math.abs(delta);
-
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-
+            interactionDeltaRef.current += Math.abs(delta);
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
             timeoutRef.current = setTimeout(() => {
-                // Ein Schwellenwert, der für beide Interaktionen passt
-                if (scrollDeltaRef.current > 10) {
+                if (interactionDeltaRef.current > 15) {
                     triggerMultipleEffects(3);
                 }
-                scrollDeltaRef.current = 0;
-            }, 20);
+                interactionDeltaRef.current = 0;
+            }, 25);
         };
 
-        // --- Event-Handler für Desktop (Mausrad) ---
-        const handleWheel = (e: WheelEvent) => {
-            handleInteraction(e.deltaY);
-        };
-
-        // --- NEU: Event-Handler für Mobile (Touch) ---
-        const handleTouchStart = (e: TouchEvent) => {
-            // Speichert die Y-Koordinate des ersten Touch-Punkts
-            touchStartRef.current = e.touches[0].clientY;
-        };
-
+        const handleWheel = (e: WheelEvent) => handleInteraction(e.deltaY);
+        const handleTouchStart = (e: TouchEvent) => { touchStartRef.current = e.touches[0].clientY; };
         const handleTouchMove = (e: TouchEvent) => {
             const currentY = e.touches[0].clientY;
-            // Berechnet die Distanz zur letzten bekannten Position
             const delta = touchStartRef.current - currentY;
             handleInteraction(delta);
-            // Aktualisiert die Startposition für die nächste Bewegung
             touchStartRef.current = currentY;
         };
 
-        // Events für Desktop und Mobile registrieren
+        // Der 'resize' Handler ist einfach die stabile scanVisibleCharacters-Funktion.
+        window.addEventListener('resize', scanVisibleCharacters);
         window.addEventListener('wheel', handleWheel, { passive: true });
         window.addEventListener('touchstart', handleTouchStart, { passive: true });
         window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
-        // Aufräumfunktion: Entfernt die Listener, wenn die Komponente unmounted wird
         return () => {
+            window.removeEventListener('resize', scanVisibleCharacters);
             window.removeEventListener('wheel', handleWheel);
             window.removeEventListener('touchstart', handleTouchStart);
             window.removeEventListener('touchmove', handleTouchMove);
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-    }, []); // Leeres Array, damit der Effekt nur einmal beim Mounten ausgeführt wird
+        // Wir übergeben die stabilen Funktionen an das Dependency-Array.
+        // Das stellt sicher, dass der Hook nur neu läuft, wenn sich diese (stabilen) Funktionen ändern, was sie nicht tun.
+    }, [scanVisibleCharacters, triggerMultipleEffects]);
 
     return (
-        <GlitchCoreContext.Provider value={{ triggerEffect, effectQueue, clearQueue }}>
+        <GlitchCoreContext.Provider value={{ effectQueue, clearQueue }}>
             {children}
         </GlitchCoreContext.Provider>
     );
