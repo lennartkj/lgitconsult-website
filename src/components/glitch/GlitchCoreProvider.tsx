@@ -4,8 +4,8 @@ import React, { createContext, useContext, useState, useEffect, useRef, useCallb
 
 // --- Typen und Interfaces (unverändert) ---
 interface GlitchEffect {
-    start: { x: number; y: number };
-    end: { x: number; y: number };
+    startRef: { textNode: Node; charIndex: number };
+    endRef: { textNode: Node; charIndex: number };
 }
 
 interface GlitchCoreContextType {
@@ -92,15 +92,16 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
             while (startIndex === endIndex) {
                 endIndex = Math.floor(Math.random() * characterRefs.length);
             }
-            const startRef = characterRefs[startIndex];
-            const endRef = characterRefs[endIndex];
-            const startCoords = getCoordsForChar(startRef.textNode, startRef.charIndex);
-            const endCoords = getCoordsForChar(endRef.textNode, endRef.charIndex);
-            if (startCoords && endCoords) {
-                newEffects.push({ start: startCoords, end: endCoords });
-            }
+            newEffects.push({
+                startRef: characterRefs[startIndex],
+                endRef: characterRefs[endIndex],
+            });
         }
-        setEffectQueue(prev => [...prev, ...newEffects]);
+
+        // ÄNDERUNG: Ersetze die Queue, anstatt sie zu erweitern.
+        // Das verhindert Race Conditions und vereinfacht die Logik.
+        setEffectQueue(newEffects);
+
     }, [characterRefs]);
 
     // --- Effekt-Hooks ---
@@ -117,7 +118,7 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             timeoutRef.current = setTimeout(() => {
                 if (interactionDeltaRef.current > 15) {
-                    triggerMultipleEffects(3);
+                    triggerMultipleEffects(5);
                 }
                 interactionDeltaRef.current = 0;
             }, 25);
