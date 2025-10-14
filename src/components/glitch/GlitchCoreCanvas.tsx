@@ -5,8 +5,10 @@ import { useGlitchCore } from './GlitchCoreProvider';
 
 // Definieren des Typs für den Effekt
 interface EffectTarget {
-  element: HTMLElement;
-  position: DOMRect;
+  start: HTMLElement;
+  end: HTMLElement;
+  positionStart: DOMRect;
+  positionEnd: DOMRect;
   index: number;
 }
 
@@ -30,73 +32,63 @@ export default function GlitchCoreCanvas() {
     return () => window.removeEventListener('resize', resizeCanvas);
   }, []);
 
-  // Rendert die Effekte auf dem Canvas
+  // Hook zum Hinzufügen neuer Effekte zur Liste
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!ctx || effectQueue.length === 0) return;
+    if (effectQueue.length === 0) return;
 
-    // Verarbeitet die Effekt-Warteschlange
     const newEffects = effectQueue.map((el, index) => {
-      const position = el.getBoundingClientRect();
-      return { element: el, position, index: effects.length + index + 1 };
+      const positionStart = el.start.getBoundingClientRect();
+      const positionEnd = el.end.getBoundingClientRect();
+      return { start: el.start, end: el.end, positionStart, positionEnd, index: effects.length + index + 1 };
     });
 
     setEffects(prev => [...prev, ...newEffects]);
     clearQueue();
+  }, [effectQueue]);
 
-    // Zeichne alle Effekte (in einer separaten Funktion)
+  // Hook für das Zeichnen und die Lebensdauer der Effekte
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!ctx) return;
+
     const drawEffects = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      effects.forEach(({ element, position, index }) => {
-        // Bestimme die Größe des zufälligen Buchstabens (oder Elements)
-        const fontSize = parseFloat(window.getComputedStyle(element).fontSize);
-        const textMetrics = ctx.measureText(element.textContent.charAt(0));
-        const letterWidth = textMetrics.width;
-        const letterHeight = fontSize;
+      effects.forEach(({ positionStart, positionEnd, index }) => {
+        const startX = positionStart.left + positionStart.width / 2;
+        const startY = positionStart.top + positionStart.height / 2;
+        const endX = positionEnd.left + positionEnd.width / 2;
+        const endY = positionEnd.top + positionEnd.height / 2;
 
-        const letterX = position.left + letterWidth / 2;
-        const letterY = position.top + letterHeight / 2;
-
-        // Zeichne den Kreis um den Buchstaben
         ctx.beginPath();
-        ctx.arc(
-            letterX,
-            letterY,
-            letterWidth / 2 + 5,
-            0,
-            2 * Math.PI
-        );
-        ctx.strokeStyle = '#00ffc3';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        // Zeichne die Linie zur Zahl
-        ctx.beginPath();
-        ctx.moveTo(letterX, letterY);
-        ctx.lineTo(letterX + 50, letterY - 50);
+        ctx.arc(startX, startY, 10, 0, 2 * Math.PI);
         ctx.strokeStyle = '#00ffc3';
         ctx.stroke();
 
-        // Zeichne die Nummer
+        ctx.beginPath();
+        ctx.arc(endX, endY, 10, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#00ffc3';
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.strokeStyle = '#00ffc3';
+        ctx.stroke();
+
         ctx.fillStyle = '#00ffc3';
         ctx.font = '12px "Geist Mono", monospace';
-        ctx.fillText(index.toString(), letterX + 50, letterY - 50);
+        ctx.fillText(index.toString(), endX + 15, endY - 15);
       });
     };
 
-    // Zeichne die Effekte
-    drawEffects();
-
-  }, [effectQueue, clearQueue, effects]);
-
-  // Dieser Hook verwaltet die Lebensdauer der Effekte
-  useEffect(() => {
     if (effects.length > 0) {
+      drawEffects();
+
       const timeout = setTimeout(() => {
         setEffects([]);
-      }, 500); // 500ms, bis die Effekte verschwinden
+      }, 100);
 
       return () => clearTimeout(timeout);
     }

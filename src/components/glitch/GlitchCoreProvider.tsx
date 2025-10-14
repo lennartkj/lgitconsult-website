@@ -1,11 +1,11 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 
 // --- Typen und Interfaces ---
 interface GlitchCoreContextType {
-    triggerEffect: (target: HTMLElement) => void;
-    effectQueue: HTMLElement[];
+    triggerEffect: (startTarget: HTMLElement, endTarget: HTMLElement) => void;
+    effectQueue: { start: HTMLElement, end: HTMLElement }[];
     clearQueue: () => void;
 }
 
@@ -23,14 +23,11 @@ export const useGlitchCore = () => {
     return context;
 };
 
-// --- GlitchCoreProvider Komponente ---
 export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps) {
-    const [effectQueue, setEffectQueue] = useState<HTMLElement[]>([]);
+    const [effectQueue, setEffectQueue] = useState<{ start: HTMLElement, end: HTMLElement }[]>([]);
+    const lastScrollTime = useRef(0);
+    const scrollCount = useRef(0);
     const hasInitialized = useRef(false);
-
-    // Der Scroll-Handler wird jetzt zuverlässiger ausgelöst
-    const scrollDeltaRef = useRef(0);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const clearQueue = () => {
         setEffectQueue([]);
@@ -40,8 +37,7 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
         const textElements: HTMLElement[] = [];
         const allElements = document.body.querySelectorAll('h1, h2, h3, p, span, li, a, strong, em');
         allElements.forEach(el => {
-            // Stelle sicher, dass das Element sichtbar ist
-            if (el instanceof HTMLElement && el.textContent && el.textContent.trim().length > 3 && el.offsetWidth > 0 && el.offsetHeight > 0) {
+            if (el instanceof HTMLElement && el.textContent && el.textContent.trim().length > 3) {
                 textElements.push(el);
             }
         });
@@ -54,53 +50,48 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
         return elements[randomIndex];
     };
 
-    const triggerEffect = (target: HTMLElement) => {
-        setEffectQueue(prev => [...prev, target]);
+    const triggerEffect = (startTarget: HTMLElement, endTarget: HTMLElement) => {
+        setEffectQueue(prev => [...prev, { start: startTarget, end: endTarget }]);
     };
 
-    const triggerMultipleEffects = (count: number) => {
-        const elements = findTextElements();
-        if (elements.length === 0) return;
-
-        const newEffects: HTMLElement[] = [];
-        for (let i = 0; i < count; i++) {
-            const randomElement = getRandomElement(elements);
-            if (randomElement) {
-                newEffects.push(randomElement);
-            }
-        }
-        setEffectQueue(prev => [...prev, ...newEffects]);
-    };
-    // --- Effekt-Logik für den Scroll-Handler ---
     useEffect(() => {
         if (!hasInitialized.current) {
             const initialElements = findTextElements();
-            if (initialElements.length > 0) {
-                // Führe initialen Effekt aus
-                const randomElement = getRandomElement(initialElements);
-                if(randomElement) {
-                    triggerEffect(randomElement);
+            if (initialElements.length > 1) {
+                const start = getRandomElement(initialElements);
+                const end = getRandomElement(initialElements);
+                if (start && end) {
+                    triggerEffect(start, end);
                 }
             }
             hasInitialized.current = true;
         }
 
         const handleScroll = (e: WheelEvent) => {
-            // Scroll-Delta akkumulieren
-            scrollDeltaRef.current += Math.abs(e.deltaY);
+            const currentTime = Date.now();
+            const timeSinceLastScroll = currentTime - lastScrollTime.current;
+            lastScrollTime.current = currentTime;
 
-            // Debounce-Logik, um nicht bei jedem Pixel zu triggern
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
+            if (timeSinceLastScroll < 200) {
+                scrollCount.current += 1;
+            } else {
+                scrollCount.current = 0;
             }
 
-            timeoutRef.current = setTimeout(() => {
-                if (scrollDeltaRef.current > 1) {
-                    // FIX: Trigger multiple effects instead of just one
-                    triggerMultipleEffects(10); // This will add 3 new lines/circles
+            if (scrollCount.current > 2) {
+                const elements = findTextElements();
+
+                if (elements.length < 2) return;
+
+                const startElement = getRandomElement(elements);
+                const remaining = elements.filter(el => el !== startElement);
+                const endElement = getRandomElement(remaining);
+
+                if (startElement && endElement) {
+                    triggerEffect(startElement, endElement);
                 }
-                scrollDeltaRef.current = 0;
-            }, 10);
+                scrollCount.current = 0;
+            }
         };
 
         window.addEventListener('wheel', handleScroll);
@@ -108,7 +99,7 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
         return () => {
             window.removeEventListener('wheel', handleScroll);
         };
-    }, []); // Abhängigkeit: [] stellt sicher, dass der Hook nur einmal läuft
+    }, []);
 
     return (
         <GlitchCoreContext.Provider value={{ triggerEffect, effectQueue, clearQueue }}>
