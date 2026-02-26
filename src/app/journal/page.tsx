@@ -1,4 +1,4 @@
-import { getAllPosts, getFeaturedPosts, getCategories } from "@/lib/data";
+import { getAllPosts, getCategories } from "@/lib/data";
 // Korrigierter Import: Die Übersichtsseite nutzt JournalContent
 import JournalContent from "@/components/journal/JournalContent";
 import { Post, Category } from "@/lib/data/types"; // Importiere Typen, falls benötigt

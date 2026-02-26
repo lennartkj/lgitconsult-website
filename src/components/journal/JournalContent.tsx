@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import NextLink from "next/link";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/Button";
 import { Post, Category } from "@/lib/data/types";
 
 interface JournalContentProps {
@@ -179,11 +178,6 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                                 </div>
                             )}
 
-                            <div className="mt-12">
-                                <Button variant="outline">
-                                    Load More Articles
-                                </Button>
-                            </div>
                         </div>
                     </div>
                 </div>

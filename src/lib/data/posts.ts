@@ -70,10 +70,17 @@ export const getCategories = async (): Promise<Category[]> => {
 
   const categoryCounts: Record<string, number> = {};
   allPosts.forEach(post => {
-    // Stellt sicher, dass die Kategorie ein String ist, um Fehler zu vermeiden
     if (typeof post.category === 'string') {
-      const normalizedCategory = post.category.toLowerCase();
-      categoryCounts[normalizedCategory] = (categoryCounts[normalizedCategory] || 0) + 1;
+      // Use original casing — first occurrence wins
+      const key = post.category.toLowerCase();
+      if (!(key in categoryCounts)) {
+        categoryCounts[post.category] = 0;
+      }
+      // Find the existing key with matching lowercase
+      const existingKey = Object.keys(categoryCounts).find(k => k.toLowerCase() === key);
+      if (existingKey) {
+        categoryCounts[existingKey] = categoryCounts[existingKey] + 1;
+      }
     }
   });
 
