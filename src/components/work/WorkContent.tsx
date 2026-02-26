@@ -51,7 +51,7 @@ export default function WorkContent({ projects: initialProjects }: WorkContentPr
     return (
         <>
             {/* Hero Section — left-aligned */}
-            <section className="py-24 md:py-32 bg-muted">
+            <section className="py-32 md:py-48 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
                         <motion.div
@@ -61,11 +61,11 @@ export default function WorkContent({ projects: initialProjects }: WorkContentPr
                             custom={0}
                             className="col-span-12 md:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Portfolio</span>
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-6">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Portfolio</span>
+                            <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
                                 Our Work
                             </h1>
-                            <p className="text-base text-fg/50 leading-relaxed max-w-lg">
+                            <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
                                 Selected projects and case studies across digital products, campaigns, and creative ventures.
                             </p>
                         </motion.div>

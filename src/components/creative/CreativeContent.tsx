@@ -26,7 +26,7 @@ export default function CreativeContent({ services }: CreativeContentProps) {
     return (
         <>
             {/* Hero Section — left-aligned */}
-            <section className="py-24 md:py-32 bg-muted">
+            <section className="py-32 md:py-48 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
                         <motion.div
@@ -36,11 +36,11 @@ export default function CreativeContent({ services }: CreativeContentProps) {
                             custom={0}
                             className="col-span-12 md:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Services — Creative</span>
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-8">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Creative Consulting</span>
+                            <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
                                 Creative
                             </h1>
-                            <p className="text-base text-fg/50 leading-relaxed max-w-lg">
+                            <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
                                 For artists, brands, and advertisers who want more than the obvious. Campaigns, photography, music, video, and creative direction — powered by Leipzig&apos;s creative scene.
                             </p>
                         </motion.div>
@@ -60,7 +60,7 @@ export default function CreativeContent({ services }: CreativeContentProps) {
                             custom={0}
                             className="col-span-12 md:col-span-3"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block">Approach</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block">002 — Approach</span>
                         </motion.div>
                         <motion.div
                             initial="hidden"
@@ -82,6 +82,24 @@ export default function CreativeContent({ services }: CreativeContentProps) {
                 </div>
             </section>
 
+            {/* Full-bleed statement — rhythm break */}
+            <section className="py-20 md:py-28 border-t border-b border-fg/10">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={fadeIn}
+                        custom={0}
+                        className="grid grid-cols-12"
+                    >
+                        <p className="col-span-12 md:col-span-8 md:col-start-3 text-2xl md:text-4xl font-light tracking-tight leading-snug text-fg/70">
+                            &ldquo;We don&apos;t make content — we build creative partnerships. Shared vision, shared outcome.&rdquo;
+                        </p>
+                    </motion.div>
+                </div>
+            </section>
+
             {/* Services — ruled-line editorial layout */}
             <section className="py-24 md:py-32 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -94,7 +112,7 @@ export default function CreativeContent({ services }: CreativeContentProps) {
                             custom={0}
                             className="col-span-12 md:col-span-6"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Services</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">003 — Services</span>
                             <h2 className="text-3xl md:text-4xl font-light tracking-tighter">What We Offer</h2>
                         </motion.div>
                     </div>

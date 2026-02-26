@@ -136,6 +136,85 @@ export default function HomeContent({ projects }: HomeContentProps) {
                 </div>
             </section>
 
+            {/* Two Pillars — editorial offset grid */}
+            <section className="py-24 md:py-32 bg-muted">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-12 mb-16">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={fadeIn}
+                            custom={0}
+                            className="col-span-12 md:col-span-6"
+                        >
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">002 — What We Do</span>
+                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter">Two Pillars</h2>
+                        </motion.div>
+                    </div>
+
+                    <div className="grid grid-cols-12 gap-12 md:gap-16">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={fadeIn}
+                            custom={1}
+                            className="col-span-12 md:col-span-5"
+                        >
+                            <div className="border-t border-fg/10 pt-8">
+                                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 block mb-4">Digital</span>
+                                <h3 className="text-xl font-light tracking-tight mb-4">IT Consulting & Web Development</h3>
+                                <p className="text-sm text-fg/50 leading-relaxed mb-6">
+                                    Web platforms, mobile apps, UI/UX design, and technical consulting. The infrastructure that makes everything else possible.
+                                </p>
+                                <Button href="/services" variant="outline" size="sm">
+                                    Digital Services
+                                </Button>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={fadeIn}
+                            custom={2}
+                            className="col-span-12 md:col-span-5 md:col-start-8"
+                        >
+                            <div className="border-t border-fg/10 pt-8">
+                                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 block mb-4">Creative</span>
+                                <h3 className="text-xl font-light tracking-tight mb-4">Creative Consulting & Joint Ventures</h3>
+                                <p className="text-sm text-fg/50 leading-relaxed mb-6">
+                                    Campaigns, photography, music, video — built with Leipzig&apos;s creative scene. We work with artists and brands as partners, not vendors.
+                                </p>
+                                <Button href="/creative" variant="outline" size="sm">
+                                    Creative Services
+                                </Button>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Full-bleed statement — rhythm break */}
+            <section className="py-20 md:py-28">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={fadeIn}
+                        custom={0}
+                        className="grid grid-cols-12"
+                    >
+                        <p className="col-span-12 md:col-span-8 md:col-start-3 text-2xl md:text-4xl font-light tracking-tight leading-snug text-fg/70">
+                            &ldquo;Leipzig-rooted, globally minded. We bridge the gap between creative vision and technical execution.&rdquo;
+                        </p>
+                    </motion.div>
+                </div>
+            </section>
+
             {/* CTA Section — full-bleed, minimal */}
             <section className="py-24 md:py-32 border-t border-fg/10">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -148,6 +227,7 @@ export default function HomeContent({ projects }: HomeContentProps) {
                             custom={0}
                             className="col-span-12 md:col-span-8"
                         >
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">003 — Connect</span>
                             <h2 className="text-4xl md:text-6xl font-light tracking-tighter mb-6">Let&apos;s Build Something Together</h2>
                             <p className="text-fg/50 max-w-lg leading-relaxed mb-10">
                                 Whether it&apos;s a digital product, a campaign, or a joint venture — we&apos;re ready to talk.

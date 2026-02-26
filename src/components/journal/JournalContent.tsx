@@ -43,7 +43,7 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
     return (
         <>
             {/* Hero Section — left-aligned, editorial */}
-            <section className="py-24 md:py-32 bg-muted">
+            <section className="py-32 md:py-48 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
                         <motion.div
@@ -53,11 +53,11 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                             custom={0}
                             className="col-span-12 md:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Journal</span>
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-6">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Journal</span>
+                            <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
                                 Thoughts & Work
                             </h1>
-                            <p className="text-base text-fg/50 leading-relaxed max-w-lg">
+                            <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
                                 Notes on technology, creative work, and the intersection of both.
                             </p>
                         </motion.div>
@@ -78,7 +78,7 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                                 custom={0}
                                 className="col-span-12 md:col-span-6"
                             >
-                                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Featured</span>
+                                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">002 — Featured</span>
                             </motion.div>
                         </div>
 
@@ -128,7 +128,7 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                             custom={0}
                             className="col-span-12 md:col-span-3"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">Categories</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">003 — Archive</span>
                             <div className="border-t border-fg/10">
                                 {categories.map((category) => (
                                     <button

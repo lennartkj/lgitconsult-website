@@ -37,7 +37,7 @@ export default function AboutContent() {
                             custom={0}
                             className="col-span-12 md:col-span-8 lg:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">About</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — About</span>
                             <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
                                 LGIT Consult
                             </h1>
@@ -122,6 +122,24 @@ export default function AboutContent() {
                             </motion.div>
                         ))}
                     </div>
+                </div>
+            </section>
+
+            {/* Full-bleed statement — rhythm break */}
+            <section className="py-20 md:py-28 border-t border-fg/10">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={fadeIn}
+                        custom={0}
+                        className="grid grid-cols-12"
+                    >
+                        <p className="col-span-12 md:col-span-8 md:col-start-3 text-2xl md:text-4xl font-light tracking-tight leading-snug text-fg/70">
+                            &ldquo;Restraint as luxury. Systems as aesthetic. The tension between analog and digital — that&apos;s where we live.&rdquo;
+                        </p>
+                    </motion.div>
                 </div>
             </section>
         </>

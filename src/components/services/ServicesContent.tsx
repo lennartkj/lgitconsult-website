@@ -27,7 +27,7 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
     return (
         <>
             {/* Hero Section — left-aligned, generous whitespace */}
-            <section className="py-24 md:py-32 bg-muted">
+            <section className="py-32 md:py-48 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
                         <motion.div
@@ -37,11 +37,11 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                             custom={0}
                             className="col-span-12 md:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Services — Digital</span>
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-8">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Digital Services</span>
+                            <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
                                 Digital
                             </h1>
-                            <p className="text-base text-fg/50 leading-relaxed max-w-lg">
+                            <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
                                 Web development, mobile apps, design, and IT consulting. The technical backbone for your digital presence.
                             </p>
                         </motion.div>
@@ -52,6 +52,20 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
             {/* Services — ruled-line editorial layout */}
             <section className="py-24 md:py-32">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-12 mb-16">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={fadeIn}
+                            custom={0}
+                            className="col-span-12 md:col-span-6"
+                        >
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">002 — Capabilities</span>
+                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter">What We Build</h2>
+                        </motion.div>
+                    </div>
+
                     <div className="border-t border-fg/10">
                         {services.map((service, index) => (
                             <motion.div
@@ -94,6 +108,24 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                 </div>
             </section>
 
+            {/* Full-bleed statement — rhythm break */}
+            <section className="py-20 md:py-28 border-t border-fg/10">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={fadeIn}
+                        custom={0}
+                        className="grid grid-cols-12"
+                    >
+                        <p className="col-span-12 md:col-span-8 md:col-start-3 text-2xl md:text-4xl font-light tracking-tight leading-snug text-fg/70">
+                            &ldquo;Technology is never the goal — it&apos;s the enabler. We build digital systems that let creative work scale.&rdquo;
+                        </p>
+                    </motion.div>
+                </div>
+            </section>
+
             {/* Process Section — horizontal ruled list, no cards */}
             <section className="py-24 md:py-32 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -106,7 +138,7 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                             custom={0}
                             className="col-span-12 md:col-span-6"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Process</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">003 — Process</span>
                             <h2 className="text-3xl md:text-4xl font-light tracking-tighter mb-4">How We Work</h2>
                             <p className="text-fg/50 leading-relaxed">
                                 Every project is different, but our approach stays consistent.

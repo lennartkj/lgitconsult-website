@@ -29,7 +29,7 @@ export default function ContactPage() {
               custom={0}
               className="col-span-12 md:col-span-7"
             >
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">Contact</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Contact</span>
               <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9]">
                 Get in Touch
               </h1>
@@ -50,7 +50,7 @@ export default function ContactPage() {
               custom={1}
               className="col-span-12 md:col-span-5"
             >
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-8">Details</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-8">002 — Details</span>
               <div className="border-t border-fg/10">
                 <div className="py-6 border-b border-fg/10">
                   <h3 className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 mb-2">Address</h3>
@@ -75,7 +75,7 @@ export default function ContactPage() {
               custom={2}
               className="col-span-12 md:col-span-4 md:col-start-8"
             >
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-8">Hours</span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-8">003 — Hours</span>
               <div className="border-t border-fg/10">
                 <div className="flex justify-between py-5 border-b border-fg/10">
                   <span className="text-sm text-fg/50">Monday — Friday</span>
