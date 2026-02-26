@@ -22,28 +22,46 @@ The reference points were publications like 032c, Ssense Editorial, the Virgil A
 
 ## Strip the Color
 
-First decision: kill the blue. The entire palette went monochrome — warm off-white (`#f8f7f4`) and near-black (`#111111`). Color comes from photography and project work. The interface stays neutral.
+First decision: kill the blue. The entire palette went monochrome — warm off-white (`#f8f7f4`) and near-black (`#111111`). Dark mode inverts to `#0c0c0c` and `#e8e6e1`. No accent color. No gradients. Color comes exclusively from photography and project work. The interface stays neutral so client work has room to breathe.
 
-This forced everything else. Without color to create hierarchy, typography had to carry the entire visual system. That constraint turned out to be the most productive one.
+This forced every other decision. Without color to create hierarchy, typography and spacing had to carry the entire visual system. That single constraint turned out to be the most productive one we made.
 
 ## Type Carries Everything
 
-Geist Sans at light weight, large sizes, tight tracking for display. Geist Mono at 11px with wide letter-spacing for metadata and labels. The contrast between a thin 72px headline and a tiny mono label does more work than any color palette could.
+Two typefaces, used surgically. Geist Sans at light weight (300), set large — 72px, 96px, 128px on desktop — with tracking pulled tight (`-0.04em`). Geist Mono at 11px with wide letter-spacing (`0.2em`) for every metadata element: dates, section labels, categories, navigation markers.
 
-The index numbering — `001 — Services`, `002 — Work` — came from the glitch effect's existing numbering system. We just surfaced it into the typography and made the connection explicit.
+The contrast between a thin 7rem headline and an 11px mono label does more visual work than any color palette could. It creates an immediate hierarchy without needing color, weight, or decoration. The eye goes to the headline, then falls to the label. Two sizes, two typefaces, total clarity.
+
+The index numbering — `001 — Services`, `002 — Work`, `003 — Archive` — came directly from the glitch system's existing numbering logic. The canvas renderer was already drawing index numbers as part of its particle system. We surfaced that same convention into the typography, making the connection between the interactive layer and the page structure explicit.
 
 ## Kill the Card
 
-The old card had `rounded-lg border shadow-sm`. Standard. We replaced it with ruled lines and sharp edges. Content sits on the page with 1px dividers, like a printed spread. Hover states shift elements horizontally rather than lifting them with shadows.
+The old site had standard cards everywhere: `rounded-lg border shadow-sm`, maybe a hover glow. Every section was a row of lifted rectangles. It looked like a component library demo, not an editorial layout.
+
+We replaced every card with ruled lines. Content sits directly on the page, separated by 1px dividers (`border-fg/10`) — like a printed newspaper spread or a gallery exhibition list. Hover states shift elements 8px horizontally (`group-hover:translate-x-2`) rather than lifting them with shadows. The interaction feels like sliding a drawer, not pressing a button.
+
+This changed the density of information on every page. Cards waste space — padding, borders, margins between cards, margins inside cards. Ruled lines let content stack tightly. A list of ten projects in the old card grid needed three rows and a scroll. In the ruled-line layout, they're a single scannable column.
 
 ## Break the Grid
 
-Every section used to be centered heading, paragraph, three-column grid. Now it's 12-column layouts with intentional asymmetry — content in columns 1–7, sidebar in 9–12. Heroes are left-aligned with vertical space doing the heavy lifting. Different sections use different column distributions.
+The old site's layout formula was: centered heading, paragraph, three-column grid of cards. Every section. Every page. Predictable, balanced, and completely lifeless.
+
+The redesign uses 12-column layouts with intentional asymmetry. Content occupies columns 1–7 or 1–8. Sidebars sit in columns 9–12 with sticky positioning. Heroes are left-aligned — no centering — with vertical space doing the heavy lifting instead of horizontal balance.
+
+Different sections use different column splits. The journal article layout puts prose in 7 columns with a table of contents in 3 columns starting at column 9. The services page uses a different ratio. The work index is different again. The grid is consistent (always 12 columns) but the content placement varies, which keeps pages from feeling templated.
 
 ## The Glitch as System
 
-The canvas-based glitch effect was already drawing circles, lines, and index numbers on scroll. Rather than treating it as decoration, we made it structural — the same numbering system appears in section labels, the same ruled-line logic appears in card layouts. The glitch isn't an overlay. It's the design language.
+The canvas-based glitch effect is the most technically involved piece of the site. It renders on a full-viewport `<canvas>` element, drawing circles, lines, arcs, and index numbers that respond to mouse position and scroll. The rendering is all custom — no library, no WebGL, just Canvas 2D context with requestAnimationFrame.
+
+But the critical design decision was making it structural rather than decorative. The glitch system draws numbered indices (`001`, `002`, `003`) as part of its particle field. Those same numbers appear in the page's section labels. The glitch draws ruled lines between its elements. The page uses ruled lines between its content blocks. The glitch uses the same monospace type treatment. The page's metadata labels use the same monospace type treatment.
+
+The result is that the glitch doesn't feel like a layer sitting on top of the design — it feels like the design's skeleton made visible. When you move your cursor and the glitch field responds, you're seeing the same organizational logic that structures the page content. The interactive and the static share a visual language.
+
+The implementation lives in `GlitchCoreProvider` (React context) and `GlitchCoreCanvas` (the renderer), with the canvas layered behind page content at reduced opacity. It's triggered by mouse and touch interaction, with intensity that scales based on cursor speed. On mobile, it responds to scroll velocity instead.
 
 ## What Stayed
 
-Next.js 15, Tailwind, Framer Motion, MDX for content. The architecture was already solid. The redesign was purely visual — new paint on a good frame. Seven phases over six weeks, each one removing something that felt safe: a shadow, a rounded corner, a centered layout. What's left is more intentional.
+Next.js 15 with App Router, Tailwind CSS v4, Framer Motion, MDX for content. The technical architecture was already solid — server components for data fetching, ISR for caching, API routes for search and preview. The redesign was purely visual. New paint on a good frame.
+
+Seven phases over six weeks, each one removing something that felt safe: a shadow, a rounded corner, a centered layout, a color, a card border. The process was subtractive. What's left is more intentional because everything decorative got stripped away, and what remained had to justify itself structurally.

@@ -16,38 +16,40 @@ featured: false
 
 ## Joints
 
-A cabinetmaker's dovetail joint is stronger than a butt joint, but it also communicates care. Someone understood the forces involved and chose a solution that's both functional and considered.
+There's a dovetail joint in a drawer we keep in the studio. Someone made it decades ago — eight interlocking pieces cut by hand, no screws, no glue visible. The drawer still works. You open it and feel the resistance of wood against wood, fitted so precisely that air pressure slows it down.
 
-Code works the same way. The internal structure of a well-written module — naming, flow, boundaries — communicates care to every developer who touches it next. Users never see it. Maintainers live in it.
+Nobody sees that joint. The person who opens the drawer doesn't think about it. But it's the reason the drawer still works after all this time, and the reason it feels like something when you use it.
 
-## Material Knowledge
+We think about code the same way. The internal structure of a module — how it's named, how data flows through it, where the boundaries sit — is a set of decisions that users never see but that every developer who touches the project afterward has to live inside. A well-cut joint makes the next fifty years easier. A sloppy one guarantees the whole piece wobbles.
 
-Every craft requires knowing your materials. A ceramicist knows how clay responds to temperature. A typographer knows how a typeface performs at small sizes.
+## Knowing the Material
 
-Software has materials too: languages, frameworks, data structures, protocols. TypeScript behaves differently at the edges of its type system. React's reconciliation has specific performance characteristics. HTTP has semantics that, when respected, make systems predictable.
+A ceramicist knows how porcelain responds at cone 10 versus cone 6. A typographer knows which typefaces hold up at 9px and which fall apart. The knowledge is physical — built from hours of watching material behave under specific conditions.
 
-Good developers treat these as materials to understand, not tools to use. They know where a framework's abstractions leak, where a type system has gaps, where a protocol's guarantees don't hold.
+We work with TypeScript, React, HTTP, WebGL. Each one has grain. TypeScript's type system has edges where inference breaks down and you have to guide it by hand. React's reconciler makes specific tradeoffs between update speed and memory. HTTP has semantics that, when you actually respect them, make an entire system predictable — and when you ignore them, make debugging a nightmare.
 
-## The Editing Analogy
+The difference between using a framework and understanding a framework is the difference between someone who buys pre-cut lumber and someone who mills their own. Both produce furniture. One of them knows what to do when the wood isn't straight.
 
-Film editing is called the invisible art — when it works, you don't notice it. Cuts feel natural, pacing feels inevitable. Behind that are hundreds of decisions about timing, continuity, and rhythm.
+## The Editing Room
 
-Code review is the same. A good refactoring session is pure editing — removing unnecessary complexity, improving flow, making sure the reader's eye moves through the logic without stumbling. The goal: make the complex feel simple.
+Film editing is called the invisible art. When it works, you don't notice it. Cuts feel natural. Pacing feels inevitable. Behind every "natural" cut are two hundred hours of someone sitting in a dark room, rearranging time.
 
-The best codebases read like well-edited films. Each module does one thing. Transitions between components are clean. Nothing wasted.
+We treat code review the same way. A good refactoring session is pure editing — cutting unnecessary complexity, tightening transitions between modules, making sure the reader's eye moves through the logic without tripping. You know it's working when the result feels obvious, like it couldn't have been written any other way.
 
-## Constraints Produce
+The best codebases we've built read like well-edited films. Each module does one thing. Transitions between components are clean. Nothing is there to impress — everything is there because it earns its place.
 
-Every craft operates within constraints. A sonnet has 14 lines. A film frame has a fixed ratio. A boat hull has to displace its own weight.
+## Working Inside Constraints
 
-In software: performance budgets, type systems, API contracts, browser capabilities. The temptation is to treat constraints as obstacles. The craft approach treats them as design parameters.
+Every serious creative discipline operates inside constraints. A sonnet has fourteen lines. A film frame has a fixed ratio. A boat hull has to displace its own weight. The people who make great work inside those constraints don't treat them as limitations — they treat them as the brief.
 
-A 100ms page load budget isn't a restriction — it's a brief. It forces decisions about what matters, what defers, what gets cut. The constrained solution is almost always better than the unconstrained one would have been.
+Software has constraints that are just as real: performance budgets, type systems, API contracts, browser capabilities, network latency. A 100ms page load budget isn't a restriction. It's a design parameter. It forces you to decide what matters, what defers, what gets cut entirely.
 
-## Visible Systems
+We've found that the projects with the tightest constraints produce the cleanest architecture. When you can't afford waste, you don't waste. When every kilobyte counts, you learn what a kilobyte is actually worth.
 
-In a well-designed typeface, every character shares a consistent logic — the same stroke weights, curve tensions, optical adjustments. You feel the system without articulating it.
+## Systems That Teach
 
-A well-structured codebase has the same quality. Consistent naming, consistent error handling, consistent directory structure. New code almost writes itself because the system guides the decisions.
+Pick up a well-designed typeface and set it at different sizes. Every character shares a logic — the same stroke weights, the same curve tensions, the same optical adjustments. You feel the system without being able to name it. It just looks right, at every size, in every context.
 
-This is the direct connection between code and craft. Both build systems that are coherent, maintainable, and clear in their intentions. Not beautiful like decoration. Functional like a good tool — balanced, purposeful, obvious in what it does.
+That's what a well-structured codebase feels like from the inside. Consistent naming, consistent error handling, consistent directory structure. When the system is coherent, new code almost writes itself — not because it's automated, but because the decisions have already been made and the patterns are clear enough to follow.
+
+This is the direct line between code and craft. Both produce systems that teach the people who use them. Not beautiful like decoration. Functional like a good tool — balanced, worn in the right places, obvious in what it does and how to hold it.
