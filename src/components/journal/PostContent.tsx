@@ -39,7 +39,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
     return (
         <>
             {/* Hero — left-aligned, editorial */}
-            <section className="py-32 md:py-48 bg-muted">
+            <section className="py-24 md:py-32 lg:py-48 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
                         <motion.div
@@ -49,16 +49,16 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                             custom={0}
                             className="col-span-12 md:col-span-8 lg:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">
+                            <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">
                                 {postIndex} — Article
                             </span>
-                            <h1 className="text-4xl md:text-5xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-8">
+                            <h1 className="text-3xl md:text-5xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-8">
                                 {post.title}
                             </h1>
                             <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg mb-8">
                                 {post.excerpt}
                             </p>
-                            <div className="flex items-baseline gap-6 font-mono text-[11px] text-fg/40">
+                            <div className="flex items-baseline gap-6 font-mono text-xs md:text-[11px] text-fg/40">
                                 <span>{post.date}</span>
                                 <span className="uppercase tracking-[0.1em]">{post.author}</span>
                             </div>
@@ -68,7 +68,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
             </section>
 
             {/* Article body + sidebar */}
-            <section className="py-24 md:py-32">
+            <section className="py-16 md:py-24 lg:py-32">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12 gap-x-8 lg:gap-x-12">
                         {/* Article */}
@@ -80,7 +80,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                             custom={0}
                             className="col-span-12 lg:col-span-7"
                         >
-                            <article className="prose prose-lg max-w-none">
+                            <article className="prose prose-sm md:prose-lg max-w-none">
                                 <MDXRemote {...mdxSource} />
                             </article>
 
@@ -91,7 +91,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                                         {post.tags.map((tag) => (
                                             <span
                                                 key={tag}
-                                                className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40"
+                                                className="font-mono text-xs md:text-[11px] uppercase tracking-[0.15em] text-fg/40"
                                             >
                                                 {tag}
                                             </span>
@@ -103,7 +103,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                             {/* Author */}
                             {post.authorBio && (
                                 <div className="mt-12 pt-8 border-t border-fg/10">
-                                    <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">Author</span>
+                                    <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">Author</span>
                                     <h3 className="text-lg font-light tracking-tight mb-2">{post.author}</h3>
                                     <p className="text-sm text-fg/50 leading-relaxed max-w-lg">{post.authorBio}</p>
                                 </div>
@@ -121,7 +121,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                                 className="hidden lg:block lg:col-span-3 lg:col-start-9"
                             >
                                 <div className="sticky top-24">
-                                    <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">Contents</span>
+                                    <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">Contents</span>
                                     <nav className="border-t border-fg/10">
                                         {tocEntries.map((entry, index) => (
                                             <a
@@ -142,7 +142,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
 
             {/* Related — ruled-line list */}
             {relatedPosts.length > 0 && (
-                <section className="py-24 md:py-32 bg-muted">
+                <section className="py-16 md:py-24 lg:py-32 bg-muted">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                         <motion.div
                             initial="hidden"
@@ -152,7 +152,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                             custom={0}
                             className="mb-12"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40">Related</span>
+                            <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40">Related</span>
                         </motion.div>
 
                         <div className="border-t border-fg/10">
@@ -166,11 +166,11 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                                     custom={index + 1}
                                 >
                                     <NextLink href={`/journal/${relatedPost.slug}`} className="block group">
-                                        <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-baseline transition-transform duration-300 group-hover:translate-x-2">
-                                            <div className="col-span-4 md:col-span-2">
-                                                <span className="font-mono text-[11px] text-fg/30">{relatedPost.date}</span>
+                                        <div className="py-6 md:py-8 border-b border-fg/10 transition-transform duration-300 group-hover:translate-x-2 md:grid md:grid-cols-12 md:gap-4 md:items-baseline">
+                                            <div className="md:col-span-2 mb-1 md:mb-0">
+                                                <span className="font-mono text-xs md:text-[11px] text-fg/30">{relatedPost.date}</span>
                                             </div>
-                                            <div className="col-span-8 md:col-span-5">
+                                            <div className="md:col-span-5">
                                                 <h3 className="text-lg md:text-2xl font-light tracking-tight group-hover:text-fg/70 transition-colors">{relatedPost.title}</h3>
                                             </div>
                                             <div className="hidden md:block md:col-span-4">

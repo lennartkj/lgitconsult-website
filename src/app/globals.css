@@ -180,3 +180,19 @@ a, button, [role="button"], input, select, textarea, label {
 .prose hr {
   border-top-width: 1px;
 }
+
+/* Mobile prose tightening */
+@media (max-width: 767px) {
+  .prose h2 {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+  }
+
+  .prose p {
+    line-height: 1.7;
+  }
+
+  .prose blockquote {
+    padding-left: 1rem;
+  }
+}
