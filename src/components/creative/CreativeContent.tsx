@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Service } from "@/lib/data/types";
@@ -58,6 +59,17 @@ export default function CreativeContent({ services }: CreativeContentProps) {
                         </motion.div>
                     </div>
                 </div>
+            </section>
+
+            {/* Full-bleed image — film negative, the analog process */}
+            <section className="relative w-full h-[40vh] md:h-[60vh] overflow-hidden img-editorial">
+                <Image
+                    src="/images/film-negative.jpg"
+                    alt="Film negative — analog photography process"
+                    fill
+                    className="object-cover"
+                    sizes="100vw"
+                />
             </section>
 
             {/* Approach — asymmetric two-column */}
@@ -167,6 +179,17 @@ export default function CreativeContent({ services }: CreativeContentProps) {
                         ))}
                     </div>
                 </div>
+            </section>
+
+            {/* Full-bleed texture — visual break */}
+            <section className="relative w-full h-[30vh] md:h-[40vh] overflow-hidden img-editorial">
+                <Image
+                    src="/images/texture-macro.jpg"
+                    alt="Surface texture detail"
+                    fill
+                    className="object-cover"
+                    sizes="100vw"
+                />
             </section>
 
             {/* CTA Section — left-aligned */}

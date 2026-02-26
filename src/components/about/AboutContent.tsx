@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { motion, type Variants, type Easing } from "framer-motion";
 
-// Animation variants
 const fadeIn: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
@@ -38,7 +38,7 @@ export default function AboutContent() {
 
     return (
         <>
-            {/* Hero Section — left-aligned, no image */}
+            {/* Hero Section */}
             <section className="py-32 md:py-48 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
@@ -59,6 +59,17 @@ export default function AboutContent() {
                         </motion.div>
                     </div>
                 </div>
+            </section>
+
+            {/* Full-bleed image — camera collection, grain overlay */}
+            <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden img-editorial">
+                <Image
+                    src="/images/camera-collection.jpg"
+                    alt="Vintage camera collection — the tools of the craft"
+                    fill
+                    className="object-cover img-bw"
+                    sizes="100vw"
+                />
             </section>
 
             {/* Mission Section — asymmetric two-column */}
@@ -92,7 +103,47 @@ export default function AboutContent() {
                 </div>
             </section>
 
-            {/* Values Section — ruled-line list, no cards */}
+            {/* Mixed-scale image grid — editorial rhythm break */}
+            <section className="py-0">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-12 gap-4">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={fadeIn}
+                            custom={0}
+                            className="col-span-12 md:col-span-7 relative h-[40vh] md:h-[50vh] img-editorial"
+                        >
+                            <Image
+                                src="/images/leica-engraving.jpg"
+                                alt="Leica — Ernst Leitz Wetzlar"
+                                fill
+                                className="object-cover img-bw"
+                                sizes="(max-width: 768px) 100vw, 58vw"
+                            />
+                        </motion.div>
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={fadeIn}
+                            custom={1}
+                            className="col-span-12 md:col-span-5 relative h-[40vh] md:h-[50vh] img-editorial"
+                        >
+                            <Image
+                                src="/images/leica-lens.jpg"
+                                alt="Leica lens cap detail"
+                                fill
+                                className="object-cover img-bw"
+                                sizes="(max-width: 768px) 100vw, 42vw"
+                            />
+                        </motion.div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Values Section — ruled-line list */}
             <section className="py-24 md:py-32 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12 mb-16">

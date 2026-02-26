@@ -117,15 +117,16 @@ export default function HomeContent({ projects }: HomeContentProps) {
                 </div>
             </section>
 
-            {/* Full-bleed hero image — parallax */}
-            <section ref={heroImageRef} className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
+            {/* Full-bleed hero image — parallax, grain overlay */}
+            <section ref={heroImageRef} className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden img-editorial">
                 <motion.div style={{ y: imageY }} className="absolute inset-0 scale-[1.15]">
                     <Image
-                        src="/hero_image_1.png"
-                        alt="LGIT Consult"
+                        src="/images/snow-reflection.jpg"
+                        alt="Leipzig at night — where we work"
                         fill
-                        className="object-cover"
+                        className="object-cover img-bw"
                         priority
+                        sizes="100vw"
                     />
                 </motion.div>
             </section>
