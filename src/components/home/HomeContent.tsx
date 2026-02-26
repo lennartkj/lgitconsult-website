@@ -4,14 +4,12 @@ import Image from "next/image";
 import React from "react";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/Button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardLink } from "@/components/ui/Card";
-import { Link } from "@/components/ui/Link";
+import { CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardLink } from "@/components/ui/Card";
 import { Placeholder } from "@/components/ui/Placeholder";
-import { Project, Service } from "@/lib/data/types"; // Importiere Typen
+import { Project } from "@/lib/data/types";
 
 interface HomeContentProps {
     projects: Project[];
-    services: Service[];
 }
 
 // Animation variants
@@ -28,8 +26,7 @@ const fadeIn: Variants = {
     }),
 };
 
-// Component erhält die Daten direkt über Props vom Server
-export default function HomeContent({ projects, services }: HomeContentProps) {
+export default function HomeContent({ projects }: HomeContentProps) {
     return (
         <>
             {/* Hero Section */}
@@ -43,11 +40,12 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                             custom={0}
                             className="flex flex-col gap-6"
                         >
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                                Transform Your Digital Presence
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 mb-4 block">LGIT Consult</span>
+                            <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.95]">
+                                Where Technology Meets Creative Vision
                             </h1>
-                            <p className="text-lg md:text-xl text-fg/70 max-w-lg">
-                                We build modern, high-performance websites and applications that help businesses grow and succeed in the digital world.
+                            <p className="text-base md:text-lg text-fg/60 max-w-md leading-relaxed">
+                                Leipzig-based creative consulting and digital agency. We work with artists, brands, and businesses — building campaigns, digital products, and everything in between.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 mt-4">
                                 <Button href="/contact" size="lg">
@@ -90,9 +88,10 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                         custom={0}
                         className="text-center mb-12"
                     >
-                        <h2 className="text-3xl font-bold mb-4">Featured Projects</h2>
-                        <p className="text-fg/70 max-w-2xl mx-auto">
-                            Take a look at some of our recent work that showcases our expertise and capabilities.
+                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">001 — Featured Work</span>
+                        <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-4">Selected Projects</h2>
+                        <p className="text-fg/50 max-w-2xl mx-auto leading-relaxed">
+                            From e-learning platforms to artist campaigns — a look at what we&apos;ve been building.
                         </p>
                     </motion.div>
 
@@ -112,6 +111,7 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                                             text={project.title}
                                             bgColor={index % 2 === 0 ? "#0070f3" : "#6366f1"}
                                             textColor="#ffffff"
+                                            seed={index}
                                             className="w-full h-full transition-transform duration-500 hover:scale-105"
                                         />
                                     </div>
@@ -147,54 +147,6 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                 </div>
             </section>
 
-            {/* Services Section */}
-            <section className="py-16">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        variants={fadeIn}
-                        custom={0}
-                        className="text-center mb-12"
-                    >
-                        <h2 className="text-3xl font-bold mb-4">Our Services</h2>
-                        <p className="text-fg/70 max-w-2xl mx-auto">
-                            We offer a wide range of services to help your business succeed in the digital world.
-                        </p>
-                    </motion.div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {services.map((service, index) => (
-                            <motion.div
-                                key={service.id}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true, margin: "-50px" }}
-                                variants={fadeIn}
-                                custom={index + 1}
-                            >
-                                <Card className="h-full flex flex-col">
-                                    <CardHeader>
-                                        <div className="text-4xl mb-4">{service.icon}</div>
-                                        <CardTitle>{service.title}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="flex-grow">
-                                        <p className="text-fg/70">{service.description}</p>
-                                    </CardContent>
-                                </Card>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    <div className="text-center mt-12">
-                        <Button href="/services" variant="outline">
-                            Learn More About Our Services
-                        </Button>
-                    </div>
-                </div>
-            </section>
-
             {/* CTA Section */}
             <section className="py-16 bg-accent text-accent-contrast">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -206,9 +158,9 @@ export default function HomeContent({ projects, services }: HomeContentProps) {
                             variants={fadeIn}
                             custom={0}
                         >
-                            <h2 className="text-3xl font-bold mb-4">Ready to Start Your Project?</h2>
-                            <p className="text-accent-contrast/90 mb-8">
-                                Contact us today to discuss your project and how we can help you achieve your goals.
+                            <h2 className="text-3xl md:text-5xl font-light tracking-tight mb-6">Let&apos;s Build Something Together</h2>
+                            <p className="text-accent-contrast/70 mb-8 leading-relaxed">
+                                Whether it&apos;s a digital product, a campaign, or a joint venture — we&apos;re ready to talk.
                             </p>
                             <Button
                                 href="/contact"

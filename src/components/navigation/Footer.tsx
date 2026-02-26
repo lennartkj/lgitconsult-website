@@ -8,32 +8,32 @@ export default function Footer() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="space-y-4">
-            <h3 className="text-lg font-bold">LGIT Consult</h3>
-            <p className="text-sm text-fg/70 max-w-xs">
-              Professional IT consulting and development services for businesses of all sizes.
+            <h3 className="font-mono text-sm uppercase tracking-[0.15em] font-medium">LGIT Consult</h3>
+            <p className="text-sm text-fg/50 max-w-xs leading-relaxed">
+              Creative consulting and digital agency based in Leipzig. Technology, campaigns, and joint ventures with artists and brands.
             </p>
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold">Navigation</h4>
+            <h4 className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/40">Navigation</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="transition-colors hover:text-accent">
+                <Link href="/" className="text-fg/50 transition-colors hover:text-fg">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/work" className="transition-colors hover:text-accent">
+                <Link href="/work" className="text-fg/50 transition-colors hover:text-fg">
                   Work
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="transition-colors hover:text-accent">
+                <Link href="/about" className="text-fg/50 transition-colors hover:text-fg">
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/journal" className="transition-colors hover:text-accent">
+                <Link href="/journal" className="text-fg/50 transition-colors hover:text-fg">
                   Journal
                 </Link>
               </li>
@@ -41,15 +41,20 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold">Services</h4>
+            <h4 className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/40">Services</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/services" className="transition-colors hover:text-accent">
-                  Services
+                <Link href="/services" className="text-fg/50 transition-colors hover:text-fg">
+                  Digital
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="transition-colors hover:text-accent">
+                <Link href="/creative" className="text-fg/50 transition-colors hover:text-fg">
+                  Creative
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-fg/50 transition-colors hover:text-fg">
                   Contact
                 </Link>
               </li>
@@ -57,20 +62,20 @@ export default function Footer() {
           </div>
 
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold">Legal</h4>
+            <h4 className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/40">Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/legal/privacy" className="transition-colors hover:text-accent">
+                <Link href="/legal/privacy" className="text-fg/50 transition-colors hover:text-fg">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/legal/terms" className="transition-colors hover:text-accent">
+                <Link href="/legal/terms" className="text-fg/50 transition-colors hover:text-fg">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/legal/impressum" className="transition-colors hover:text-accent">
+                <Link href="/legal/impressum" className="text-fg/50 transition-colors hover:text-fg">
                   Impressum
                 </Link>
               </li>

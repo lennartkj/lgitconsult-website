@@ -4,11 +4,10 @@ import React from "react";
 import { motion, type Variants } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Service, ProcessStep } from "@/lib/data/types";
+import { Service } from "@/lib/data/types";
 
-interface ServicesContentProps {
+interface CreativeContentProps {
     services: Service[];
-    processSteps: ProcessStep[];
 }
 
 const fadeIn: Variants = {
@@ -24,7 +23,7 @@ const fadeIn: Variants = {
     }),
 };
 
-export default function ServicesContent({ services, processSteps }: ServicesContentProps) {
+export default function CreativeContent({ services }: CreativeContentProps) {
     return (
         <>
             {/* Hero Section */}
@@ -37,20 +36,55 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                         custom={0}
                         className="max-w-3xl mx-auto text-center"
                     >
-                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Services — Digital</span>
+                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Services — Creative</span>
                         <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-6">
-                            Digital
+                            Creative
                         </h1>
                         <p className="text-base text-fg/60 leading-relaxed">
-                            Web development, mobile apps, design, and IT consulting. The technical backbone for your digital presence.
+                            For artists, brands, and advertisers who want more than the obvious. Campaigns, photography, music, video, and creative direction — powered by Leipzig&apos;s creative scene.
+                        </p>
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* Intro Section */}
+            <section className="py-16">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={fadeIn}
+                        custom={0}
+                        className="max-w-3xl mx-auto"
+                    >
+                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">Approach</span>
+                        <h2 className="text-2xl md:text-3xl font-light tracking-tight mb-6">How We Work</h2>
+                        <p className="text-base text-fg/60 mb-4 leading-relaxed">
+                            We don&apos;t just take briefs — we build partnerships. Our creative consulting model is built on joint ventures with artists and brands, where we share the vision and the outcome.
+                        </p>
+                        <p className="text-base text-fg/60 leading-relaxed">
+                            Our pool of Leipzig-based creatives — photographers, videographers, musicians, designers, and strategists — means we can assemble the right team for any project, from a single shoot to a full campaign rollout.
                         </p>
                     </motion.div>
                 </div>
             </section>
 
             {/* Services Grid */}
-            <section className="py-16">
+            <section className="py-16 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        variants={fadeIn}
+                        custom={0}
+                        className="mb-12"
+                    >
+                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">Services</span>
+                        <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-2">What We Offer</h2>
+                    </motion.div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                         {services.map((service, index) => (
                             <motion.div
@@ -59,15 +93,14 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                                 whileInView="visible"
                                 viewport={{ once: true, margin: "-50px" }}
                                 variants={fadeIn}
-                                custom={index}
+                                custom={index + 1}
                             >
                                 <Card className="h-full flex flex-col">
                                     <CardContent className="p-8 flex-grow">
                                         <div className="text-xs font-semibold uppercase tracking-widest text-accent mb-4">{service.icon}</div>
-                                        <h2 className="text-xl font-medium mb-2">{service.title}</h2>
+                                        <h3 className="text-xl font-medium mb-2">{service.title}</h3>
                                         <p className="text-sm text-fg/50 mb-6 leading-relaxed">{service.description}</p>
 
-                                        <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 mb-3">What we offer</h3>
                                         <ul className="space-y-2 mb-6">
                                             {service.features.map((feature) => (
                                                 <li key={feature} className="flex items-start">
@@ -90,55 +123,6 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                 </div>
             </section>
 
-            {/* Process Section */}
-            <section className="py-16 bg-muted">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        variants={fadeIn}
-                        custom={0}
-                        className="text-center mb-12"
-                    >
-                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">Process</span>
-                        <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-4">How We Work</h2>
-                        <p className="text-fg/50 max-w-2xl mx-auto leading-relaxed">
-                            Every project is different, but our approach stays consistent.
-                        </p>
-                    </motion.div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        {processSteps.map((step, index) => (
-                            <motion.div
-                                key={step.step}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                                variants={fadeIn}
-                                custom={index + 1}
-                                className="relative"
-                            >
-                                <Card className="h-full">
-                                    <CardContent className="p-6 text-center">
-                                        <div className="w-12 h-12 bg-accent text-accent-contrast rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
-                                            {step.step}
-                                        </div>
-                                        <h3 className="text-base font-medium mb-2">{step.title}</h3>
-                                        <p className="text-sm text-fg/50 leading-relaxed">{step.description}</p>
-                                    </CardContent>
-                                </Card>
-                                {index < processSteps.length - 1 && (
-                                    <div className="hidden md:block absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 text-2xl text-fg/30">
-                                        →
-                                    </div>
-                                )}
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
             {/* CTA Section */}
             <section className="py-16 bg-accent text-accent-contrast">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -150,9 +134,9 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                             variants={fadeIn}
                             custom={0}
                         >
-                            <h2 className="text-3xl md:text-5xl font-light tracking-tight mb-6">Have a Digital Project in Mind?</h2>
+                            <h2 className="text-3xl md:text-5xl font-light tracking-tight mb-6">Got a Creative Project?</h2>
                             <p className="text-accent-contrast/70 mb-8 leading-relaxed">
-                                Tell us what you need — we&apos;ll figure out the best way to build it.
+                                Whether it&apos;s a campaign, a shoot, a release, or something entirely new — let&apos;s talk.
                             </p>
                             <Button
                                 href="/contact"

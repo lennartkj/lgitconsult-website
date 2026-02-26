@@ -309,12 +309,14 @@ export function Placeholder({
     }
   }, [selectedPattern, width, height, randomBgColor, randomTextColor, uniqueId]);
 
+  // Only set inline dimensions if no CSS size classes are provided
+  const hasCSSDimensions = className.includes("w-") || className.includes("h-");
+
   return (
     <div
       className={`flex items-center justify-center overflow-hidden ${className}`}
       style={{
-        width: width,
-        height: height,
+        ...(!hasCSSDimensions && { width, height }),
         backgroundColor: randomBgColor,
         color: randomTextColor,
         position: "relative",

@@ -68,3 +68,8 @@ export const getServiceTitles = async (): Promise<{ id: number, title: string, i
     icon: service.icon
   }));
 };
+
+export const getServicesByPillar = async (pillar: "digital" | "creative"): Promise<Service[]> => {
+  const allServices = await getAllServices();
+  return allServices.filter(service => service.pillar === pillar);
+};

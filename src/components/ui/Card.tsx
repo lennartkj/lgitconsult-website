@@ -36,7 +36,7 @@ interface CardProps {
 }
 
 export function Card({ className = "", children }: CardProps) {
-    const baseStyles = "rounded-lg border border-fg/10 bg-bg p-6 shadow-sm";
+    const baseStyles = "border border-fg/10 bg-bg p-6";
     const combinedClassName = `${baseStyles} ${className}`;
 
     // This component now only handles the visual wrapper
@@ -75,7 +75,7 @@ export function CardLink({
         },
     };
 
-    const hoverStyles = hoverEffect ? "hover:border-accent/50 hover:shadow-md transition-all duration-200" : "";
+    const hoverStyles = hoverEffect ? "hover:border-fg/30 transition-all duration-200" : "";
     const combinedClassName = `${className} ${hoverStyles}`;
     const isInternalLink = href && !external;
 
@@ -133,7 +133,7 @@ export function CardHeader({ className = "", children, ...props }: React.HTMLAtt
 
 export function CardTitle({ className = "", children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
     return (
-        <h3 className={`text-xl font-semibold ${className}`} {...props}>
+        <h3 className={`text-lg font-medium ${className}`} {...props}>
             {children}
         </h3>
     );
@@ -142,7 +142,7 @@ export function CardTitle({ className = "", children, ...props }: React.HTMLAttr
 export function CardDescription({ className = "", children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
     // Corrected the closing tag
     return (
-        <p className={`text-sm text-fg/70 ${className}`} {...props}>
+        <p className={`text-sm text-fg/50 leading-relaxed ${className}`} {...props}>
             {children}
         </p>
     );

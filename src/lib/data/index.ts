@@ -25,6 +25,7 @@ export type { Post, Category } from './types';
 export {
   getAllServices,
   getServiceById,
+  getServicesByPillar,
   getAllPricingTiers,
   getPricingTierById,
   getAllProcessSteps,

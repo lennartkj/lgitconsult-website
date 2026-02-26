@@ -50,14 +50,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref
     ) => {
       // Base styles
-      const baseStyles = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+      const baseStyles = "inline-flex items-center justify-center font-mono text-[12px] uppercase tracking-[0.1em] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-fg/30 disabled:opacity-50 disabled:pointer-events-none";
 
       // Variant styles
       const variantStyles = {
-        primary: "bg-accent text-accent-contrast hover:bg-accent/90",
+        primary: "bg-fg text-bg hover:bg-fg/85",
         secondary: "bg-muted text-fg hover:bg-muted/80",
-        outline: "border border-fg/20 hover:bg-muted",
-        ghost: "hover:bg-muted",
+        outline: "border border-fg/20 text-fg hover:bg-fg hover:text-bg",
+        ghost: "text-fg/60 hover:text-fg",
       };
 
       // Size styles

@@ -171,12 +171,12 @@ export default function PrivacyPolicyPage() {
 
               <h2>Data Protection Officer</h2>
               <p>
-                In compliance with German data protection laws, we have appointed a Data Protection Officer (Datenschutzbeauftragter) who can be contacted regarding any questions or concerns about our data processing practices:
+                For any questions or concerns about our data processing practices, please contact:
               </p>
               <ul>
-                <li>Name: [Name of Data Protection Officer]</li>
-                <li>Email: dpo@lgitconsult.com</li>
-                <li>Address: 123 Business Street, Suite 100, City, Country</li>
+                <li>Name: Lennart Gründel</li>
+                <li>Email: info@git-consult.group</li>
+                <li>Address: Mädler-Passage, Aufgang B, Grimmaische Str. 2-4, 04109 Leipzig</li>
               </ul>
 
               <h2>Automated Decision Making and Profiling</h2>
@@ -205,9 +205,9 @@ export default function PrivacyPolicyPage() {
                 If you have any questions about this Privacy Policy, please contact us:
               </p>
               <ul>
-                <li>By email: privacy@lgitconsult.com</li>
-                <li>By phone: +1 (555) 123-4567</li>
-                <li>By mail: 123 Business Street, Suite 100, City, Country</li>
+                <li>By email: info@git-consult.group</li>
+                <li>By phone: +49 179 126 7379</li>
+                <li>By mail: Mädler-Passage, Aufgang B, Grimmaische Str. 2-4, 04109 Leipzig</li>
               </ul>
             </div>
           </div>

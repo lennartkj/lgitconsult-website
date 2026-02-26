@@ -46,6 +46,7 @@ export interface Service {
     title: string;
     description: string;
     icon: string;
+    pillar: "digital" | "creative";
     features: string[];
     cta: string;
 }

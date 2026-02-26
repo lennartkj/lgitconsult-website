@@ -20,9 +20,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LGIT Consult - IT Consulting & Development Services",
-  description: "Professional IT consulting and development services for businesses of all sizes. We help you transform your digital presence with modern web solutions.",
-  keywords: ["IT consulting", "web development", "digital transformation", "Next.js", "React"],
+  title: "LGIT Consult — Creative Consulting & Digital Agency",
+  description: "Leipzig-based creative consulting and digital agency. Technology, campaigns, and joint ventures with artists and brands.",
+  keywords: ["creative consulting", "digital agency", "Leipzig", "web development", "campaign design", "photography"],
   authors: [{ name: "LGIT Consult" }],
   creator: "LGIT Consult",
   publisher: "LGIT Consult",

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
+import { usePathname } from "next/navigation";
 
 // --- Typen und Interfaces (unverändert) ---
 interface GlitchEffect {
@@ -32,10 +33,12 @@ export const useGlitchCore = () => {
 export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps) {
     const [effectQueue, setEffectQueue] = useState<GlitchEffect[]>([]);
     const [characterRefs, setCharacterRefs] = useState<{ textNode: Node; charIndex: number }[]>([]);
+    const pathname = usePathname();
 
     const interactionDeltaRef = useRef(0);
     const touchStartRef = useRef(0);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const scanTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const clearQueue = useCallback(() => {
         setEffectQueue([]);
@@ -106,18 +109,30 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
 
     // --- Effekt-Hooks ---
 
-    // KORREKTUR 1: Dieser Hook läuft nur einmal beim Mounten, um den initialen Scan durchzuführen.
+    // Re-scan characters when route changes, with a delay to let page content render
     useEffect(() => {
+        // Immediate scan for content already in DOM
         scanVisibleCharacters();
-    }, [scanVisibleCharacters]);
 
-    // KORREKTUR 2: Dieser Hook richtet die Event-Listener ein. Er ist jetzt stabil.
+        // Delayed scan to catch Framer Motion animations and lazy content
+        scanTimeoutRef.current = setTimeout(() => {
+            scanVisibleCharacters();
+        }, 600);
+
+        return () => {
+            if (scanTimeoutRef.current) clearTimeout(scanTimeoutRef.current);
+        };
+    }, [pathname, scanVisibleCharacters]);
+
+    // Set up interaction listeners and periodic rescan on scroll
     useEffect(() => {
         const handleInteraction = (delta: number) => {
             interactionDeltaRef.current += Math.abs(delta);
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             timeoutRef.current = setTimeout(() => {
                 if (interactionDeltaRef.current > 15) {
+                    // Rescan on scroll to pick up newly visible elements
+                    scanVisibleCharacters();
                     triggerMultipleEffects(5);
                 }
                 interactionDeltaRef.current = 0;
@@ -133,7 +148,6 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
             touchStartRef.current = currentY;
         };
 
-        // Der 'resize' Handler ist einfach die stabile scanVisibleCharacters-Funktion.
         window.addEventListener('resize', scanVisibleCharacters);
         window.addEventListener('wheel', handleWheel, { passive: true });
         window.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -146,8 +160,6 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
             window.removeEventListener('touchmove', handleTouchMove);
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-        // Wir übergeben die stabilen Funktionen an das Dependency-Array.
-        // Das stellt sicher, dass der Hook nur neu läuft, wenn sich diese (stabilen) Funktionen ändern, was sie nicht tun.
     }, [scanVisibleCharacters, triggerMultipleEffects]);
 
     return (
