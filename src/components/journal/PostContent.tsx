@@ -38,7 +38,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
 
     return (
         <>
-            {/* Hero Section — left-aligned, editorial */}
+            {/* Hero — left-aligned, editorial */}
             <section className="py-32 md:py-48 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
@@ -47,7 +47,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                             animate="visible"
                             variants={fadeIn}
                             custom={0}
-                            className="col-span-12 md:col-span-7"
+                            className="col-span-12 md:col-span-8 lg:col-span-7"
                         >
                             <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">
                                 {postIndex} — Article
@@ -67,58 +67,58 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                 </div>
             </section>
 
-            {/* Article Content and Sidebar — asymmetric 12-col */}
+            {/* Article body + sidebar */}
             <section className="py-24 md:py-32">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12 gap-8">
-                        {/* Main Content */}
+                    <div className="grid grid-cols-12 gap-x-8 lg:gap-x-12">
+                        {/* Article */}
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
                             variants={fadeIn}
                             custom={0}
-                            className="col-span-12 lg:col-span-8"
+                            className="col-span-12 lg:col-span-7"
                         >
                             <article className="prose prose-lg max-w-none">
                                 <MDXRemote {...mdxSource} />
                             </article>
 
                             {/* Tags */}
-                            <div className="mt-16 pt-8 border-t border-fg/10">
-                                <div className="flex flex-wrap gap-4">
-                                    {post.tags.map((tag) => (
-                                        <span
-                                            key={tag}
-                                            className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
+                            {post.tags.length > 0 && (
+                                <div className="mt-16 pt-8 border-t border-fg/10">
+                                    <div className="flex flex-wrap gap-4">
+                                        {post.tags.map((tag) => (
+                                            <span
+                                                key={tag}
+                                                className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            {/* Author Bio */}
+                            {/* Author */}
                             {post.authorBio && (
                                 <div className="mt-12 pt-8 border-t border-fg/10">
-                                    <div>
-                                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">Author</span>
-                                        <h3 className="text-lg font-light tracking-tight mb-2">{post.author}</h3>
-                                        <p className="text-sm text-fg/50 leading-relaxed max-w-lg">{post.authorBio}</p>
-                                    </div>
+                                    <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">Author</span>
+                                    <h3 className="text-lg font-light tracking-tight mb-2">{post.author}</h3>
+                                    <p className="text-sm text-fg/50 leading-relaxed max-w-lg">{post.authorBio}</p>
                                 </div>
                             )}
                         </motion.div>
 
-                        {/* Sidebar — Table of Contents */}
+                        {/* Sidebar TOC — desktop only */}
                         {tocEntries.length > 0 && (
-                            <motion.div
+                            <motion.aside
                                 initial="hidden"
                                 whileInView="visible"
                                 viewport={{ once: true }}
                                 variants={fadeIn}
                                 custom={1}
-                                className="col-span-12 lg:col-span-3 lg:col-start-10"
+                                className="hidden lg:block lg:col-span-3 lg:col-start-9"
                             >
                                 <div className="sticky top-24">
                                     <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">Contents</span>
@@ -134,28 +134,26 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                                         ))}
                                     </nav>
                                 </div>
-                            </motion.div>
+                            </motion.aside>
                         )}
                     </div>
                 </div>
             </section>
 
-            {/* Related Articles — ruled-line list */}
+            {/* Related — ruled-line list */}
             {relatedPosts.length > 0 && (
                 <section className="py-24 md:py-32 bg-muted">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-12 mb-12">
-                            <motion.div
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                                variants={fadeIn}
-                                custom={0}
-                                className="col-span-12 md:col-span-6"
-                            >
-                                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Related</span>
-                            </motion.div>
-                        </div>
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={fadeIn}
+                            custom={0}
+                            className="mb-12"
+                        >
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40">Related</span>
+                        </motion.div>
 
                         <div className="border-t border-fg/10">
                             {relatedPosts.map((relatedPost, index) => (
@@ -169,16 +167,16 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                                 >
                                     <NextLink href={`/journal/${relatedPost.slug}`} className="block group">
                                         <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-baseline transition-transform duration-300 group-hover:translate-x-2">
-                                            <div className="col-span-12 md:col-span-2">
+                                            <div className="col-span-4 md:col-span-2">
                                                 <span className="font-mono text-[11px] text-fg/30">{relatedPost.date}</span>
                                             </div>
-                                            <div className="col-span-12 md:col-span-5">
-                                                <h3 className="text-xl md:text-2xl font-light tracking-tight group-hover:text-fg/70 transition-colors">{relatedPost.title}</h3>
+                                            <div className="col-span-8 md:col-span-5">
+                                                <h3 className="text-lg md:text-2xl font-light tracking-tight group-hover:text-fg/70 transition-colors">{relatedPost.title}</h3>
                                             </div>
-                                            <div className="col-span-12 md:col-span-4">
+                                            <div className="hidden md:block md:col-span-4">
                                                 <p className="text-sm text-fg/40 leading-relaxed">{relatedPost.excerpt}</p>
                                             </div>
-                                            <div className="col-span-12 md:col-span-1 text-right hidden md:block">
+                                            <div className="hidden md:block md:col-span-1 text-right">
                                                 <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-fg/30">{relatedPost.category}</span>
                                             </div>
                                         </div>

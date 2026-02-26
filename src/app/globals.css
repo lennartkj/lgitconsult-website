@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   /* Colors — monochrome warm neutrals */
@@ -84,4 +85,98 @@ a, button, [role="button"], input, select, textarea, label {
 /* B&W treatment for editorial images */
 .img-bw {
   filter: grayscale(100%) contrast(1.1);
+}
+
+/* Editorial prose — override typography plugin defaults */
+.prose {
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-links: var(--fg);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-quotes: var(--fg);
+  --tw-prose-quote-borders: color-mix(in srgb, var(--fg) 15%, transparent);
+  --tw-prose-counters: color-mix(in srgb, var(--fg) 40%, transparent);
+  --tw-prose-bullets: color-mix(in srgb, var(--fg) 30%, transparent);
+  --tw-prose-hr: color-mix(in srgb, var(--fg) 10%, transparent);
+  --tw-prose-captions: color-mix(in srgb, var(--fg) 50%, transparent);
+  --tw-prose-code: var(--fg);
+  --tw-prose-pre-bg: var(--muted);
+  --tw-prose-pre-code: var(--fg);
+  --tw-prose-th-borders: color-mix(in srgb, var(--fg) 15%, transparent);
+  --tw-prose-td-borders: color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.prose h2 {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
+  padding-top: 2rem;
+  border-top: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.prose h2:first-child {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.prose h3 {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.prose p {
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+  line-height: 1.8;
+}
+
+.prose strong {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.prose a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--fg) 30%, transparent);
+  transition: text-decoration-color 0.2s;
+}
+
+.prose a:hover {
+  text-decoration-color: var(--fg);
+}
+
+.prose blockquote {
+  font-style: normal;
+  font-weight: 300;
+  border-left-width: 1px;
+  padding-left: 1.5rem;
+  color: color-mix(in srgb, var(--fg) 60%, transparent);
+}
+
+.prose code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.85em;
+  background: var(--muted);
+  padding: 0.15em 0.4em;
+  border-radius: 0.125rem;
+}
+
+.prose code::before,
+.prose code::after {
+  content: none;
+}
+
+.prose pre {
+  border-radius: 0;
+  border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.prose ul > li::marker {
+  color: color-mix(in srgb, var(--fg) 30%, transparent);
+}
+
+.prose hr {
+  border-top-width: 1px;
 }
