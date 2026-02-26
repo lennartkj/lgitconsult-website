@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 
-// --- Typen und Interfaces (unverändert) ---
 interface GlitchEffect {
     startRef: { textNode: Node; charIndex: number };
     endRef: { textNode: Node; charIndex: number };
@@ -18,7 +17,6 @@ interface GlitchCoreProviderProps {
     children: React.ReactNode;
 }
 
-// --- React Context (unverändert) ---
 const GlitchCoreContext = createContext<GlitchCoreContextType | null>(null);
 
 export const useGlitchCore = () => {
@@ -29,7 +27,6 @@ export const useGlitchCore = () => {
     return context;
 };
 
-// --- GlitchCoreProvider Komponente ---
 export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps) {
     const [effectQueue, setEffectQueue] = useState<GlitchEffect[]>([]);
     const [characterRefs, setCharacterRefs] = useState<{ textNode: Node; charIndex: number }[]>([]);
@@ -43,9 +40,6 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
     const clearQueue = useCallback(() => {
         setEffectQueue([]);
     }, []);
-
-    // HINWEIS: Alle useCallback-Hooks sind korrekt, da sie die Funktionen stabil halten.
-    // Das Problem lag in der Art, wie die useEffect-Hooks sie aufgerufen haben.
 
     const scanVisibleCharacters = useCallback(() => {
         const refs: { textNode: Node; charIndex: number }[] = [];
@@ -74,17 +68,6 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
         setCharacterRefs(refs);
     }, []);
 
-    const getCoordsForChar = (textNode: Node, charIndex: number): { x: number; y: number } | null => {
-        try {
-            const range = document.createRange();
-            range.setStart(textNode, charIndex);
-            range.setEnd(textNode, charIndex + 1);
-            const rect = range.getBoundingClientRect();
-            if (rect.width === 0 && rect.height === 0) return null;
-            return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-        } catch { return null; }
-    };
-
     const triggerMultipleEffects = useCallback((count: number) => {
         if (characterRefs.length < 2) return;
 
@@ -101,20 +84,14 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
             });
         }
 
-        // ÄNDERUNG: Ersetze die Queue, anstatt sie zu erweitern.
-        // Das verhindert Race Conditions und vereinfacht die Logik.
         setEffectQueue(newEffects);
-
     }, [characterRefs]);
 
-    // --- Effekt-Hooks ---
-
-    // Re-scan characters when route changes, with a delay to let page content render
+    // Re-scan characters when route changes
     useEffect(() => {
-        // Immediate scan for content already in DOM
         scanVisibleCharacters();
 
-        // Delayed scan to catch Framer Motion animations and lazy content
+        // Delayed scan for animated/lazy content
         scanTimeoutRef.current = setTimeout(() => {
             scanVisibleCharacters();
         }, 600);
@@ -124,14 +101,13 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
         };
     }, [pathname, scanVisibleCharacters]);
 
-    // Set up interaction listeners and periodic rescan on scroll
+    // Interaction listeners
     useEffect(() => {
         const handleInteraction = (delta: number) => {
             interactionDeltaRef.current += Math.abs(delta);
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             timeoutRef.current = setTimeout(() => {
                 if (interactionDeltaRef.current > 15) {
-                    // Rescan on scroll to pick up newly visible elements
                     scanVisibleCharacters();
                     triggerMultipleEffects(5);
                 }
