@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/Button";
-import { CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardLink } from "@/components/ui/Card";
-import { Placeholder } from "@/components/ui/Placeholder";
 import { Project } from "@/lib/data/types";
 
 interface HomeContentProps {
@@ -29,25 +28,25 @@ const fadeIn: Variants = {
 export default function HomeContent({ projects }: HomeContentProps) {
     return (
         <>
-            {/* Hero Section */}
-            <section className="relative py-20 md:py-28 overflow-hidden">
+            {/* Hero Section — left-aligned, text owns the space */}
+            <section className="py-32 md:py-48">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div className="grid grid-cols-12">
                         <motion.div
                             initial="hidden"
                             animate="visible"
                             variants={fadeIn}
                             custom={0}
-                            className="flex flex-col gap-6"
+                            className="col-span-12 md:col-span-8 lg:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 mb-4 block">LGIT Consult</span>
-                            <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.95]">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">LGIT Consult</span>
+                            <h1 className="text-5xl md:text-7xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
                                 Where Technology Meets Creative Vision
                             </h1>
-                            <p className="text-base md:text-lg text-fg/60 max-w-md leading-relaxed">
+                            <p className="text-base md:text-lg text-fg/50 max-w-lg leading-relaxed mb-10">
                                 Leipzig-based creative consulting and digital agency. We work with artists, brands, and businesses — building campaigns, digital products, and everything in between.
                             </p>
-                            <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                            <div className="flex gap-4">
                                 <Button href="/contact" size="lg">
                                     Get Started
                                 </Button>
@@ -56,46 +55,43 @@ export default function HomeContent({ projects }: HomeContentProps) {
                                 </Button>
                             </div>
                         </motion.div>
-                        <motion.div
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeIn}
-                            custom={1}
-                            className="relative h-[300px] md:h-[400px] rounded-lg overflow-hidden"
-                        >
-                            <div className="w-full h-full">
-                                <Image
-                                    src="/hero_image_1.png"
-                                    alt="Hero Image"
-                                    className="w-full h-full rounded-lg"
-                                    layout="fill"
-                                    objectFit="cover"
-                                />
-                            </div>
-                        </motion.div>
                     </div>
                 </div>
             </section>
 
-            {/* Featured Projects Section */}
-            <section className="py-16 bg-muted">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: "-100px" }}
-                        variants={fadeIn}
-                        custom={0}
-                        className="text-center mb-12"
-                    >
-                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">001 — Featured Work</span>
-                        <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-4">Selected Projects</h2>
-                        <p className="text-fg/50 max-w-2xl mx-auto leading-relaxed">
-                            From e-learning platforms to artist campaigns — a look at what we&apos;ve been building.
-                        </p>
-                    </motion.div>
+            {/* Full-bleed hero image */}
+            <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
+                <Image
+                    src="/hero_image_1.png"
+                    alt="LGIT Consult"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+            </section>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Featured Projects — editorial list layout */}
+            <section className="py-24 md:py-32">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-12 mb-16">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, margin: "-100px" }}
+                            variants={fadeIn}
+                            custom={0}
+                            className="col-span-12 md:col-span-7"
+                        >
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">001 — Featured Work</span>
+                            <h2 className="text-4xl md:text-5xl font-light tracking-tighter mb-4">Selected Projects</h2>
+                            <p className="text-fg/50 max-w-lg leading-relaxed">
+                                From e-learning platforms to artist campaigns — a look at what we&apos;ve been building.
+                            </p>
+                        </motion.div>
+                    </div>
+
+                    {/* Ruled-line project list */}
+                    <div className="border-t border-fg/10">
                         {projects.map((project, index) => (
                             <motion.div
                                 key={project.slug}
@@ -103,43 +99,36 @@ export default function HomeContent({ projects }: HomeContentProps) {
                                 whileInView="visible"
                                 viewport={{ once: true, margin: "-50px" }}
                                 variants={fadeIn}
-                                custom={index + 1}
+                                custom={index}
                             >
-                                <CardLink href={`/work/${project.slug}`} className="h-full flex flex-col">
-                                    <div className="relative h-48 w-full mb-4 rounded-lg overflow-hidden">
-                                        <Placeholder
-                                            text={project.title}
-                                            bgColor={index % 2 === 0 ? "#0070f3" : "#6366f1"}
-                                            textColor="#ffffff"
-                                            seed={index}
-                                            className="w-full h-full transition-transform duration-500 hover:scale-105"
-                                        />
-                                    </div>
-                                    <CardHeader>
-                                        <CardTitle>{project.title}</CardTitle>
-                                        <CardDescription>{project.description}</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="flex-grow">
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {(project.tags ?? []).map((tag) => (
+                                <Link href={`/work/${project.slug}`} className="block group">
+                                    <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-center">
+                                        <div className="col-span-1 hidden md:block">
+                                            <span className="font-mono text-[11px] text-fg/30">{String(index + 1).padStart(2, "0")}</span>
+                                        </div>
+                                        <div className="col-span-12 md:col-span-5">
+                                            <h3 className="text-xl md:text-2xl font-light tracking-tight group-hover:text-fg/70 transition-colors">{project.title}</h3>
+                                        </div>
+                                        <div className="col-span-12 md:col-span-4">
+                                            <p className="text-sm text-fg/40 leading-relaxed">{project.description}</p>
+                                        </div>
+                                        <div className="col-span-12 md:col-span-2 flex flex-wrap gap-2">
+                                            {(project.tags ?? []).slice(0, 2).map((tag) => (
                                                 <span
                                                     key={tag}
-                                                    className="text-xs bg-fg/10 text-fg/80 px-2 py-1 rounded-full"
+                                                    className="font-mono text-[10px] uppercase tracking-[0.1em] text-fg/30"
                                                 >
-                          {tag}
-                        </span>
+                                                    {tag}
+                                                </span>
                                             ))}
                                         </div>
-                                    </CardContent>
-                                    <CardFooter>
-                                        {/* FIX: Link wurde entfernt, da die gesamte Karte bereits ein Link ist */}
-                                    </CardFooter>
-                                </CardLink>
+                                    </div>
+                                </Link>
                             </motion.div>
                         ))}
                     </div>
 
-                    <div className="text-center mt-12">
+                    <div className="mt-12">
                         <Button href="/work" variant="outline">
                             View All Projects
                         </Button>
@@ -147,25 +136,23 @@ export default function HomeContent({ projects }: HomeContentProps) {
                 </div>
             </section>
 
-            {/* CTA Section */}
-            <section className="py-16 bg-accent text-accent-contrast">
+            {/* CTA Section — full-bleed, minimal */}
+            <section className="py-24 md:py-32 border-t border-fg/10">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="max-w-3xl mx-auto text-center">
+                    <div className="grid grid-cols-12">
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
                             variants={fadeIn}
                             custom={0}
+                            className="col-span-12 md:col-span-8"
                         >
-                            <h2 className="text-3xl md:text-5xl font-light tracking-tight mb-6">Let&apos;s Build Something Together</h2>
-                            <p className="text-accent-contrast/70 mb-8 leading-relaxed">
+                            <h2 className="text-4xl md:text-6xl font-light tracking-tighter mb-6">Let&apos;s Build Something Together</h2>
+                            <p className="text-fg/50 max-w-lg leading-relaxed mb-10">
                                 Whether it&apos;s a digital product, a campaign, or a joint venture — we&apos;re ready to talk.
                             </p>
-                            <Button
-                                href="/contact"
-                                className="bg-accent-contrast text-accent hover:bg-accent-contrast/90"
-                            >
+                            <Button href="/contact">
                                 Get in Touch
                             </Button>
                         </motion.div>

@@ -2,7 +2,6 @@
 
 import React from "react";
 import { motion, type Variants } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Service, ProcessStep } from "@/lib/data/types";
 
@@ -27,31 +26,33 @@ const fadeIn: Variants = {
 export default function ServicesContent({ services, processSteps }: ServicesContentProps) {
     return (
         <>
-            {/* Hero Section */}
-            <section className="py-16 md:py-24 bg-muted">
+            {/* Hero Section — left-aligned, generous whitespace */}
+            <section className="py-24 md:py-32 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={fadeIn}
-                        custom={0}
-                        className="max-w-3xl mx-auto text-center"
-                    >
-                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Services — Digital</span>
-                        <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-6">
-                            Digital
-                        </h1>
-                        <p className="text-base text-fg/60 leading-relaxed">
-                            Web development, mobile apps, design, and IT consulting. The technical backbone for your digital presence.
-                        </p>
-                    </motion.div>
+                    <div className="grid grid-cols-12">
+                        <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeIn}
+                            custom={0}
+                            className="col-span-12 md:col-span-7"
+                        >
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Services — Digital</span>
+                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter leading-[0.95] mb-8">
+                                Digital
+                            </h1>
+                            <p className="text-base text-fg/50 leading-relaxed max-w-lg">
+                                Web development, mobile apps, design, and IT consulting. The technical backbone for your digital presence.
+                            </p>
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
-            {/* Services Grid */}
-            <section className="py-16">
+            {/* Services — ruled-line editorial layout */}
+            <section className="py-24 md:py-32">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div className="border-t border-fg/10">
                         {services.map((service, index) => (
                             <motion.div
                                 key={service.id}
@@ -60,55 +61,60 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                                 viewport={{ once: true, margin: "-50px" }}
                                 variants={fadeIn}
                                 custom={index}
+                                className="border-b border-fg/10 py-12 md:py-16"
                             >
-                                <Card className="h-full flex flex-col">
-                                    <CardContent className="p-8 flex-grow">
-                                        <div className="text-xs font-semibold uppercase tracking-widest text-accent mb-4">{service.icon}</div>
-                                        <h2 className="text-xl font-medium mb-2">{service.title}</h2>
-                                        <p className="text-sm text-fg/50 mb-6 leading-relaxed">{service.description}</p>
-
-                                        <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 mb-3">What we offer</h3>
-                                        <ul className="space-y-2 mb-6">
+                                <div className="grid grid-cols-12 gap-6 md:gap-12">
+                                    <div className="col-span-12 md:col-span-1">
+                                        <span className="font-mono text-[11px] text-fg/30">{String(index + 1).padStart(2, "0")}</span>
+                                    </div>
+                                    <div className="col-span-12 md:col-span-4">
+                                        <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 mb-3">{service.icon}</div>
+                                        <h2 className="text-2xl md:text-3xl font-light tracking-tight mb-3">{service.title}</h2>
+                                        <p className="text-sm text-fg/50 leading-relaxed">{service.description}</p>
+                                    </div>
+                                    <div className="col-span-12 md:col-span-4 md:col-start-7">
+                                        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 block mb-4">Capabilities</span>
+                                        <ul className="space-y-3">
                                             {service.features.map((feature) => (
-                                                <li key={feature} className="flex items-start">
-                                                    <span className="text-accent mr-2">✓</span>
-                                                    <span>{feature}</span>
+                                                <li key={feature} className="text-sm text-fg/60 border-t border-fg/5 pt-3 first:border-t-0 first:pt-0">
+                                                    {feature}
                                                 </li>
                                             ))}
                                         </ul>
-
-                                        <div className="mt-auto pt-4">
-                                            <Button href="/contact" variant="primary">
-                                                {service.cta}
-                                            </Button>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                    </div>
+                                    <div className="col-span-12 md:col-span-2 md:col-start-11 flex md:items-end md:justify-end">
+                                        <Button href="/contact" variant="outline" size="sm">
+                                            {service.cta}
+                                        </Button>
+                                    </div>
+                                </div>
                             </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Process Section */}
-            <section className="py-16 bg-muted">
+            {/* Process Section — horizontal ruled list, no cards */}
+            <section className="py-24 md:py-32 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        variants={fadeIn}
-                        custom={0}
-                        className="text-center mb-12"
-                    >
-                        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-3">Process</span>
-                        <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-4">How We Work</h2>
-                        <p className="text-fg/50 max-w-2xl mx-auto leading-relaxed">
-                            Every project is different, but our approach stays consistent.
-                        </p>
-                    </motion.div>
+                    <div className="grid grid-cols-12 mb-16">
+                        <motion.div
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true }}
+                            variants={fadeIn}
+                            custom={0}
+                            className="col-span-12 md:col-span-6"
+                        >
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">Process</span>
+                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter mb-4">How We Work</h2>
+                            <p className="text-fg/50 leading-relaxed">
+                                Every project is different, but our approach stays consistent.
+                            </p>
+                        </motion.div>
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-0 border-t border-fg/10">
                         {processSteps.map((step, index) => (
                             <motion.div
                                 key={step.step}
@@ -117,47 +123,34 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                                 viewport={{ once: true }}
                                 variants={fadeIn}
                                 custom={index + 1}
-                                className="relative"
+                                className="py-8 md:pr-8 border-b md:border-b-0 md:border-r border-fg/10 last:border-b-0 last:border-r-0"
                             >
-                                <Card className="h-full">
-                                    <CardContent className="p-6 text-center">
-                                        <div className="w-12 h-12 bg-accent text-accent-contrast rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
-                                            {step.step}
-                                        </div>
-                                        <h3 className="text-base font-medium mb-2">{step.title}</h3>
-                                        <p className="text-sm text-fg/50 leading-relaxed">{step.description}</p>
-                                    </CardContent>
-                                </Card>
-                                {index < processSteps.length - 1 && (
-                                    <div className="hidden md:block absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 text-2xl text-fg/30">
-                                        →
-                                    </div>
-                                )}
+                                <span className="font-mono text-[11px] text-fg/30 block mb-4">{String(step.step).padStart(2, "0")}</span>
+                                <h3 className="text-base font-medium mb-2">{step.title}</h3>
+                                <p className="text-sm text-fg/40 leading-relaxed">{step.description}</p>
                             </motion.div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* CTA Section */}
-            <section className="py-16 bg-accent text-accent-contrast">
+            {/* CTA Section — left-aligned, ruled */}
+            <section className="py-24 md:py-32 border-t border-fg/10">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="max-w-3xl mx-auto text-center">
+                    <div className="grid grid-cols-12">
                         <motion.div
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
                             variants={fadeIn}
                             custom={0}
+                            className="col-span-12 md:col-span-8"
                         >
-                            <h2 className="text-3xl md:text-5xl font-light tracking-tight mb-6">Have a Digital Project in Mind?</h2>
-                            <p className="text-accent-contrast/70 mb-8 leading-relaxed">
+                            <h2 className="text-4xl md:text-6xl font-light tracking-tighter mb-6">Have a Digital Project in Mind?</h2>
+                            <p className="text-fg/50 max-w-lg leading-relaxed mb-10">
                                 Tell us what you need — we&apos;ll figure out the best way to build it.
                             </p>
-                            <Button
-                                href="/contact"
-                                className="bg-accent-contrast text-accent hover:bg-accent-contrast/90"
-                            >
+                            <Button href="/contact">
                                 Get in Touch
                             </Button>
                         </motion.div>

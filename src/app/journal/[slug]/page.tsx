@@ -1,22 +1,15 @@
 import { notFound } from "next/navigation";
-import { getPostBySlug, getRelatedPosts, getAllPosts, Post } from "@/lib/data";
+import { getPostBySlug, getRelatedPosts, getAllPosts } from "@/lib/data";
 import PostContent from "@/components/journal/PostContent";
-import { MDXRemoteSerializeResult } from "next-mdx-remote";
 
-
-// Generiere statische Pfade für alle Posts (für Static Site Generation/ISR)
 export async function generateStaticParams() {
   const posts = await getAllPosts();
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
-// Generiere Metadaten für die Seite
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  // Daten holen, um SEO-Metadaten zu generieren
-  const postData = await getPostBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const postData = await getPostBySlug(slug);
 
   if (!postData) {
     return {
@@ -31,25 +24,19 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-// Setze die Revalidierungszeit (für ISR)
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 60;
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  // 1. Daten des aktuellen Posts holen (mit MDX Source)
-  const postWithMdx = await getPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const postWithMdx = await getPostBySlug(slug);
 
-  // 2. 404 behandeln, falls Post nicht gefunden wird
   if (!postWithMdx) {
     notFound();
   }
 
-  // 3. Verwandte Posts holen
-  const relatedPosts = await getRelatedPosts(params.slug, 3);
-
-  // 4. Daten für den Client Component vorbereiten
+  const relatedPosts = await getRelatedPosts(slug, 3);
   const { post, mdxSource } = postWithMdx;
 
-  // Render den Client Component mit allen Daten
   return (
       <PostContent
           post={post}
