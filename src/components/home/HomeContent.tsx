@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import { motion, type Variants } from "framer-motion";
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Project } from "@/lib/data/types";
 
@@ -11,7 +11,7 @@ interface HomeContentProps {
     projects: Project[];
 }
 
-// Animation variants
+// Standard fade-up
 const fadeIn: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({
@@ -25,52 +25,112 @@ const fadeIn: Variants = {
     }),
 };
 
+// Slide from left
+const slideFromLeft: Variants = {
+    hidden: { opacity: 0, x: -40 },
+    visible: (i: number) => ({
+        opacity: 1,
+        x: 0,
+        transition: {
+            delay: i * 0.1,
+            duration: 0.6,
+            ease: [0.16, 1, 0.3, 1],
+        },
+    }),
+};
+
+// Slide from right
+const slideFromRight: Variants = {
+    hidden: { opacity: 0, x: 40 },
+    visible: (i: number) => ({
+        opacity: 1,
+        x: 0,
+        transition: {
+            delay: i * 0.1,
+            duration: 0.6,
+            ease: [0.16, 1, 0.3, 1],
+        },
+    }),
+};
+
+// Staggered container for hero text lines
+const staggerContainer: Variants = {
+    hidden: {},
+    visible: {
+        transition: {
+            staggerChildren: 0.12,
+            delayChildren: 0.1,
+        },
+    },
+};
+
+const staggerLine: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.7,
+            ease: [0.16, 1, 0.3, 1],
+        },
+    },
+};
+
 export default function HomeContent({ projects }: HomeContentProps) {
+    const heroImageRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: heroImageRef,
+        offset: ["start end", "end start"],
+    });
+    const imageY = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
+
     return (
         <>
-            {/* Hero Section — left-aligned, text owns the space */}
+            {/* Hero Section — staggered line-by-line reveal */}
             <section className="py-32 md:py-48">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
                         <motion.div
                             initial="hidden"
                             animate="visible"
-                            variants={fadeIn}
-                            custom={0}
+                            variants={staggerContainer}
                             className="col-span-12 md:col-span-8 lg:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">LGIT Consult</span>
+                            <motion.span variants={staggerLine} className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">LGIT Consult</motion.span>
                             <h1 className="text-5xl md:text-7xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
-                                Where Technology Meets Creative Vision
+                                <motion.span variants={staggerLine} className="block">Where Technology</motion.span>
+                                <motion.span variants={staggerLine} className="block">Meets Creative Vision</motion.span>
                             </h1>
-                            <p className="text-base md:text-lg text-fg/50 max-w-lg leading-relaxed mb-10">
+                            <motion.p variants={staggerLine} className="text-base md:text-lg text-fg/50 max-w-lg leading-relaxed mb-10">
                                 Leipzig-based creative consulting and digital agency. We work with artists, brands, and businesses — building campaigns, digital products, and everything in between.
-                            </p>
-                            <div className="flex gap-4">
+                            </motion.p>
+                            <motion.div variants={staggerLine} className="flex gap-4">
                                 <Button href="/contact" size="lg">
                                     Get Started
                                 </Button>
                                 <Button href="/work" variant="outline" size="lg">
                                     View Our Work
                                 </Button>
-                            </div>
+                            </motion.div>
                         </motion.div>
                     </div>
                 </div>
             </section>
 
-            {/* Full-bleed hero image */}
-            <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
-                <Image
-                    src="/hero_image_1.png"
-                    alt="LGIT Consult"
-                    fill
-                    className="object-cover"
-                    priority
-                />
+            {/* Full-bleed hero image — parallax */}
+            <section ref={heroImageRef} className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
+                <motion.div style={{ y: imageY }} className="absolute inset-0 scale-[1.15]">
+                    <Image
+                        src="/hero_image_1.png"
+                        alt="LGIT Consult"
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                </motion.div>
             </section>
 
-            {/* Featured Projects — editorial list layout */}
+            {/* Featured Projects — slide from left, hover shift on rows */}
             <section className="py-24 md:py-32">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12 mb-16">
@@ -78,7 +138,7 @@ export default function HomeContent({ projects }: HomeContentProps) {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true, margin: "-100px" }}
-                            variants={fadeIn}
+                            variants={slideFromLeft}
                             custom={0}
                             className="col-span-12 md:col-span-7"
                         >
@@ -102,7 +162,7 @@ export default function HomeContent({ projects }: HomeContentProps) {
                                 custom={index}
                             >
                                 <Link href={`/work/${project.slug}`} className="block group">
-                                    <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-center">
+                                    <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-center transition-transform duration-300 group-hover:translate-x-2">
                                         <div className="col-span-1 hidden md:block">
                                             <span className="font-mono text-[11px] text-fg/30">{String(index + 1).padStart(2, "0")}</span>
                                         </div>
@@ -136,7 +196,7 @@ export default function HomeContent({ projects }: HomeContentProps) {
                 </div>
             </section>
 
-            {/* Two Pillars — editorial offset grid */}
+            {/* Two Pillars — slide from opposite sides */}
             <section className="py-24 md:py-32 bg-muted">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12 mb-16">
@@ -158,7 +218,7 @@ export default function HomeContent({ projects }: HomeContentProps) {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            variants={fadeIn}
+                            variants={slideFromLeft}
                             custom={1}
                             className="col-span-12 md:col-span-5"
                         >
@@ -178,8 +238,8 @@ export default function HomeContent({ projects }: HomeContentProps) {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            variants={fadeIn}
-                            custom={2}
+                            variants={slideFromRight}
+                            custom={1}
                             className="col-span-12 md:col-span-5 md:col-start-8"
                         >
                             <div className="border-t border-fg/10 pt-8">
@@ -197,14 +257,14 @@ export default function HomeContent({ projects }: HomeContentProps) {
                 </div>
             </section>
 
-            {/* Full-bleed statement — rhythm break */}
+            {/* Full-bleed statement — slide from right */}
             <section className="py-20 md:py-28">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <motion.div
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
-                        variants={fadeIn}
+                        variants={slideFromRight}
                         custom={0}
                         className="grid grid-cols-12"
                     >
@@ -215,7 +275,7 @@ export default function HomeContent({ projects }: HomeContentProps) {
                 </div>
             </section>
 
-            {/* CTA Section — full-bleed, minimal */}
+            {/* CTA Section */}
             <section className="py-24 md:py-32 border-t border-fg/10">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-12">
@@ -223,7 +283,7 @@ export default function HomeContent({ projects }: HomeContentProps) {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            variants={fadeIn}
+                            variants={slideFromLeft}
                             custom={0}
                             className="col-span-12 md:col-span-8"
                         >

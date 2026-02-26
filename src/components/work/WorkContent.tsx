@@ -113,7 +113,7 @@ export default function WorkContent({ projects: initialProjects }: WorkContentPr
                                     custom={index}
                                 >
                                     <Link href={`/work/${project.slug}`} className="block group">
-                                        <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-center">
+                                        <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-center transition-transform duration-300 group-hover:translate-x-2">
                                             <div className="col-span-1 hidden md:block">
                                                 <span className="font-mono text-[11px] text-fg/30">{String(index + 1).padStart(2, "0")}</span>
                                             </div>

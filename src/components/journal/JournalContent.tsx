@@ -93,7 +93,7 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                                     custom={index + 1}
                                 >
                                     <NextLink href={`/journal/${post.slug}`} className="block group">
-                                        <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-baseline">
+                                        <div className="grid grid-cols-12 gap-4 py-8 border-b border-fg/10 items-baseline transition-transform duration-300 group-hover:translate-x-2">
                                             <div className="col-span-12 md:col-span-2">
                                                 <span className="font-mono text-[11px] text-fg/30">{post.date}</span>
                                             </div>
@@ -161,7 +161,7 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                                             custom={index}
                                         >
                                             <NextLink href={`/journal/${post.slug}`} className="block group">
-                                                <div className="py-8 border-b border-fg/10">
+                                                <div className="py-8 border-b border-fg/10 transition-transform duration-300 group-hover:translate-x-2">
                                                     <div className="flex items-baseline gap-4 mb-2">
                                                         <span className="font-mono text-[11px] text-fg/30">{post.date}</span>
                                                         <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-fg/30">{post.category}</span>

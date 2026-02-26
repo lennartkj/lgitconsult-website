@@ -56,7 +56,7 @@ export function ProjectHeroImage({
           animate="visible"
           variants={fadeIn}
           custom={custom}
-          className={`relative h-[300px] md:h-[400px] rounded-lg overflow-hidden ${className}`}
+          className={`relative h-[300px] md:h-[400px] overflow-hidden ${className}`}
       >
         {children}
       </motion.div>
@@ -116,7 +116,7 @@ export function RelatedProjectsHeader({
           viewport={{ once: true }}
           variants={fadeIn}
           custom={custom}
-          className={`text-center mb-12 ${className}`}
+          className={`mb-12 ${className}`}
       >
         {children}
       </motion.div>

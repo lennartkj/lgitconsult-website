@@ -22,6 +22,18 @@ const fadeIn: Variants = {
     }),
 };
 
+const slideFromRight: Variants = {
+    hidden: { opacity: 0, x: 40 },
+    visible: {
+        opacity: 1,
+        x: 0,
+        transition: {
+            duration: 0.6,
+            ease: [0.16, 1, 0.3, 1],
+        },
+    },
+};
+
 export default function CreativeContent({ services }: CreativeContentProps) {
     return (
         <>
@@ -89,8 +101,7 @@ export default function CreativeContent({ services }: CreativeContentProps) {
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: true }}
-                        variants={fadeIn}
-                        custom={0}
+                        variants={slideFromRight}
                         className="grid grid-cols-12"
                     >
                         <p className="col-span-12 md:col-span-8 md:col-start-3 text-2xl md:text-4xl font-light tracking-tight leading-snug text-fg/70">

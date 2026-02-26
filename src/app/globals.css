@@ -57,4 +57,9 @@
 body {
   background: var(--bg);
   color: var(--fg);
+  cursor: crosshair;
+}
+
+a, button, [role="button"], input, select, textarea, label {
+  cursor: crosshair;
 }
