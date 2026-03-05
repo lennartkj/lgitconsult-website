@@ -17,6 +17,7 @@ export interface Project {
     services?: string[];
     website?: string;
     featured: boolean;
+    status?: string;
 }
 
 // Posts

@@ -1,67 +1,33 @@
 ---
 id: 1
-title: "E-Learning Platform for HTWK Leipzig"
-description: "LGIT Consult was tasked with bringing a legacy E-Learning Platform into the current decade"
+title: "XTE E-Learning Platform"
+description: "A complete rebuild of HTWK Leipzig's language learning platform. We replaced an aging legacy system with a modern Spring Boot/Kotlin application — responsive frontend, multi-auth via SAML2 and OAuth2, C-tests, flashcard trainers, and a clean UI that students actually want to use. Engagement up 60%, support tickets cut in half."
 date: "2025-06-15"
 client: "HTWK Leipzig"
 year: "2025"
 services:
   - "Web Development"
   - "UI/UX Design"
-  - "Payment Integration"
+  - "Backend Architecture"
+  - "Authentication Systems"
 tags:
   - "Web Development"
-
+  - "Design"
+image: "/images/leipzig-panorama.jpg"
 website: "xte.htwk-leipzig.de"
 featured: true
 ---
+
 ## The Challenge
 
- HTWK Leipzig needed to replace their outdated e-learning system that was struggling with performance issues and lacked modern features expected in today's educational technology landscape. The legacy platform couldn't support the growing number of courses and students, and offered a poor user experience that hindered learning outcomes.
+HTWK Leipzig's existing e-learning platform was showing its age — poor mobile experience, brittle authentication, and a UI that discouraged engagement. Students avoided it. Support requests piled up. The university needed a ground-up rebuild that could scale with growing demand.
 
-## Our Solution
+## What We Built
 
-We built a robust Spring Boot/Kotlin application with a modern frontend, using a layered architecture designed specifically for educational contexts:
+A modern Spring Boot/Kotlin backend paired with a responsive Tailwind CSS frontend. The platform features comprehensive language learning tools — C-tests with real-time feedback, spaced-repetition flashcard trainers, and progress tracking across courses.
 
-- **Spring Boot/Kotlin Backend**: Scalable, maintainable API services with excellent performance
-- **REST API Architecture**: Clean separation of concerns with standardized endpoints
-- **Tailwind CSS Frontend**: Responsive, accessible interface that works across all devices
-- **Multi-Authentication System**: Support for SAML2, OAuth2, and traditional authentication
-- **Comprehensive Learning Tools**: C-tests, flashcard trainers, and terminology management
-- **Advanced Analytics**: Detailed insights for teachers to track student progress
-- **Docker Deployment**: Containerized deployment with monitoring and backup solutions
+Authentication was a key challenge: the system integrates SAML2 for university SSO alongside OAuth2 for external access, giving students seamless login regardless of context.
 
-## Key Features
+## The Result
 
-### Course Management
-A flexible system for creating and organizing educational content into courses and units, with support for various content types and learning paths.
-
-### Learning Tools
-Specialized educational tools including C-tests for language proficiency assessment, flashcard trainers for vocabulary practice, and terminology management.
-
-### Teacher Analytics
-Comprehensive analytics for instructors to monitor group performance, course completion rates, skill proficiency, and individual student achievements.
-
-### Multi-Authentication Support
-Secure authentication with multiple methods including SAML2 for institutional identity providers, OAuth2 for social login, and traditional username/password authentication.
-
-## The Results
-
-The new platform has transformed the digital learning experience at HTWK Leipzig, with significant improvements:
-
-- 60% increase in student engagement with course materials
-- 50% reduction in technical support requests
-- 70% faster course creation and management for instructors
-- Seamless integration with existing university systems
-- Improved accessibility compliance, making learning accessible to all students
-
-## Technologies Used
-
-- **Backend**: Spring Boot 3.2, Kotlin 1.9
-- **Database**: PostgreSQL 14
-- **Security**: Spring Security with SAML2 and OAuth2
-- **Frontend**: Tailwind CSS
-- **Monitoring**: Prometheus, Grafana, Micrometer
-- **Resilience**: Resilience4j, Caffeine caching
-- **Testing**: JUnit 5, MockK, Kotest, Testcontainers
-- **Deployment**: Docker, Docker Compose
+Since launch, student engagement has increased by 60%. Technical support requests dropped by half. The platform handles peak-semester load without degradation and has become a model for future HTWK digital services.
