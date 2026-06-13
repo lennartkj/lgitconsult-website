@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import AuditDeliverable, { AuditData } from "@/components/audit/AuditDeliverable";
 
 export const metadata: Metadata = {
-  title: "The Audit — Sample | LGIT",
+  title: "The Audit · Patina — Sample",
   description: "A sample Audit deliverable.",
   robots: { index: false, follow: false },
 };

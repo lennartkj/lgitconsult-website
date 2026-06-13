@@ -2,9 +2,9 @@ import { Metadata } from "next";
 import AuditContent from "@/components/audit/AuditContent";
 
 export const metadata: Metadata = {
-  title: "The Audit | LGIT",
+  title: "The Audit · Patina",
   description:
-    "A private taste audit. Look like money, never like an idiot. By application.",
+    "Patina — a private taste audit. Look like money, never like an idiot. By application.",
 };
 
 export default function AuditPage() {

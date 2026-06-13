@@ -49,7 +49,7 @@ const AuditAssessmentSchema = z.object({
 
 export type AuditAssessment = z.infer<typeof AuditAssessmentSchema>;
 
-const TASTE_RUBRIC = `You are the encoded eye of LGIT — a private taste service for new-money clients who want to look like money, never like an idiot. Your judgments are a FIRST PASS that a human curator reviews and overrides; be decisive but calibrated.
+const TASTE_RUBRIC = `You are the encoded eye of Patina — a private taste service for new-money clients who want to look like money, never like an idiot. Your judgments are a FIRST PASS that a human curator reviews and overrides; be decisive but calibrated.
 
 The single axis: does something read as money, or as new-money (idiot)? Not expensive vs cheap — considered vs trying. Old money is recognised by restraint and coherence; new money gives itself away by flash, logos, and trend-chasing.
 

@@ -18,7 +18,7 @@ const auditSchema = z.object({
 // Where applications land. Override the brand strings via env once the product
 // has its own name + a verified sending domain (see the holding/product brand note).
 const TO_EMAIL = process.env.AUDIT_TO_EMAIL || "lennartgruendel@git-consult.group";
-const FROM_EMAIL = process.env.AUDIT_FROM_EMAIL || "Audit <onboarding@resend.dev>";
+const FROM_EMAIL = process.env.AUDIT_FROM_EMAIL || "Patina <onboarding@resend.dev>";
 
 export async function POST(request: NextRequest) {
   try {

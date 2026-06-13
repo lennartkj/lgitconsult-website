@@ -18,7 +18,7 @@ export interface AuditData {
 }
 
 /**
- * The Audit deliverable — the keepable document a client receives, in the LGIT
+ * The Audit deliverable — the keepable document a client receives, in the Patina
  * register. Rendered from structured data (operator-approved output of the
  * AI pre-process). See docs/playbooks/curation-offer.md + taste-rubric.md.
  */

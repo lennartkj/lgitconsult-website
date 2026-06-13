@@ -89,6 +89,9 @@ export default function AuditContent() {
               custom={0}
               className="col-span-12 md:col-span-9"
             >
+              <span className="font-mono text-[12px] uppercase tracking-[0.35em] text-fg/70 block mb-10">
+                Patina
+              </span>
               <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">
                 001 — The Audit
               </span>
@@ -265,7 +268,7 @@ export default function AuditContent() {
                       className="mt-1 accent-fg"
                     />
                     <span className="text-fg/50 text-sm leading-relaxed">
-                      I agree that LGIT may store and process this information to
+                      I agree that Patina may store and process this information to
                       respond to my application, per the privacy policy.
                     </span>
                   </label>
