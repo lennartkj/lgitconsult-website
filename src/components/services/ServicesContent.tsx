@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import NextLink from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Service, ProcessStep } from "@/lib/data/types";
@@ -95,7 +96,9 @@ export default function ServicesContent({ services, processSteps }: ServicesCont
                                     </div>
                                     <div className="col-span-12 md:col-span-4">
                                         <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 mb-3">{service.icon}</div>
-                                        <h2 className="text-2xl md:text-3xl font-light tracking-tight mb-3">{service.title}</h2>
+                                        <NextLink href={`/services/${service.slug}`} className="group/svc inline-block mb-3">
+                                            <h2 className="text-2xl md:text-3xl font-light tracking-tight group-hover/svc:text-fg/60 transition-colors">{service.title}</h2>
+                                        </NextLink>
                                         <p className="text-sm text-fg/50 leading-relaxed">{service.description}</p>
                                     </div>
                                     <div className="col-span-12 md:col-span-4 md:col-start-7">
