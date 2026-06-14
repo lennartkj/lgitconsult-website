@@ -5,8 +5,6 @@
 export {
   getAllProjects,
   getFeaturedProjects,
-  getProjectBySlug,
-  getRelatedProjects,
 } from './projects';
 export type { Project } from './types';
 
