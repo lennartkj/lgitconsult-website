@@ -8,7 +8,7 @@ const imageSchema = z.object({
   dataBase64: z.string().min(1),
 });
 
-// The Audit application schema — mirrors the intake fields in AuditContent.
+// The Audit application schema — mirrors the intake fields in AuditWizard.
 const auditSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),

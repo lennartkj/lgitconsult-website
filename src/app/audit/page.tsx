@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import AuditContent from "@/components/audit/AuditContent";
+import AuditWizard from "@/components/audit/AuditWizard";
 
 export const metadata: Metadata = {
   title: "The Audit · Patina",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function AuditPage() {
-  return <AuditContent />;
+  return <AuditWizard />;
 }

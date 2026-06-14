@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import Navbar from "@/components/navigation/Navbar";
-import Footer from "@/components/navigation/Footer";
+import {
+  ConditionalNavbar,
+  ConditionalFooter,
+} from "@/components/navigation/ConditionalChrome";
 import { PreviewProvider } from "@/components/preview/PreviewProvider";
 import React, { Suspense } from 'react';
 import GlitchCoreProvider from '@/components/glitch/GlitchCoreProvider';
@@ -49,7 +51,7 @@ export default function RootLayout({
           <div className="flex min-h-screen flex-col">
 
             <Suspense fallback={null}>
-              <Navbar />
+              <ConditionalNavbar />
             </Suspense>
 
             <main className="flex-grow">
@@ -57,7 +59,7 @@ export default function RootLayout({
             </main>
 
             <Suspense fallback={null}>
-              <Footer />
+              <ConditionalFooter />
             </Suspense>
 
           </div>

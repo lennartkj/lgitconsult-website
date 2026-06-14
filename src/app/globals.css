@@ -65,6 +65,32 @@ a, button, [role="button"], input, select, textarea, label {
   cursor: crosshair;
 }
 
+/* ── Audit — clinical "Severance" register, scoped to the intake ───────────── */
+/* Applied via the .audit-clinical wrapper on /audit only, so the rest of the   */
+/* site keeps its editorial register. Flat cool white, near-black, gallery-cold.*/
+.audit-clinical {
+  --bg: #fafafa;
+  --fg: #0a0a0a;
+  --muted: #f0f0ef;
+  --subtle: #9a9a96;
+  --accent: #0a0a0a;
+  --accent-contrast: #fafafa;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* Stay light + clinical even when the OS prefers dark. */
+@media (prefers-color-scheme: dark) {
+  .audit-clinical {
+    --bg: #fafafa;
+    --fg: #0a0a0a;
+    --muted: #f0f0ef;
+    --subtle: #9a9a96;
+    --accent: #0a0a0a;
+    --accent-contrast: #fafafa;
+  }
+}
+
 /* Editorial image treatment — grain overlay */
 .img-editorial {
   position: relative;
