@@ -8,6 +8,7 @@ import {
   easeOut,
 } from "framer-motion";
 import { compressImage, type UploadedImage } from "./compressImage";
+import { track } from "@/lib/track";
 
 const FOCUS_OPTIONS = [
   "Wardrobe",
@@ -92,6 +93,15 @@ export default function AuditWizard() {
     return () => clearTimeout(t);
   }, [step, view]);
 
+  // Funnel instrumentation (Phase 0).
+  useEffect(() => {
+    track("audit_view");
+  }, []);
+  useEffect(() => {
+    if (view === "form") track("audit_step", { step: current.id, index: step });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, view]);
+
   const toggleFocus = (option: string) =>
     setFocus((prev) =>
       prev.includes(option)
@@ -172,6 +182,7 @@ export default function AuditWizard() {
         setError(data.message || "Please check your entries and try again.");
         return;
       }
+      track("audit_submit");
       setStatus("idle");
       setView("done");
     } catch {
@@ -278,14 +289,21 @@ export default function AuditWizard() {
                   what quietly gives you away, and what to acquire next. Eight
                   questions. Around two minutes.
                 </p>
-                <div className="mt-12">
+                <div className="mt-12 flex flex-wrap items-center gap-8">
                   <button
                     type="button"
-                    onClick={() => { setView("form"); setStep(0); }}
+                    onClick={() => { track("audit_begin"); setView("form"); setStep(0); }}
                     className="font-mono text-[12px] uppercase tracking-[0.2em] border border-fg px-8 py-4 hover:bg-fg hover:text-bg transition-colors"
                   >
                     Begin ▸
                   </button>
+                  <a
+                    href="/audit/gift"
+                    onClick={() => track("gift_click")}
+                    className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40 hover:text-fg transition-colors"
+                  >
+                    Gifting it to someone? ▸
+                  </a>
                 </div>
               </motion.div>
             )}
