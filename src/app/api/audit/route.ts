@@ -8,26 +8,24 @@ const imageSchema = z.object({
   dataBase64: z.string().min(1),
 });
 
-// The Audit application schema — mirrors the intake fields in AuditWizard.
+// The Audit application — the intake is now a taste-profile test (AuditWizard):
+// name + email + budget + a derived taste type, plus two human "flavour" answers
+// (childhood sweet, what they saw in the pattern). focus/about are legacy-optional.
 const auditSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
-  focus: z.array(z.string()).min(1, { message: "Select at least one focus" }),
-  budget: z.string().min(1, { message: "Please select a budget range" }),
-  about: z.string().min(10, { message: "Tell us a little more (10+ characters)" }),
+  budget: z.string().optional().default(""),
+  tasteType: z.string().optional().default(""),
+  sweet: z.string().optional().default(""),
+  seen: z.string().optional().default(""),
+  focus: z.array(z.string()).optional().default([]),
+  about: z.string().optional().default(""),
   links: z.string().optional().default(""),
-  consent: z
-    .boolean()
-    .refine((val) => val === true, { message: "Consent is required" }),
-  // Honeypot — humans leave it empty; bots fill it. Optional, never shown.
-  company: z.string().optional().default(""),
-  // Client-compressed photos (base64, no data: prefix). Capped to keep the
-  // request well under the serverless body limit.
+  consent: z.boolean().refine((val) => val === true, { message: "Consent is required" }),
+  company: z.string().optional().default(""), // honeypot
   images: z.array(imageSchema).max(6).optional().default([]),
 });
 
-// Where applications land. Override the brand strings via env once the product
-// has its own name + a verified sending domain (see the holding/product brand note).
 const TO_EMAIL = process.env.AUDIT_TO_EMAIL || "lennartgruendel@git-consult.group";
 const FROM_EMAIL = process.env.AUDIT_FROM_EMAIL || "Patina <onboarding@resend.dev>";
 
@@ -35,7 +33,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const result = auditSchema.safeParse(body);
-
     if (!result.success) {
       return NextResponse.json(
         { success: false, errors: result.error.flatten().fieldErrors },
@@ -45,14 +42,10 @@ export async function POST(request: NextRequest) {
 
     const application = result.data;
 
-    // Honeypot tripped → a bot. Accept silently (don't tip it off), but do not
-    // log, email, or spend Opus tokens on it.
+    // Honeypot → bot. Accept silently; do not log, email, or spend tokens.
     if (application.company) {
       console.warn("Audit honeypot tripped — dropping submission.");
-      return NextResponse.json(
-        { success: true, message: "Application received." },
-        { status: 200 }
-      );
+      return NextResponse.json({ success: true, message: "Application received." }, { status: 200 });
     }
 
     const { images } = application;
@@ -62,56 +55,48 @@ export async function POST(request: NextRequest) {
       budget: application.budget,
       about: application.about,
       links: application.links,
+      tasteType: application.tasteType,
+      sweet: application.sweet,
+      seen: application.seen,
     };
     const resendKey = process.env.RESEND_API_KEY;
 
-    // Always log (without the base64 blobs) — a lead is never lost even if email fails.
     console.log("Audit application:", { ...intake, imageCount: images.length });
 
-    // Immediate operator email — the raw application, sent in-request as the
-    // reliable backup. The richer AI draft follows via after() below.
     if (resendKey) {
       const lines = [
         `New Audit application.`,
         ``,
         `Name:    ${intake.name}`,
         `Email:   ${application.email}`,
-        `Focus:   ${intake.focus.join(", ")}`,
-        `Budget:  ${intake.budget}`,
+        intake.tasteType ? `Type:    ${intake.tasteType}` : `Type:    —`,
+        `Budget:  ${intake.budget || "—"}`,
         `Photos:  ${images.length}`,
         ``,
-        `About / where they want to land:`,
-        intake.about,
-        ``,
-        intake.links ? `Links:\n${intake.links}` : `Links: —`,
+        intake.sweet ? `Childhood sweet: ${intake.sweet}` : ``,
+        intake.seen ? `Saw in the pattern: ${intake.seen}` : ``,
         ``,
         images.length
           ? `An AI first-pass assessment follows in a separate email.`
           : `No photos attached — AI first-pass will be text-only.`,
-      ];
+      ].filter((l) => l !== ``);
       try {
         const resend = new Resend(resendKey);
         await resend.emails.send({
           from: FROM_EMAIL,
           to: TO_EMAIL,
           replyTo: application.email,
-          subject: `New Audit application — ${intake.name}`,
+          subject: `New Audit application — ${intake.name}${intake.tasteType ? ` (${intake.tasteType})` : ""}`,
           text: lines.join("\n"),
         });
       } catch (err) {
         console.error("Audit email delivery failed (application still logged):", err);
       }
     } else {
-      console.warn(
-        "RESEND_API_KEY not set — Audit application logged only, no email sent."
-      );
+      console.warn("RESEND_API_KEY not set — Audit application logged only, no email sent.");
     }
 
-    // The 80%: run the AI pre-process AFTER responding, so the applicant gets an
-    // instant ack and never waits on the model. The draft + raw assessment land
-    // in the operator's inbox to review and override (the operator review queue,
-    // inbox-edition). Tokens are only spent on submissions that pass schema +
-    // honeypot, never on raw bot spam. See docs/products/patina/DECISIONS.md.
+    // The 80%: AI first-pass after the response, only on screened submissions.
     after(async () => {
       if (!process.env.ANTHROPIC_API_KEY) {
         console.warn("ANTHROPIC_API_KEY not set — skipping Audit AI pre-process.");
@@ -119,9 +104,8 @@ export async function POST(request: NextRequest) {
       }
       try {
         const assessment = await assessAudit(intake, images as AuditImage[]);
-
         const draft = [
-          `AI first-pass assessment for ${intake.name} — review, override, then send.`,
+          `AI first-pass assessment for ${intake.name}${intake.tasteType ? ` — ${intake.tasteType}` : ""}. Review, override, then send.`,
           `This is the 80%. The eye is the product; nothing ships unrefined.`,
           ``,
           `SUMMARY`,
@@ -138,8 +122,7 @@ export async function POST(request: NextRequest) {
           ``,
           `STARTER LIST`,
           ...assessment.starter.map(
-            (s) =>
-              `  • ${s.piece} — ${s.where}${s.range ? ` (${s.range})` : ""}\n    ${s.why}`
+            (s) => `  • ${s.piece} — ${s.where}${s.range ? ` (${s.range})` : ""}\n    ${s.why}`
           ),
           ``,
           `— Refine, then paste into the AuditDeliverable data to produce the client document.`,
@@ -162,18 +145,11 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json(
-      { success: true, message: "Application received." },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true, message: "Application received." }, { status: 200 });
   } catch (error) {
     console.error("Error processing audit application:", error);
     return NextResponse.json(
-      {
-        success: false,
-        message:
-          "There was an error processing your request. Please try again later.",
-      },
+      { success: false, message: "There was an error processing your request. Please try again later." },
       { status: 500 }
     );
   }

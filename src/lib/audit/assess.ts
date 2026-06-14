@@ -24,6 +24,12 @@ export interface AuditIntake {
   budget: string;
   about: string;
   links?: string;
+  /** Derived taste archetype from the intake test (e.g. "The Heir"). */
+  tasteType?: string;
+  /** Childhood-sweet answer — human texture for the eye. */
+  sweet?: string;
+  /** What they saw in the randomized pattern (Rorschach-style). */
+  seen?: string;
 }
 
 export interface AuditImage {
@@ -71,9 +77,12 @@ export async function assessAudit(
     `A new client has applied for an Audit. Produce the first-pass assessment.`,
     ``,
     `Name: ${intake.name}`,
-    `Wants the eye on: ${intake.focus.join(", ")}`,
-    `Acquisition budget: ${intake.budget}`,
-    `About them / where they want to land: ${intake.about}`,
+    intake.tasteType ? `Taste type (from the intake test): ${intake.tasteType}` : ``,
+    intake.budget ? `Acquisition budget: ${intake.budget}` : ``,
+    intake.focus.length ? `Wants the eye on: ${intake.focus.join(", ")}` : ``,
+    intake.about ? `About them / where they want to land: ${intake.about}` : ``,
+    intake.sweet ? `Childhood sweet (a clue to their instinct): ${intake.sweet}` : ``,
+    intake.seen ? `In a randomized pattern they saw: ${intake.seen}` : ``,
     intake.links ? `Links: ${intake.links}` : ``,
     images.length ? `(${images.length} photo(s) of them / their space / current pieces attached.)` : ``,
     ``,

@@ -12,19 +12,19 @@ export const metadata: Metadata = {
 const config: CaptureConfig = {
   product: "Patina · Gifted Audit",
   trackPrefix: "gift",
-  kicker: "Patina · The Audit",
-  title: "Gift the Audit",
-  body: "Give someone the eye — a private read of what to keep, what to lose, what to acquire. Arranged discreetly; they never see the machinery, only the verdict.",
+  kicker: "Patina · In Confidence",
+  title: "Give the culture.",
+  body: "Some things cannot be bought for oneself; they have to be given. The eye, over a home, a wardrobe, whatever someone collects — arranged in private, so they receive only the conclusion.",
   extraLabel: "Who is it for?",
   extraPlaceholder: "Their name",
   noteLabel: "Anything we should know?",
-  notePlaceholder: "The occasion, the relationship, anything useful.",
-  cta: "Request a gift ▸",
-  success: "Noted.",
+  notePlaceholder: "The occasion, the relationship.",
+  cta: "Arrange it ▸",
+  success: "Consider it done.",
   successBody:
-    "The gifted Audit is arranged privately, by request. We will be in touch with how it works and how to present it.",
+    "We will be in touch privately, with how it works and how to give it.",
   consentText:
-    "I agree that Patina may store and process this information to arrange the gift, per the privacy policy.",
+    "I agree that Patina may keep and use what I show, to arrange the gift, in confidence — per the privacy policy.",
   backHref: "/audit",
   backLabel: "◂ The Audit",
 };
