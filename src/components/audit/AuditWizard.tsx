@@ -126,6 +126,15 @@ export default function AuditWizard() {
   const removeImage = (i: number) =>
     setImages((prev) => prev.filter((_, idx) => idx !== i));
 
+  // Single-select → confirm with a beat, then advance (Typeform-style).
+  function selectBudget(b: string) {
+    setBudget(b);
+    window.setTimeout(
+      () => setStep((s) => (s < STEPS.length - 1 ? s + 1 : s)),
+      240
+    );
+  }
+
   function canContinue(): boolean {
     switch (current.id) {
       case "name":
@@ -222,6 +231,15 @@ export default function AuditWizard() {
         />
       </div>
 
+      {/* Screen-reader step announcements */}
+      <span aria-live="polite" className="sr-only">
+        {view === "form"
+          ? `Step ${step + 1} of ${STEPS.length}`
+          : view === "done"
+          ? "Application received"
+          : ""}
+      </span>
+
       {/* System header + progress (only during the form) */}
       {view === "form" && (
         <header className="px-6 pt-8 sm:px-10">
@@ -251,14 +269,14 @@ export default function AuditWizard() {
           <AnimatePresence mode="wait">
             {view === "cover" && (
               <motion.div key="cover" {...fade}>
-                <span className={labelCls}>Patina</span>
+                <span className={labelCls}>Patina · Intake Protocol</span>
                 <h1 className="mt-8 text-6xl md:text-8xl font-light tracking-tighter leading-[0.9]">
                   The Audit
                 </h1>
                 <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">
                   A private assessment of where you stand — what reads as money,
-                  what gives you away, and what to acquire. Answered one question
-                  at a time. Roughly two minutes.
+                  what quietly gives you away, and what to acquire next. Eight
+                  questions. Around two minutes.
                 </p>
                 <div className="mt-12">
                   <button
@@ -280,13 +298,16 @@ export default function AuditWizard() {
 
             {view === "done" && (
               <motion.div key="done" {...fade}>
-                <span className={labelCls}>Patina · Intake</span>
+                <span className={labelCls}>Patina · Intake Protocol</span>
                 <h2 className="mt-8 text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">
                   Received.
                 </h2>
                 <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">
-                  Your application is in review. If it is a fit, you will hear
-                  from us — and we will ask for anything we still need to begin.
+                  Your file is in review. If it is a fit, you will hear from us —
+                  and we will request anything else we need to begin.
+                </p>
+                <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.25em] text-fg/30">
+                  Patina · Intake · Logged
                 </p>
               </motion.div>
             )}
@@ -351,17 +372,20 @@ export default function AuditWizard() {
       case "focus":
         return (
           <Field q="What do you want the eye on?" hint="Select all that apply.">
-            <div className="flex flex-wrap gap-3" data-autofocus tabIndex={-1}>
+            <div className="flex flex-wrap gap-3">
               {FOCUS_OPTIONS.map((option) => {
                 const active = focus.includes(option);
                 return (
                   <button
-                    key={option} type="button" onClick={() => toggleFocus(option)}
-                    className={`font-mono text-[12px] uppercase tracking-[0.1em] px-5 py-3 border transition-colors ${
-                      active ? "bg-fg text-bg border-fg" : "border-fg/25 text-fg/60 hover:border-fg/60"
+                    key={option} type="button" aria-pressed={active}
+                    onClick={() => toggleFocus(option)}
+                    className={`cursor-pointer select-none font-mono text-[12px] uppercase tracking-[0.1em] px-5 py-3 border transition-all active:translate-y-px ${
+                      active
+                        ? "bg-fg text-bg border-fg"
+                        : "border-fg/30 text-fg/70 hover:border-fg hover:text-fg"
                     }`}
                   >
-                    {option}
+                    {active ? "✓ " : ""}{option}
                   </button>
                 );
               })}
@@ -370,19 +394,24 @@ export default function AuditWizard() {
         );
       case "budget":
         return (
-          <Field q="What is your acquisition budget?">
+          <Field q="What is your acquisition budget?" hint="Select one.">
             <div className="border-t border-fg/15">
               {BUDGET_OPTIONS.map((b) => {
                 const active = budget === b;
                 return (
                   <button
-                    key={b} type="button" onClick={() => setBudget(b)}
-                    className={`flex w-full items-center justify-between border-b border-fg/15 py-5 text-left transition-colors ${
-                      active ? "text-fg" : "text-fg/55 hover:text-fg"
+                    key={b} type="button" aria-pressed={active}
+                    onClick={() => selectBudget(b)}
+                    className={`group flex w-full cursor-pointer select-none items-center justify-between border-b border-fg/15 py-5 pl-4 text-left transition-all ${
+                      active ? "bg-fg/[0.04] text-fg" : "text-fg/55 hover:pl-6 hover:text-fg"
                     }`}
                   >
                     <span className="text-xl font-light">{b}</span>
-                    <span className={`h-3 w-3 border ${active ? "bg-fg border-fg" : "border-fg/30"}`} />
+                    <span
+                      className={`mr-4 h-2.5 w-2.5 rotate-45 border transition-colors ${
+                        active ? "bg-fg border-fg" : "border-fg/30 group-hover:border-fg"
+                      }`}
+                    />
                   </button>
                 );
               })}

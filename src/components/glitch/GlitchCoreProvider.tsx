@@ -104,6 +104,8 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
     // Interaction listeners
     useEffect(() => {
         const handleInteraction = (delta: number) => {
+            // Keep the Audit dezent — ambient surveyor-lines only, no scroll burst.
+            if (pathname === "/audit" || pathname?.startsWith("/audit/")) return;
             interactionDeltaRef.current += Math.abs(delta);
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             timeoutRef.current = setTimeout(() => {
@@ -136,7 +138,7 @@ export default function GlitchCoreProvider({ children }: GlitchCoreProviderProps
             window.removeEventListener('touchmove', handleTouchMove);
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
-    }, [scanVisibleCharacters, triggerMultipleEffects]);
+    }, [scanVisibleCharacters, triggerMultipleEffects, pathname]);
 
     return (
         <GlitchCoreContext.Provider value={{ effectQueue, clearQueue }}>
