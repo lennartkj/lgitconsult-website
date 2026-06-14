@@ -33,6 +33,50 @@ const inputClass =
 const labelClass =
   "font-mono text-[10px] uppercase tracking-[0.15em] text-fg/40 block mb-3";
 
+const MAX_IMAGES = 5;
+
+type UploadedImage = {
+  mediaType: "image/jpeg";
+  dataBase64: string; // no data: prefix — matches AuditImage in lib/audit/assess.ts
+  previewUrl: string; // full data URL, for the thumbnail only
+  name: string;
+};
+
+// Resize + recompress in the browser so payloads stay small (a few hundred KB
+// each) and well under the serverless body limit — the eye doesn't need originals.
+async function compressImage(
+  file: File,
+  maxDim = 1600,
+  quality = 0.82
+): Promise<Omit<UploadedImage, "name">> {
+  const dataUrl: string = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("read failed"));
+    reader.readAsDataURL(file);
+  });
+  const img: HTMLImageElement = await new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = () => reject(new Error("decode failed"));
+    i.src = dataUrl;
+  });
+  let { width, height } = img;
+  if (width > maxDim || height > maxDim) {
+    const scale = Math.min(maxDim / width, maxDim / height);
+    width = Math.round(width * scale);
+    height = Math.round(height * scale);
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("no canvas context");
+  ctx.drawImage(img, 0, 0, width, height);
+  const out = canvas.toDataURL("image/jpeg", quality);
+  return { mediaType: "image/jpeg", dataBase64: out.split(",")[1] ?? "", previewUrl: out };
+}
+
 type Status = "idle" | "submitting" | "success" | "error";
 
 export default function AuditContent() {
@@ -43,6 +87,9 @@ export default function AuditContent() {
   const [about, setAbout] = useState("");
   const [links, setLinks] = useState("");
   const [consent, setConsent] = useState(false);
+  const [images, setImages] = useState<UploadedImage[]>([]);
+  const [imgError, setImgError] = useState("");
+  const [company, setCompany] = useState(""); // honeypot — humans leave it empty
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -53,6 +100,33 @@ export default function AuditContent() {
         : [...prev, option]
     );
 
+  async function handleFiles(fileList: FileList | null) {
+    if (!fileList || fileList.length === 0) return;
+    setImgError("");
+    const room = MAX_IMAGES - images.length;
+    if (room <= 0) {
+      setImgError(`Up to ${MAX_IMAGES} photos.`);
+      return;
+    }
+    const incoming = Array.from(fileList);
+    const toAdd = incoming.slice(0, room);
+    try {
+      const compressed = await Promise.all(toAdd.map((f) => compressImage(f)));
+      setImages((prev) => [
+        ...prev,
+        ...compressed.map((c, i) => ({ ...c, name: toAdd[i].name })),
+      ]);
+      if (incoming.length > room) {
+        setImgError(`Added the first ${room} — up to ${MAX_IMAGES} photos.`);
+      }
+    } catch {
+      setImgError("Could not read one of those images — try a different file.");
+    }
+  }
+
+  const removeImage = (i: number) =>
+    setImages((prev) => prev.filter((_, idx) => idx !== i));
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("submitting");
@@ -61,7 +135,10 @@ export default function AuditContent() {
       const res = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, focus, budget, about, links, consent }),
+        body: JSON.stringify({
+          name, email, focus, budget, about, links, consent, company,
+          images: images.map(({ mediaType, dataBase64 }) => ({ mediaType, dataBase64 })),
+        }),
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
@@ -258,6 +335,72 @@ export default function AuditContent() {
                       onChange={(e) => setLinks(e.target.value)}
                       className={`${inputClass} resize-none`}
                       placeholder="Paste any links that show your world."
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelClass} htmlFor="photos">
+                      Photographs{" "}
+                      <span className="text-fg/25">
+                        (optional — you, your space, current pieces; up to {MAX_IMAGES})
+                      </span>
+                    </label>
+                    <input
+                      id="photos"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => {
+                        handleFiles(e.target.files);
+                        e.target.value = "";
+                      }}
+                      className="block w-full text-sm text-fg/50 file:mr-4 file:rounded-none file:border file:border-fg/20 file:bg-transparent file:px-4 file:py-2 file:font-mono file:text-[11px] file:uppercase file:tracking-[0.1em] file:text-fg/70 hover:file:border-fg/50"
+                    />
+                    {imgError && (
+                      <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.1em] text-fg/70">
+                        {imgError}
+                      </p>
+                    )}
+                    {images.length > 0 && (
+                      <div className="mt-5 grid grid-cols-3 sm:grid-cols-5 gap-3">
+                        {images.map((img, i) => (
+                          <div
+                            key={i}
+                            className="relative aspect-square overflow-hidden border border-fg/10"
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={img.previewUrl}
+                              alt={img.name}
+                              className="h-full w-full object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeImage(i)}
+                              aria-label="Remove photo"
+                              className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center border border-fg/20 bg-bg/80 text-xs leading-none text-fg"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Honeypot — off-screen; humans never fill it, bots do. */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute left-[-9999px] top-[-9999px] h-0 w-0 overflow-hidden"
+                  >
+                    <label htmlFor="company">Company</label>
+                    <input
+                      id="company"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
                     />
                   </div>
 

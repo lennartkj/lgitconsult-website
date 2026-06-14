@@ -1,6 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
+import { assessAudit, type AuditImage } from "@/lib/audit/assess";
+
+const imageSchema = z.object({
+  mediaType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]),
+  dataBase64: z.string().min(1),
+});
 
 // The Audit application schema — mirrors the intake fields in AuditContent.
 const auditSchema = z.object({
@@ -13,6 +19,11 @@ const auditSchema = z.object({
   consent: z
     .boolean()
     .refine((val) => val === true, { message: "Consent is required" }),
+  // Honeypot — humans leave it empty; bots fill it. Optional, never shown.
+  company: z.string().optional().default(""),
+  // Client-compressed photos (base64, no data: prefix). Capped to keep the
+  // request well under the serverless body limit.
+  images: z.array(imageSchema).max(6).optional().default([]),
 });
 
 // Where applications land. Override the brand strings via env once the product
@@ -34,35 +45,60 @@ export async function POST(request: NextRequest) {
 
     const application = result.data;
 
-    // Always log as a backup — a lead is never lost even if email delivery fails.
-    console.log("Audit application:", application);
+    // Honeypot tripped → a bot. Accept silently (don't tip it off), but do not
+    // log, email, or spend Opus tokens on it.
+    if (application.company) {
+      console.warn("Audit honeypot tripped — dropping submission.");
+      return NextResponse.json(
+        { success: true, message: "Application received." },
+        { status: 200 }
+      );
+    }
 
-    const apiKey = process.env.RESEND_API_KEY;
-    if (apiKey) {
+    const { images } = application;
+    const intake = {
+      name: application.name,
+      focus: application.focus,
+      budget: application.budget,
+      about: application.about,
+      links: application.links,
+    };
+    const resendKey = process.env.RESEND_API_KEY;
+
+    // Always log (without the base64 blobs) — a lead is never lost even if email fails.
+    console.log("Audit application:", { ...intake, imageCount: images.length });
+
+    // Immediate operator email — the raw application, sent in-request as the
+    // reliable backup. The richer AI draft follows via after() below.
+    if (resendKey) {
       const lines = [
         `New Audit application.`,
         ``,
-        `Name:    ${application.name}`,
+        `Name:    ${intake.name}`,
         `Email:   ${application.email}`,
-        `Focus:   ${application.focus.join(", ")}`,
-        `Budget:  ${application.budget}`,
+        `Focus:   ${intake.focus.join(", ")}`,
+        `Budget:  ${intake.budget}`,
+        `Photos:  ${images.length}`,
         ``,
         `About / where they want to land:`,
-        application.about,
+        intake.about,
         ``,
-        application.links ? `Links:\n${application.links}` : `Links: —`,
+        intake.links ? `Links:\n${intake.links}` : `Links: —`,
+        ``,
+        images.length
+          ? `An AI first-pass assessment follows in a separate email.`
+          : `No photos attached — AI first-pass will be text-only.`,
       ];
       try {
-        const resend = new Resend(apiKey);
+        const resend = new Resend(resendKey);
         await resend.emails.send({
           from: FROM_EMAIL,
           to: TO_EMAIL,
           replyTo: application.email,
-          subject: `New Audit application — ${application.name}`,
+          subject: `New Audit application — ${intake.name}`,
           text: lines.join("\n"),
         });
       } catch (err) {
-        // Don't fail the applicant — the application is already logged as backup.
         console.error("Audit email delivery failed (application still logged):", err);
       }
     } else {
@@ -71,8 +107,60 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO (next): persist the application + kick off the AI pre-process
-    // (src/lib/audit/assess.ts) into an operator review queue.
+    // The 80%: run the AI pre-process AFTER responding, so the applicant gets an
+    // instant ack and never waits on the model. The draft + raw assessment land
+    // in the operator's inbox to review and override (the operator review queue,
+    // inbox-edition). Tokens are only spent on submissions that pass schema +
+    // honeypot, never on raw bot spam. See docs/products/patina/DECISIONS.md.
+    after(async () => {
+      if (!process.env.ANTHROPIC_API_KEY) {
+        console.warn("ANTHROPIC_API_KEY not set — skipping Audit AI pre-process.");
+        return;
+      }
+      try {
+        const assessment = await assessAudit(intake, images as AuditImage[]);
+
+        const draft = [
+          `AI first-pass assessment for ${intake.name} — review, override, then send.`,
+          `This is the 80%. The eye is the product; nothing ships unrefined.`,
+          ``,
+          `SUMMARY`,
+          assessment.summary,
+          ``,
+          `WHAT WORKS`,
+          ...assessment.works.map((w) => `  • ${w}`),
+          ``,
+          `WHAT TO LOSE`,
+          ...assessment.lose.map((l) => `  • ${l}`),
+          ``,
+          `DIRECTION`,
+          ...assessment.direction.map((d) => `  ${d}`),
+          ``,
+          `STARTER LIST`,
+          ...assessment.starter.map(
+            (s) =>
+              `  • ${s.piece} — ${s.where}${s.range ? ` (${s.range})` : ""}\n    ${s.why}`
+          ),
+          ``,
+          `— Refine, then paste into the AuditDeliverable data to produce the client document.`,
+        ].join("\n");
+
+        if (resendKey) {
+          const resend = new Resend(resendKey);
+          await resend.emails.send({
+            from: FROM_EMAIL,
+            to: TO_EMAIL,
+            replyTo: application.email,
+            subject: `Audit AI draft — ${intake.name} (review before sending)`,
+            text: draft,
+          });
+        } else {
+          console.log("Audit AI draft (no RESEND_API_KEY to send it):\n", draft);
+        }
+      } catch (err) {
+        console.error("Audit AI pre-process failed:", err);
+      }
+    });
 
     return NextResponse.json(
       { success: true, message: "Application received." },
