@@ -10,28 +10,50 @@ const inputCls =
 const fieldLabel =
   "font-mono text-[10px] uppercase tracking-[0.15em] text-fg/40 block mb-2";
 
+export type CaptureConfig = {
+  /** Waitlist product tag. */
+  product: string;
+  /** Funnel event prefix, e.g. "gift" → gift_view / gift_submit. */
+  trackPrefix: string;
+  kicker: string;
+  title: string;
+  body: string;
+  /** Optional single-line extra (e.g. recipient). */
+  extraLabel?: string;
+  extraPlaceholder?: string;
+  /** Optional free-text note. */
+  noteLabel?: string;
+  notePlaceholder?: string;
+  cta: string;
+  success: string;
+  successBody: string;
+  consentText: string;
+  backHref?: string;
+  backLabel?: string;
+};
+
 type Status = "idle" | "submitting" | "success" | "error";
 
-export default function GiftAudit() {
+export default function ClinicalCapture({ config }: { config: CaptureConfig }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [recipient, setRecipient] = useState("");
+  const [extra, setExtra] = useState("");
   const [note, setNote] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    track("gift_view");
-  }, []);
+    track(`${config.trackPrefix}_view`);
+  }, [config.trackPrefix]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("submitting");
     setError("");
     try {
-      const giftNote = [
-        recipient ? `For: ${recipient}` : null,
+      const fullNote = [
+        config.extraLabel && extra ? `${config.extraLabel} ${extra}` : null,
         note || null,
       ]
         .filter(Boolean)
@@ -40,10 +62,10 @@ export default function GiftAudit() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          product: "Patina · Gifted Audit",
+          product: config.product,
           name,
           email,
-          note: giftNote,
+          note: fullNote,
           consent,
         }),
       });
@@ -53,7 +75,7 @@ export default function GiftAudit() {
         setError(data.message || "Please check the form and try again.");
         return;
       }
-      track("gift_submit");
+      track(`${config.trackPrefix}_submit`);
       setStatus("success");
     } catch {
       setStatus("error");
@@ -72,72 +94,73 @@ export default function GiftAudit() {
       <div className="w-full max-w-xl">
         {status === "success" ? (
           <motion.div {...fade}>
-            <span className={labelCls}>Patina · Intake Protocol</span>
+            <span className={labelCls}>{config.kicker}</span>
             <h1 className="mt-8 text-5xl md:text-6xl font-light tracking-tighter leading-[0.95]">
-              Noted.
+              {config.success}
             </h1>
             <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">
-              The gifted Audit is arranged privately, by request. We will be in
-              touch with how it works and how to present it.
+              {config.successBody}
             </p>
             <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.25em] text-fg/30">
-              Patina · Gift · Logged
+              {config.kicker} · Logged
             </p>
           </motion.div>
         ) : (
           <motion.div {...fade}>
-            <span className={labelCls}>Patina · Intake Protocol</span>
+            <span className={labelCls}>{config.kicker}</span>
             <h1 className="mt-8 text-5xl md:text-6xl font-light tracking-tighter leading-[0.95]">
-              Gift the Audit
+              {config.title}
             </h1>
             <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">
-              Give someone the eye — a private read of what to keep, what to
-              lose, what to acquire. Arranged discreetly; they never see the
-              machinery, only the verdict.
+              {config.body}
             </p>
 
             <form onSubmit={handleSubmit} className="mt-12 space-y-8">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
-                  <label className={fieldLabel} htmlFor="g-name">Your name</label>
+                  <label className={fieldLabel} htmlFor="c-name">Your name</label>
                   <input
-                    id="g-name" type="text" required value={name}
+                    id="c-name" type="text" required value={name}
                     onChange={(e) => setName(e.target.value)}
                     className={inputCls} placeholder="Your name"
                   />
                 </div>
                 <div>
-                  <label className={fieldLabel} htmlFor="g-email">Your email</label>
+                  <label className={fieldLabel} htmlFor="c-email">Your email</label>
                   <input
-                    id="g-email" type="email" required value={email}
+                    id="c-email" type="email" required value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className={inputCls} placeholder="you@example.com"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className={fieldLabel} htmlFor="g-recipient">
-                  Who is it for? <span className="text-fg/25">(optional)</span>
-                </label>
-                <input
-                  id="g-recipient" type="text" value={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
-                  className={inputCls} placeholder="Their name"
-                />
-              </div>
+              {config.extraLabel && (
+                <div>
+                  <label className={fieldLabel} htmlFor="c-extra">
+                    {config.extraLabel} <span className="text-fg/25">(optional)</span>
+                  </label>
+                  <input
+                    id="c-extra" type="text" value={extra}
+                    onChange={(e) => setExtra(e.target.value)}
+                    className={inputCls} placeholder={config.extraPlaceholder}
+                  />
+                </div>
+              )}
 
-              <div>
-                <label className={fieldLabel} htmlFor="g-note">
-                  Anything we should know? <span className="text-fg/25">(optional)</span>
-                </label>
-                <textarea
-                  id="g-note" rows={2} value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  className={`${inputCls} resize-none`}
-                  placeholder="The occasion, the relationship, anything useful."
-                />
-              </div>
+              {config.noteLabel && (
+                <div>
+                  <label className={fieldLabel} htmlFor="c-note">
+                    {config.noteLabel} <span className="text-fg/25">(optional)</span>
+                  </label>
+                  <textarea
+                    id="c-note" rows={2} value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    className={`${inputCls} resize-none`}
+                    placeholder={config.notePlaceholder}
+                  />
+                </div>
+              )}
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
@@ -146,8 +169,7 @@ export default function GiftAudit() {
                   className="mt-1.5 accent-fg"
                 />
                 <span className="text-fg/55 text-sm leading-relaxed max-w-md">
-                  I agree that Patina may store and process this information to
-                  arrange the gift, per the privacy policy.
+                  {config.consentText}
                 </span>
               </label>
 
@@ -161,16 +183,15 @@ export default function GiftAudit() {
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="font-mono text-[12px] uppercase tracking-[0.15em] border border-fg px-7 py-3 hover:bg-fg hover:text-bg transition-colors disabled:opacity-25 disabled:pointer-events-none"
+                  className="ac-btn font-mono text-[12px] uppercase tracking-[0.15em] px-7 py-3 disabled:opacity-25 disabled:pointer-events-none"
                 >
-                  {status === "submitting" ? "Sending…" : "Request a gift ▸"}
+                  {status === "submitting" ? "Sending…" : config.cta}
                 </button>
-                <a
-                  href="/audit"
-                  className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40 hover:text-fg transition-colors"
-                >
-                  ◂ The Audit
-                </a>
+                {config.backHref && (
+                  <a href={config.backHref} className="ac-link font-mono text-[11px] uppercase tracking-[0.15em]">
+                    {config.backLabel ?? "◂ Back"}
+                  </a>
+                )}
               </div>
             </form>
           </motion.div>

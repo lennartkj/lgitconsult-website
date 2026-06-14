@@ -91,6 +91,38 @@ a, button, [role="button"], input, select, textarea, label {
   }
 }
 
+/* Clinical UI primitives — these use real var() colors. NOTE: the global
+   bg-fg / text-bg / bg-muted utilities are UNREGISTERED no-ops in this Tailwind
+   theme (only background/foreground/subtle are tokens), so inverted/active
+   states must not rely on them. These classes guarantee the feedback renders. */
+.audit-clinical .ac-btn {
+  border: 1px solid var(--fg);
+  color: var(--fg);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.audit-clinical .ac-btn:hover:not(:disabled) { background: var(--fg); color: var(--bg); }
+
+.audit-clinical .ac-link { color: color-mix(in srgb, var(--fg) 45%, transparent); transition: color 0.2s ease; }
+.audit-clinical .ac-link:hover { color: var(--fg); }
+
+.audit-clinical .ac-chip {
+  border: 1px solid color-mix(in srgb, var(--fg) 30%, transparent);
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.audit-clinical .ac-chip:hover { border-color: var(--fg); color: var(--fg); }
+.audit-clinical .ac-chip[aria-pressed="true"] {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.audit-clinical .ac-row { transition: background-color 0.15s ease; }
+.audit-clinical .ac-row[aria-pressed="true"] { background: color-mix(in srgb, var(--fg) 5%, transparent); }
+.audit-clinical .ac-swatch { border: 1px solid color-mix(in srgb, var(--fg) 30%, transparent); }
+.audit-clinical .ac-row:hover .ac-swatch { border-color: var(--fg); }
+.audit-clinical .ac-row[aria-pressed="true"] .ac-swatch { background: var(--fg); border-color: var(--fg); }
+
 /* Editorial image treatment — grain overlay */
 .img-editorial {
   position: relative;

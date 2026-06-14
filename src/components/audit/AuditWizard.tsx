@@ -57,6 +57,25 @@ const labelCls =
 const inputCls =
   "w-full bg-transparent border-b border-fg/20 py-4 text-2xl md:text-3xl font-light text-fg placeholder:text-fg/20 focus:border-fg focus:outline-none transition-colors rounded-none";
 
+// Cover message A/B (MARKET.md §4). Sticky per visitor; variant tagged on funnel
+// events so per-variant conversion is readable from the [funnel] logs.
+const VARIANTS = ["H1", "H3", "H5"] as const;
+type Variant = (typeof VARIANTS)[number];
+const HEADLINES: Record<Variant, { title: string; body: string }> = {
+  H1: {
+    title: "Look like money. Never like an idiot.",
+    body: "A private assessment of where you stand — what reads as money, what quietly gives you away, and what to acquire next. Eight questions. Around two minutes.",
+  },
+  H3: {
+    title: "The eye, on call.",
+    body: "The judgment of a trusted eye across everything you own, wear, and hang — what to keep, what to lose, what to acquire next. On demand, in private. Eight questions, about two minutes.",
+  },
+  H5: {
+    title: "Before you spend €200k, get the read.",
+    body: "An independent assessment of where you stand — so you stop buying the wrong things. What already works, what to lose, what to acquire next. Eight questions, about two minutes.",
+  },
+};
+
 export default function AuditWizard() {
   const reduce = useReducedMotion();
 
@@ -76,6 +95,7 @@ export default function AuditWizard() {
 
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  const [variant, setVariant] = useState<Variant>("H1");
 
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -93,9 +113,22 @@ export default function AuditWizard() {
     return () => clearTimeout(t);
   }, [step, view]);
 
-  // Funnel instrumentation (Phase 0).
+  // Funnel instrumentation (Phase 0) + sticky A/B variant assignment.
   useEffect(() => {
-    track("audit_view");
+    let v: Variant = "H1";
+    try {
+      const stored = window.localStorage.getItem("patina_audit_variant");
+      if (stored && stored in HEADLINES) {
+        v = stored as Variant;
+      } else {
+        v = VARIANTS[Math.floor(Math.random() * VARIANTS.length)];
+        window.localStorage.setItem("patina_audit_variant", v);
+      }
+    } catch {
+      /* localStorage unavailable — fall back to H1 */
+    }
+    setVariant(v);
+    track("audit_view", { variant: v });
   }, []);
   useEffect(() => {
     if (view === "form") track("audit_step", { step: current.id, index: step });
@@ -182,7 +215,7 @@ export default function AuditWizard() {
         setError(data.message || "Please check your entries and try again.");
         return;
       }
-      track("audit_submit");
+      track("audit_submit", { variant });
       setStatus("idle");
       setView("done");
     } catch {
@@ -260,9 +293,13 @@ export default function AuditWizard() {
               Step {String(step + 1).padStart(2, "0")} / {String(STEPS.length).padStart(2, "0")}
             </span>
           </div>
-          <div className="mx-auto mt-4 h-px max-w-2xl bg-fg/15">
+          <div
+            className="mx-auto mt-4 h-px max-w-2xl"
+            style={{ background: "color-mix(in srgb, var(--fg) 15%, transparent)" }}
+          >
             <motion.div
-              className="h-px bg-fg"
+              className="h-px"
+              style={{ background: "var(--fg)" }}
               initial={false}
               animate={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
               transition={reduce ? { duration: 0 } : { duration: 0.45, ease: easeOut }}
@@ -280,29 +317,34 @@ export default function AuditWizard() {
           <AnimatePresence mode="wait">
             {view === "cover" && (
               <motion.div key="cover" {...fade}>
-                <span className={labelCls}>Patina · Intake Protocol</span>
-                <h1 className="mt-8 text-6xl md:text-8xl font-light tracking-tighter leading-[0.9]">
-                  The Audit
+                <span className={labelCls}>Patina · The Audit</span>
+                <h1 className="mt-8 max-w-2xl text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">
+                  {HEADLINES[variant].title}
                 </h1>
                 <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">
-                  A private assessment of where you stand — what reads as money,
-                  what quietly gives you away, and what to acquire next. Eight
-                  questions. Around two minutes.
+                  {HEADLINES[variant].body}
                 </p>
-                <div className="mt-12 flex flex-wrap items-center gap-8">
+                <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
                   <button
                     type="button"
-                    onClick={() => { track("audit_begin"); setView("form"); setStep(0); }}
-                    className="font-mono text-[12px] uppercase tracking-[0.2em] border border-fg px-8 py-4 hover:bg-fg hover:text-bg transition-colors"
+                    onClick={() => { track("audit_begin", { variant }); setView("form"); setStep(0); }}
+                    className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4"
                   >
                     Begin ▸
                   </button>
                   <a
+                    href="/audit/read"
+                    onClick={() => track("read_click")}
+                    className="ac-link font-mono text-[11px] uppercase tracking-[0.15em]"
+                  >
+                    Want it faster? The Read ▸
+                  </a>
+                  <a
                     href="/audit/gift"
                     onClick={() => track("gift_click")}
-                    className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40 hover:text-fg transition-colors"
+                    className="ac-link font-mono text-[11px] uppercase tracking-[0.15em]"
                   >
-                    Gifting it to someone? ▸
+                    Gifting it? ▸
                   </a>
                 </div>
               </motion.div>
@@ -340,7 +382,7 @@ export default function AuditWizard() {
             <button
               type="button"
               onClick={back}
-              className="font-mono text-[12px] uppercase tracking-[0.15em] text-fg/40 hover:text-fg transition-colors"
+              className="ac-link font-mono text-[12px] uppercase tracking-[0.15em]"
             >
               ◂ Back
             </button>
@@ -354,7 +396,7 @@ export default function AuditWizard() {
                 type="button"
                 onClick={next}
                 disabled={!canContinue() || status === "submitting"}
-                className="font-mono text-[12px] uppercase tracking-[0.15em] border border-fg px-7 py-3 hover:bg-fg hover:text-bg transition-colors disabled:opacity-25 disabled:pointer-events-none"
+                className="ac-btn font-mono text-[12px] uppercase tracking-[0.15em] px-7 py-3 disabled:opacity-25 disabled:pointer-events-none"
               >
                 {step === STEPS.length - 1
                   ? status === "submitting" ? "Sending…" : "Submit ▸"
@@ -397,11 +439,7 @@ export default function AuditWizard() {
                   <button
                     key={option} type="button" aria-pressed={active}
                     onClick={() => toggleFocus(option)}
-                    className={`cursor-pointer select-none font-mono text-[12px] uppercase tracking-[0.1em] px-5 py-3 border transition-all active:translate-y-px ${
-                      active
-                        ? "bg-fg text-bg border-fg"
-                        : "border-fg/30 text-fg/70 hover:border-fg hover:text-fg"
-                    }`}
+                    className="ac-chip cursor-pointer select-none font-mono text-[12px] uppercase tracking-[0.1em] px-5 py-3 active:translate-y-px"
                   >
                     {active ? "✓ " : ""}{option}
                   </button>
@@ -420,16 +458,10 @@ export default function AuditWizard() {
                   <button
                     key={b} type="button" aria-pressed={active}
                     onClick={() => selectBudget(b)}
-                    className={`group flex w-full cursor-pointer select-none items-center justify-between border-b border-fg/15 py-5 pl-4 text-left transition-all ${
-                      active ? "bg-fg/[0.04] text-fg" : "text-fg/55 hover:pl-6 hover:text-fg"
-                    }`}
+                    className="ac-row flex w-full cursor-pointer select-none items-center justify-between border-b border-fg/15 py-5 pl-4 text-left hover:pl-6 transition-all"
                   >
                     <span className="text-xl font-light">{b}</span>
-                    <span
-                      className={`mr-4 h-2.5 w-2.5 rotate-45 border transition-colors ${
-                        active ? "bg-fg border-fg" : "border-fg/30 group-hover:border-fg"
-                      }`}
-                    />
+                    <span className="ac-swatch mr-4 h-2.5 w-2.5 rotate-45" />
                   </button>
                 );
               })}
