@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// Self-hosted Geist (the `geist` package bundles the font files) — no Google
+// Fonts fetch at build, so production builds are network-independent.
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 
 import {
@@ -10,16 +13,6 @@ import { PreviewProvider } from "@/components/preview/PreviewProvider";
 import React, { Suspense } from 'react';
 import GlitchCoreProvider from '@/components/glitch/GlitchCoreProvider';
 import GlitchCoreCanvas from '@/components/glitch/GlitchCoreCanvas';
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "LGIT Consult — Creative Consulting & Digital Agency",
@@ -42,7 +35,7 @@ export default function RootLayout({
   return (
       <html lang="en" className="scroll-smooth">
       <body
-          className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+          className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}
       >
       <Suspense fallback={null}>
       <PreviewProvider>
