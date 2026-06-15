@@ -2,6 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
 import { assessAudit, type AuditImage } from "@/lib/audit/assess";
+import { rateLimit, clientIp } from "@/lib/ratelimit";
 
 const imageSchema = z.object({
   mediaType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]),
@@ -31,6 +32,15 @@ const FROM_EMAIL = process.env.AUDIT_FROM_EMAIL || "Patina <onboarding@resend.de
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit before any work — protects the Opus call from scripted abuse.
+    const rl = rateLimit(`audit:${clientIp(request)}`, 5, 10 * 60_000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { success: false, message: "Too many requests. Please wait a moment and try again." },
+        { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+      );
+    }
+
     const body = await request.json();
     const result = auditSchema.safeParse(body);
     if (!result.success) {

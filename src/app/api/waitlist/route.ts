@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Resend } from "resend";
+import { rateLimit, clientIp } from "@/lib/ratelimit";
 
 // Generic waitlist intake — shared by the pre-launch B2C product landings
 // (Coterie, Provenance, Sibyl). Patina has its own richer funnel at /api/audit.
@@ -25,6 +26,14 @@ const FROM_EMAIL =
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = rateLimit(`waitlist:${clientIp(request)}`, 10, 10 * 60_000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { success: false, message: "Too many requests. Please wait a moment and try again." },
+        { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+      );
+    }
+
     const body = await request.json();
     const result = waitlistSchema.safeParse(body);
 
