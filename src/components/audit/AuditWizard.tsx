@@ -140,9 +140,16 @@ export default function AuditWizard() {
   useEffect(() => {
     let v: Variant = "capital";
     try {
+      // ?v=capital|refuge|invitation pins the variant (ad message ↔ cover match),
+      // overriding the sticky/random assignment. Then persist it.
+      const q = new URLSearchParams(window.location.search).get("v");
       const stored = window.localStorage.getItem("patina_audit_variant");
-      if (stored && stored in HEADLINES) v = stored as Variant;
-      else {
+      if (q && q in HEADLINES) {
+        v = q as Variant;
+        window.localStorage.setItem("patina_audit_variant", v);
+      } else if (stored && stored in HEADLINES) {
+        v = stored as Variant;
+      } else {
         v = VARIANTS[Math.floor(Math.random() * VARIANTS.length)];
         window.localStorage.setItem("patina_audit_variant", v);
       }
@@ -171,7 +178,7 @@ export default function AuditWizard() {
     const v = arr.filter((p) => p === "V").length;
     const key = (`${r >= e ? "R" : "E"}${h >= v ? "H" : "V"}`) as TypeKey;
     setTypeKey(key);
-    track("type", { type: TYPES[key].name });
+    track("type", { type: TYPES[key].name, variant });
     setView("reveal");
   }
 
