@@ -15,7 +15,7 @@ const config: CaptureConfig = {
   trackPrefix: "read",
   kicker: "Patina · The Read",
   title: "The Read",
-  body: "Less than the full eye. One thing — a room, a wardrobe, a few pieces. Send it, and a single page comes back: what is right, what is not, and what to do next.",
+  body: "Less than the full eye. One thing — a room, a wardrobe, a few pieces. Send it, and a single page comes back: what is right, what is not, and what to do next. From €200.",
   noteLabel: "What do you want read?",
   notePlaceholder: "One room. Your wardrobe. A few pieces.",
   cta: "Send it ▸",
