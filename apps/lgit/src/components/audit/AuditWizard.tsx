@@ -109,7 +109,7 @@ function Inkblot() {
   );
 }
 
-export default function AuditWizard() {
+export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?: string }) {
   const reduce = useReducedMotion();
 
   const [view, setView] = useState<View>("cover");
@@ -179,6 +179,8 @@ export default function AuditWizard() {
     const key = (`${r >= e ? "R" : "E"}${h >= v ? "H" : "V"}`) as TypeKey;
     setTypeKey(key);
     track("type", { type: TYPES[key].name, variant });
+    // ★ The money moment becomes visible: the €150 Read offer is on the reveal.
+    track("read_offer_view", { variant, type: TYPES[key].name });
     setView("reveal");
   }
 
@@ -251,7 +253,34 @@ export default function AuditWizard() {
         setError(data.message || "Please check your entries and try again.");
         return;
       }
-      track("audit_submit", { variant, type: typeKey ? TYPES[typeKey].name : "" });
+      const typeName = typeKey ? TYPES[typeKey].name : "";
+      track("audit_submit", { variant, type: typeName });
+
+      // ★ Submit-then-pay: the application is captured (assess + operator email
+      // run server-side, unchanged). Now send the buyer to the €150 Read checkout.
+      // Operator matches payment ↔ application by email for the MVP.
+      // fast-follow: swap the static Payment Link for a Stripe Checkout Session
+      // + webhook so delivery is auto-gated on confirmed payment (no manual match).
+      if (readPaymentLink) {
+        track("read_checkout_click", { variant, type: typeName });
+        // Prefill the buyer's email on the Stripe page so payment ↔ application
+        // reconcile cleanly. prefilled_email is a supported Payment Link param.
+        let url = readPaymentLink;
+        try {
+          const u = new URL(readPaymentLink);
+          if (email) u.searchParams.set("prefilled_email", email);
+          url = u.toString();
+        } catch {
+          /* malformed link → use as-is rather than crash */
+        }
+        // Leaves the funnel; status stays "submitting" through the redirect.
+        window.location.href = url;
+        return;
+      }
+
+      // Graceful degrade — no payment link configured yet. The application is
+      // already captured; show a calm "we'll be in touch" state. Site stays safe
+      // before the operator sets STRIPE_READ_PAYMENT_LINK.
       setStatus("idle");
       setView("done");
     } catch {
@@ -371,11 +400,21 @@ export default function AuditWizard() {
                 <h1 className="mt-6 text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">{TYPES[typeKey].name}</h1>
                 <p className="mt-8 max-w-lg text-fg/70 text-lg leading-relaxed">{TYPES[typeKey].line}</p>
                 <p className="mt-6 max-w-lg text-fg/55 leading-relaxed">{TYPES[typeKey].note}</p>
-                <div className="mt-12">
-                  <button type="button" onClick={() => { setCapIndex(0); setView("capture"); }}
-                    className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Continue ▸</button>
+
+                {/* ★ The money moment — the €150 Read offer, in the clinical register. */}
+                <div className="mt-12 border-t border-fg/15 pt-8">
+                  <span className={labelCls}>The Read</span>
+                  <p className="mt-4 max-w-lg text-fg/70 leading-relaxed">
+                    An honest, written read of what you own and how it reads — built on your type and your photographs, returned within 48 hours, in confidence.
+                  </p>
+                  <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.2em] text-fg/45">
+                    €150 · Credited toward an Audit · Delivered within 48h
+                  </p>
+                  <div className="mt-8">
+                    <button type="button" onClick={() => { setCapIndex(0); setView("capture"); }}
+                      className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Get my Read ▸</button>
+                  </div>
                 </div>
-                <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-fg/35">We will build your Audit around this.</p>
               </motion.div>
             )}
 
@@ -406,7 +445,11 @@ export default function AuditWizard() {
                 {error && <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-fg/60 max-w-[16rem] text-right">{error}</span>}
                 <button type="button" onClick={next} disabled={!canContinue() || status === "submitting"}
                   className="ac-btn font-mono text-[12px] uppercase tracking-[0.15em] px-7 py-3 disabled:opacity-25 disabled:pointer-events-none">
-                  {capIndex === CAPTURE.length - 1 ? (status === "submitting" ? "Sending…" : "Submit ▸") : "Continue ▸"}
+                  {capIndex === CAPTURE.length - 1
+                    ? status === "submitting"
+                      ? readPaymentLink ? "To checkout…" : "Sending…"
+                      : readPaymentLink ? "Pay €150 ▸" : "Submit ▸"
+                    : "Continue ▸"}
                 </button>
               </div>
             ) : card.kind === "text" ? (
@@ -462,13 +505,18 @@ export default function AuditWizard() {
         );
       case "consent":
         return (
-          <Field q="Before we begin." hint="By application.">
+          <Field q="Your Read." hint={readPaymentLink ? "€150 · Credited toward an Audit · Delivered within 48h." : "By application."}>
             <label className="flex items-start gap-4 cursor-pointer">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1.5 accent-fg" data-autofocus />
               <span className="text-fg/60 text-lg leading-relaxed max-w-md">
-                I agree that Patina may keep and use what I share to respond to my application, in confidence — per the privacy policy.
+                I agree that Patina may keep and use what I share to prepare my Read, in confidence — per the privacy policy.
               </span>
             </label>
+            {readPaymentLink && (
+              <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/35 leading-relaxed max-w-md">
+                Next: secure checkout — €150. Your Read is prepared once payment is received.
+              </p>
+            )}
           </Field>
         );
       default:
