@@ -1,5 +1,5 @@
 # Visual Direction: High Art-Fashion Meets Digital
-
+    
 **Goal**: Make the LGIT Consult website feel like a high-end fashion/art publication that happens to be digital. Think Ssense editorial, 032c, Arena Homme+, or a Virgil Abloh deck — not a SaaS landing page.
 
 ---
