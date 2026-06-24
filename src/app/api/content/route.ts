@@ -6,7 +6,6 @@ import {
   getPostsByCategory,
   getAllProjects,
   getFeaturedProjects,
-  getProjectBySlug,
   getAllServices,
   getServiceById,
   getAllPricingTiers,
@@ -24,11 +23,6 @@ export async function GET(request: NextRequest) {
     // If a slug is provided, handle a single item request
     if (slug) {
       switch (type) {
-        case 'projects': {
-          const content = await getProjectBySlug(slug);
-          if (!content) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
-          return NextResponse.json(content);
-        }
         case 'posts': {
           const content = await getPostBySlug(slug);
           if (!content) return NextResponse.json({ error: 'Post not found' }, { status: 404 });
