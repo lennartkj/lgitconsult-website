@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE / tooling
+.claude/
+
+# misplaced parked-project docs (Street Supply lives in its own repo)
+Street_Supply_*
