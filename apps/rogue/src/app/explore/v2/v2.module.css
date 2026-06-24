@@ -1,0 +1,549 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   ROGUE — EXPLORE V2  ·  "EUROPEAN SUMMER, SCORCHED"
+   Mediterranean heat at 3am. Sun-scorched warm tones over a dark base.
+   All tokens are scoped to .root so we never touch shared globals.
+   Same family as LGIT (mono labels, numbered sections, Geist, restraint)
+   but pushed darker / hotter / louder.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.root {
+  /* Scorched palette — burnt orange, oxblood, bronze, heat-haze amber, tobacco */
+  --char: #0a0604;          /* charred near-black base */
+  --char-2: #120905;        /* slightly lifted panel */
+  --tobacco: #1c1009;       /* deep tobacco */
+  --oxblood: #5a1410;       /* oxblood */
+  --burnt: #c2410c;         /* burnt orange */
+  --ember: #ea5a1a;         /* ember / lit coal */
+  --amber: #f59e0b;         /* heat-haze amber */
+  --gold: #fbbf24;          /* golden-hour highlight */
+  --bone: #efe6d8;          /* dusty bone (warm off-white) */
+  --bone-dim: #c9b9a3;      /* dimmed bone */
+  --haze: #e8a06b;          /* sun-haze mid */
+
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 90% at 78% -10%, rgba(234, 90, 26, 0.30) 0%, rgba(234, 90, 26, 0) 55%),
+    radial-gradient(90% 70% at 8% 110%, rgba(90, 20, 16, 0.55) 0%, rgba(90, 20, 16, 0) 60%),
+    linear-gradient(180deg, #0a0604 0%, #120905 45%, #0a0604 100%);
+  color: var(--bone);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: clip;
+  cursor: crosshair;
+}
+
+.root a,
+.root button,
+.root [role="button"] {
+  cursor: crosshair;
+}
+
+/* Heavy film grain + dust — sits over everything, low opacity, warm-multiply */
+.root::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+}
+
+/* Heat-haze shimmer band that drifts slowly up the page */
+.root::before {
+  content: "";
+  position: fixed;
+  inset: -20% 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(245, 158, 11, 0.05) 48%,
+    rgba(234, 90, 26, 0.08) 50%,
+    rgba(245, 158, 11, 0.05) 52%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  animation: heatDrift 14s linear infinite;
+}
+
+@keyframes heatDrift {
+  0%   { transform: translateY(8%); }
+  100% { transform: translateY(-8%); }
+}
+
+/* ── Shared bits ──────────────────────────────────────────────────────────── */
+
+.wrap {
+  position: relative;
+  z-index: 2;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--ember);
+}
+
+.labelDim {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: color-mix(in srgb, var(--haze) 55%, transparent);
+}
+
+/* ── HERO ─────────────────────────────────────────────────────────────────── */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 7rem 0 4rem;
+  overflow: hidden;
+}
+
+.heroCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.heroTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: auto;
+  padding-top: 1rem;
+}
+
+.heroMeta {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.heroTitle {
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.82;
+  margin: 0;
+  font-size: clamp(4.5rem, 17vw, 16rem);
+  text-transform: uppercase;
+  /* scorched gradient ink — burnt edge to lit core */
+  background: linear-gradient(176deg, var(--gold) 0%, var(--ember) 38%, var(--burnt) 66%, var(--oxblood) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 70px rgba(234, 90, 26, 0.25);
+}
+
+.heroTitle .strike {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--burnt);
+  background: none;
+  text-shadow: none;
+}
+
+.heroSub {
+  margin-top: 2.5rem;
+  max-width: 42ch;
+  font-size: clamp(1rem, 1.4vw, 1.35rem);
+  line-height: 1.55;
+  color: var(--bone);
+  font-weight: 300;
+}
+
+.heroSub b {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.heroFoot {
+  margin-top: 3rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.scrollHint {
+  margin-top: 3.5rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.scrollHint::before {
+  content: "";
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--ember), transparent);
+}
+
+/* ── BUTTONS (local, scorched) ────────────────────────────────────────────── */
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  padding: 0.95rem 1.6rem;
+  border: none;
+  color: var(--char);
+  background: linear-gradient(120deg, var(--gold), var(--ember));
+  text-decoration: none;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, filter 0.25s ease;
+  box-shadow: 0 0 0 rgba(234, 90, 26, 0);
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 12px 40px -8px rgba(234, 90, 26, 0.6);
+}
+
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  padding: 0.95rem 1.6rem;
+  color: var(--haze);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--burnt) 55%, transparent);
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.btnGhost:hover {
+  color: var(--gold);
+  border-color: var(--ember);
+  background: rgba(234, 90, 26, 0.06);
+}
+
+/* ── SECTION SCAFFOLD ─────────────────────────────────────────────────────── */
+
+.section {
+  position: relative;
+  z-index: 2;
+  padding: 8rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--burnt) 22%, transparent);
+}
+
+.sectionHead {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-bottom: 4rem;
+}
+
+.sectionTitle {
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  text-transform: uppercase;
+  color: var(--bone);
+  margin: 0;
+}
+
+.sectionTitle em {
+  font-style: normal;
+  color: var(--ember);
+}
+
+/* ── WHAT WE DO — three scorched disciplines ──────────────────────────────── */
+
+.doGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: color-mix(in srgb, var(--burnt) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--burnt) 20%, transparent);
+}
+
+.doCell {
+  position: relative;
+  background: var(--char-2);
+  padding: 2.75rem 2rem 3.25rem;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.35s ease;
+  overflow: hidden;
+}
+
+.doCell:hover {
+  background: linear-gradient(180deg, var(--tobacco), var(--char-2));
+}
+
+.doCell:hover .doNum {
+  color: var(--ember);
+}
+
+.doCell::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ember), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doCell:hover::before {
+  transform: scaleX(1);
+}
+
+.doNum {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: color-mix(in srgb, var(--haze) 50%, transparent);
+  transition: color 0.3s ease;
+}
+
+.doName {
+  margin-top: auto;
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--bone);
+  line-height: 1;
+}
+
+.doDesc {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--bone-dim);
+  font-weight: 300;
+}
+
+/* ── STUNT SHOWCASE ───────────────────────────────────────────────────────── */
+
+.stunts {
+  display: flex;
+  flex-direction: column;
+}
+
+.stunt {
+  display: grid;
+  grid-template-columns: 5rem 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  padding: 2.5rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--burnt) 18%, transparent);
+  transition: padding-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stunt:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--burnt) 18%, transparent);
+}
+
+.stunt:hover {
+  padding-left: 1.5rem;
+}
+
+.stunt:hover .stuntName {
+  color: var(--gold);
+}
+
+.stunt:hover .stuntArrow {
+  color: var(--ember);
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.stuntIndex {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--ember);
+}
+
+.stuntName {
+  font-size: clamp(1.5rem, 3.2vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--bone);
+  line-height: 1;
+  transition: color 0.25s ease;
+}
+
+.stuntMeta {
+  display: block;
+  margin-top: 0.65rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  font-weight: 400;
+}
+
+.stuntArrow {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 1.5rem;
+  color: var(--haze);
+  opacity: 0.4;
+  transform: translateX(-12px);
+  transition: transform 0.3s ease, opacity 0.3s ease, color 0.25s ease;
+}
+
+/* ── MANIFESTO / PULL QUOTE ───────────────────────────────────────────────── */
+
+.manifesto {
+  position: relative;
+  z-index: 2;
+  padding: 9rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--burnt) 22%, transparent);
+}
+
+.manifestoText {
+  font-size: clamp(1.8rem, 4.2vw, 4rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--bone);
+  max-width: 22ch;
+}
+
+.manifestoText b {
+  font-weight: 700;
+  color: transparent;
+  background: linear-gradient(120deg, var(--gold), var(--ember));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ── CTA ──────────────────────────────────────────────────────────────────── */
+
+.cta {
+  position: relative;
+  z-index: 2;
+  padding: 9rem 0 10rem;
+  border-top: 1px solid color-mix(in srgb, var(--burnt) 22%, transparent);
+  text-align: center;
+  overflow: hidden;
+}
+
+.ctaGlow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(60% 70% at 50% 120%, rgba(234, 90, 26, 0.35), transparent 70%);
+  pointer-events: none;
+}
+
+.ctaTitle {
+  font-size: clamp(3rem, 11vw, 11rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  text-transform: uppercase;
+  margin: 0 0 2.5rem;
+  background: linear-gradient(176deg, var(--gold), var(--ember) 55%, var(--oxblood));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ctaSub {
+  max-width: 46ch;
+  margin: 0 auto 3rem;
+  font-size: clamp(1rem, 1.4vw, 1.3rem);
+  line-height: 1.6;
+  color: var(--bone-dim);
+  font-weight: 300;
+}
+
+.ctaActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── FOOTER STRIP ─────────────────────────────────────────────────────────── */
+
+.footStrip {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid color-mix(in srgb, var(--burnt) 22%, transparent);
+  padding: 2rem 0;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footStrip span {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 880px) {
+  .doGrid {
+    grid-template-columns: 1fr;
+  }
+  .stunt {
+    grid-template-columns: 3rem 1fr;
+    gap: 1.25rem;
+  }
+  .stuntArrow {
+    display: none;
+  }
+  .section {
+    padding: 5rem 0;
+  }
+  .heroTop {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root::before {
+    animation: none;
+  }
+}

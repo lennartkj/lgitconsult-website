@@ -1,0 +1,472 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   ROGUE — Explore V1 · "NOCTURNAL NEON / 5-Gum after dark"
+   Fully self-contained. No shared tokens touched. Same family as LGIT
+   (mono labels, numbered sections, Geist, restraint-as-structure, the glitch
+   idea) — but darker, edgier, electric.
+
+   Eigen hue: VOLTAGE VIOLET  #5B2BFF  (a single dangerous electric tone —
+   not generic neon-green/cyan). A hot ignition spark #FF1F6B is allowed only
+   as a knife-edge highlight. Base is near-black.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  /* local palette — scoped, overrides nothing global */
+  --ink: #050507;          /* near-black base */
+  --ink-2: #0b0b12;        /* lifted black panel */
+  --paper: #f2f0ff;        /* cold off-white text */
+  --paper-dim: #9b97c4;    /* dimmed cold lilac */
+  --volt: #5b2bff;         /* THE eigen hue — voltage violet */
+  --volt-hi: #8f6bff;      /* lifted voltage */
+  --spark: #ff1f6b;        /* hot ignition — knife-edge only */
+  --heat: #ff7a3c;         /* whisper of euro-summer heat */
+  --line: rgba(143, 107, 255, 0.16);
+  --line-hot: rgba(91, 43, 255, 0.55);
+
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(120% 80% at 70% -10%, rgba(91, 43, 255, 0.20), transparent 55%),
+    radial-gradient(90% 60% at 0% 110%, rgba(255, 31, 107, 0.10), transparent 60%),
+    var(--ink);
+  color: var(--paper);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* grain + scanline veil — sensory overload, controlled */
+.veil {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+.scan {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 41;
+  opacity: 0.35;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025) 0px,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ── mono section label — inherited DNA, electrified ───────────────────── */
+.label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.34em;
+  color: var(--paper-dim);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.labelDot {
+  width: 6px;
+  height: 6px;
+  background: var(--volt);
+  box-shadow: 0 0 12px 2px var(--volt);
+  border-radius: 1px;
+  animation: pulse 2.4s var(--_e, ease-in-out) infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 12px 2px var(--volt); }
+  50% { opacity: 0.4; box-shadow: 0 0 4px 0 var(--volt); }
+}
+
+/* ── HERO ──────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 9rem 0 5rem;
+}
+
+.heroKicker {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+  flex-wrap: wrap;
+}
+
+.heroTitle {
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.82;
+  font-size: clamp(4.5rem, 19vw, 17rem);
+  margin: 0;
+  text-transform: uppercase;
+}
+.heroLine {
+  display: block;
+  position: relative;
+}
+/* the eigen move: ROGUE stamped, with a sliced voltage echo */
+.stamp {
+  position: relative;
+  color: var(--paper);
+}
+.stamp::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--volt);
+  clip-path: polygon(0 58%, 100% 58%, 100% 100%, 0 100%);
+  transform: translate(6px, 0);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+.stamp::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--spark);
+  clip-path: polygon(0 0, 100% 0, 100% 22%, 0 22%);
+  transform: translate(-4px, 0);
+  mix-blend-mode: screen;
+  opacity: 0.6;
+}
+
+.heroSub {
+  margin-top: 2.75rem;
+  max-width: 36rem;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--paper-dim);
+  font-weight: 300;
+}
+.heroSub b {
+  color: var(--paper);
+  font-weight: 500;
+}
+
+.heroFoot {
+  margin-top: 4rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.tickerWrap {
+  margin-top: 4.5rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0.75rem 0;
+}
+.ticker {
+  display: inline-block;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  will-change: transform;
+  animation: marquee 28s linear infinite;
+}
+.ticker span { color: var(--volt-hi); padding: 0 1rem; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── BUTTONS ───────────────────────────────────────────────────────────── */
+.btn {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.6rem;
+  border: 1px solid var(--volt);
+  color: var(--paper);
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  cursor: crosshair;
+  transition: color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--volt);
+  transform: translateY(101%);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+.btn:hover {
+  border-color: var(--volt-hi);
+  box-shadow: 0 0 28px -4px var(--volt);
+}
+.btn:hover::before { transform: translateY(0); }
+.btnPrimary {
+  background: var(--volt);
+  border-color: var(--volt);
+}
+.btnPrimary::before { background: var(--spark); }
+.btnPrimary:hover { box-shadow: 0 0 40px -2px var(--spark); border-color: var(--spark); }
+
+.btnGhost {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--paper-dim);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.2s ease;
+  cursor: crosshair;
+}
+.btnGhost:hover { color: var(--volt-hi); }
+.arrow { transition: transform 0.25s ease; }
+.btn:hover .arrow, .btnGhost:hover .arrow { transform: translateX(4px); }
+
+/* ── SECTION SCAFFOLD ──────────────────────────────────────────────────── */
+.section { padding: 7rem 0; position: relative; }
+.sectionHead {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-bottom: 3.5rem;
+}
+.sectionTitle {
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  font-size: clamp(2.2rem, 5.5vw, 4.5rem);
+  margin: 0;
+}
+.sectionTitle em {
+  font-style: normal;
+  color: var(--volt-hi);
+}
+
+/* ── WHAT WE DO — ruled rows (inherited DNA), electrified hover ────────── */
+.rows { border-top: 1px solid var(--line); }
+.row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 1.5rem;
+  padding: 2.25rem 0;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  transition: background 0.3s ease;
+}
+.row::before {
+  content: "";
+  position: absolute;
+  left: -1.25rem; right: -1.25rem; top: 0; bottom: 0;
+  background: linear-gradient(90deg, rgba(91,43,255,0.10), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.row:hover::before { opacity: 1; }
+.rowNum {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--volt);
+  padding-top: 0.4rem;
+}
+.rowBody { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+@media (min-width: 768px) {
+  .rowBody { grid-template-columns: 1.1fr 1fr auto; align-items: start; gap: 2.5rem; }
+}
+.rowTitle {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  margin: 0;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.row:hover .rowTitle { color: var(--volt-hi); text-shadow: 0 0 24px rgba(143,107,255,0.5); }
+.rowDesc { color: var(--paper-dim); line-height: 1.6; font-weight: 300; font-size: 0.98rem; }
+.rowTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-content: start;
+}
+.tag {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+  border: 1px solid var(--line);
+  padding: 0.35rem 0.55rem;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+.row:hover .tag { border-color: var(--line-hot); color: var(--paper); }
+
+/* ── STUNT SHOWCASE ────────────────────────────────────────────────────── */
+.stunts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+@media (min-width: 800px) {
+  .stunts { grid-template-columns: repeat(2, 1fr); }
+  .stuntWide { grid-column: 1 / -1; }
+}
+.stunt {
+  background: var(--ink-2);
+  padding: 2.5rem;
+  position: relative;
+  min-height: 16rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: background 0.35s ease;
+}
+.stunt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 120% at 100% 0%, rgba(91,43,255,0.22), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.stunt:hover { background: #0e0e1a; }
+.stunt:hover::after { opacity: 1; }
+.stuntMeta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+}
+.stuntMeta b { color: var(--volt-hi); font-weight: 500; }
+.stuntTitle {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.5rem, 3vw, 2.6rem);
+  line-height: 1.02;
+  margin: 1.5rem 0 0;
+}
+.stuntFigure {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  font-weight: 600;
+  color: var(--volt);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-top: 1.5rem;
+  text-shadow: 0 0 30px rgba(91,43,255,0.45);
+}
+.stuntNote { color: var(--paper-dim); font-size: 0.9rem; margin-top: 0.5rem; font-weight: 300; }
+
+/* ── MANIFESTO STRIP ───────────────────────────────────────────────────── */
+.manifesto {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 6rem 0;
+}
+.manifestoText {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.6rem, 4vw, 3.2rem);
+  line-height: 1.15;
+  max-width: 60rem;
+}
+.manifestoText em { font-style: normal; color: var(--volt-hi); }
+
+/* ── CTA ───────────────────────────────────────────────────────────────── */
+.cta {
+  position: relative;
+  padding: 9rem 0 11rem;
+  text-align: center;
+  overflow: hidden;
+}
+.ctaGlow {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 70vw;
+  height: 70vw;
+  max-width: 900px;
+  max-height: 900px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(91,43,255,0.28), transparent 60%);
+  pointer-events: none;
+  filter: blur(20px);
+}
+.ctaTitle {
+  position: relative;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  font-size: clamp(3rem, 12vw, 11rem);
+  margin: 0 0 2.5rem;
+}
+.ctaSub {
+  position: relative;
+  color: var(--paper-dim);
+  max-width: 32rem;
+  margin: 0 auto 3rem;
+  font-weight: 300;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* ── FOOTER MICRO ──────────────────────────────────────────────────────── */
+.foot {
+  border-top: 1px solid var(--line);
+  padding: 2.5rem 0 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footMono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker, .labelDot { animation: none; }
+}

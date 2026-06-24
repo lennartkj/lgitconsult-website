@@ -1,0 +1,541 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   ROGUE — EXPLORE V3 · "EIGEN"
+   The signature synthesis. COLD-electric collides with HOT-scorched.
+   All tokens scoped to .root so we never touch the shared @theme.
+   Inherits the house bones (Geist, mono labels, restraint-as-structure,
+   the glitch idea) but reinvents the intensity into one proprietary device:
+   a FAULT LINE where heat-haze meets neon — a tension that is only Rogue.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.root {
+  /* ── EIGEN palette ──────────────────────────────────────────────────────── */
+  --void: #06060a;          /* near-black with a blue undertone — the cold base */
+  --void-2: #0a0a12;
+  --ash: #15151d;
+  --bone: #ece9e2;          /* warm off-white, inherited family tone */
+  --bone-dim: #9a988f;
+
+  /* HOT — scorched european-summer ember */
+  --ember: #ff4d17;         /* scorch orange */
+  --ember-hot: #ff7a1a;     /* flare */
+  --solar: #ffcf3a;         /* sun core */
+
+  /* COLD — 5-gum electric */
+  --neon: #00e5ff;          /* cold cyan */
+  --neon-violet: #7b5cff;   /* electric violet */
+  --neon-ice: #aef7ff;
+
+  --seam: #ff2d1a;          /* the collision redline — brand signature */
+
+  --mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+
+  position: relative;
+  background: var(--void);
+  color: var(--bone);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  cursor: crosshair;
+  /* honour the house */
+  -webkit-font-smoothing: antialiased;
+}
+
+.root ::selection {
+  background: var(--seam);
+  color: var(--void);
+}
+
+/* ── shared mono label (house DNA) ───────────────────────────────────────── */
+.mono {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--bone-dim);
+}
+.monoHot { color: var(--ember); }
+.monoCold { color: var(--neon); }
+
+/* ── THE SEAM — recurring brand motif: a redline collision bar ───────────── */
+.seamBar {
+  position: relative;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--ember) 18%,
+    var(--seam) 50%,
+    var(--neon) 82%,
+    transparent 100%
+  );
+  box-shadow: 0 0 18px 1px color-mix(in srgb, var(--seam) 60%, transparent);
+}
+.seamBar::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--seam);
+  box-shadow: 0 0 14px 2px var(--seam);
+}
+
+/* blinking scan caret — the recurring typographic tic */
+.caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 0.18em;
+  vertical-align: -0.12em;
+  background: var(--neon);
+  box-shadow: 0 0 12px var(--neon);
+  animation: blink 1.05s steps(2, jump-none) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── HERO ────────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 6rem);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* the cold field — neon grid drifting upward */
+.coldField {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(120% 90% at 80% 110%, color-mix(in srgb, var(--neon-violet) 22%, transparent), transparent 60%),
+    radial-gradient(90% 70% at 15% 100%, color-mix(in srgb, var(--neon) 16%, transparent), transparent 55%),
+    var(--void);
+}
+.grid {
+  position: absolute;
+  inset: -2px;
+  z-index: -2;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--neon) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--neon) 9%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to top, #000 0%, transparent 78%);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 78%);
+  animation: gridDrift 14s linear infinite;
+}
+@keyframes gridDrift { to { background-position: 0 -64px; } }
+
+/* the hot field — scorched heat-haze from the top */
+.hotField {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(110% 75% at 50% -20%, color-mix(in srgb, var(--solar) 30%, transparent), transparent 55%),
+    radial-gradient(120% 60% at 70% -10%, color-mix(in srgb, var(--ember) 26%, transparent), transparent 60%);
+  /* clipped to the top half by the seam — see .heatClip */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 44%, transparent 56%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 44%, transparent 56%);
+  mix-blend-mode: screen;
+}
+
+/* heat-haze shimmer overlay (the HOT signature texture) */
+.haze {
+  position: absolute;
+  inset: -10% 0 50% 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.04' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 0.45  0 0 0 0 0.08  0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
+  background-size: 600px 600px;
+  mix-blend-mode: screen;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+  animation: hazeShift 9s ease-in-out infinite alternate;
+}
+@keyframes hazeShift {
+  from { transform: translateY(0) scaleY(1); filter: blur(0.3px); }
+  to   { transform: translateY(-14px) scaleY(1.04); filter: blur(1.1px); }
+}
+
+/* film grain over everything — house texture, dialed darker */
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  mix-blend-mode: overlay;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.heroTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: clamp(2rem, 8vh, 5rem);
+}
+
+/* the EIGEN wordmark — split type. top half scorched, bottom half electric */
+.wordmark {
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.82;
+  font-size: clamp(4.5rem, 17vw, 16rem);
+  margin: 0;
+  position: relative;
+  width: max-content;
+  max-width: 100%;
+}
+/* base layer: cold electric fill */
+.wordmark .layer {
+  display: block;
+  position: relative;
+}
+.coldType {
+  background: linear-gradient(180deg, var(--neon-ice), var(--neon) 60%, var(--neon-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 40px color-mix(in srgb, var(--neon) 35%, transparent);
+}
+/* overlaid hot copy, clipped to the top by the fault line */
+.hotType {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--solar), var(--ember-hot) 55%, var(--ember));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 38px color-mix(in srgb, var(--ember) 45%, transparent);
+  /* the fault line — controlled by --split (set inline / via motion) */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 var(--split, 50%), transparent var(--split, 50%));
+  mask-image: linear-gradient(to bottom, #000 0%, #000 var(--split, 50%), transparent var(--split, 50%));
+  pointer-events: none;
+}
+/* the glitch displacement copies (house glitch idea, weaponised) */
+.glitchA, .glitchB {
+  position: absolute;
+  inset: 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+.glitchA { background: linear-gradient(180deg, var(--ember), var(--solar)); }
+.glitchB { background: linear-gradient(180deg, var(--neon), var(--neon-violet)); }
+.root :global(.eigen-glitching) .glitchA { animation: glA 0.42s steps(2) both; }
+.root :global(.eigen-glitching) .glitchB { animation: glB 0.42s steps(2) both; }
+@keyframes glA {
+  0% { opacity: 0.9; transform: translate(-6px, 2px); clip-path: inset(0 0 64% 0); }
+  50% { opacity: 0.7; transform: translate(5px, -3px); clip-path: inset(40% 0 18% 0); }
+  100% { opacity: 0; transform: none; }
+}
+@keyframes glB {
+  0% { opacity: 0.9; transform: translate(7px, -2px); clip-path: inset(70% 0 0 0); }
+  50% { opacity: 0.6; transform: translate(-5px, 3px); clip-path: inset(20% 0 50% 0); }
+  100% { opacity: 0; transform: none; }
+}
+
+/* the live fault-line rule that cuts across the wordmark */
+.faultRule {
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  top: var(--split, 50%);
+  height: 2px;
+  z-index: 3;
+  background: var(--seam);
+  box-shadow: 0 0 22px 2px var(--seam), 0 0 60px 4px color-mix(in srgb, var(--seam) 40%, transparent);
+  pointer-events: none;
+}
+.faultRule::before {
+  content: attr(data-tag);
+  position: absolute;
+  right: 0;
+  top: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--seam);
+}
+
+.heroLede {
+  margin-top: clamp(2rem, 6vh, 4rem);
+  max-width: 42ch;
+  font-size: clamp(1rem, 1.4vw, 1.35rem);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--bone) 72%, transparent);
+  font-weight: 300;
+}
+.heroLede b { color: var(--bone); font-weight: 500; }
+
+.scrollHint {
+  margin-top: clamp(2.5rem, 7vh, 5rem);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.scrollHint .tick {
+  width: 56px; height: 1px; background: var(--bone-dim);
+  position: relative; overflow: hidden;
+}
+.scrollHint .tick::after {
+  content: ""; position: absolute; inset: 0;
+  background: var(--neon);
+  animation: tickRun 2.2s var(--ease, cubic-bezier(0.16,1,0.3,1)) infinite;
+}
+@keyframes tickRun { 0% { transform: translateX(-100%);} 60%,100% { transform: translateX(100%);} }
+
+/* ── SECTION SCAFFOLD ─────────────────────────────────────────────────────── */
+.section {
+  position: relative;
+  padding: clamp(4rem, 12vh, 9rem) clamp(1.5rem, 5vw, 6rem);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2rem;
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+  flex-wrap: wrap;
+}
+.sectionTitle {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  margin: 0;
+}
+.hl { color: var(--ember); font-weight: 500; }
+.hlCold { color: var(--neon); font-weight: 500; }
+
+/* ── WHAT WE DO — three doctrine cards, each split hot/cold on hover ──────── */
+.doctrine {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1px;
+  background: color-mix(in srgb, var(--bone) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--bone) 8%, transparent);
+}
+.cell {
+  position: relative;
+  background: var(--void-2);
+  padding: clamp(1.5rem, 3vw, 2.75rem);
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: background 0.45s var(--ease, ease);
+}
+.cell::before { /* the collision wash that floods in on hover */
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--ember) 18%, transparent),
+    transparent 45%,
+    color-mix(in srgb, var(--neon) 18%, transparent));
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+.cell:hover::before { opacity: 1; }
+.cell:hover { background: var(--ash); }
+.cellNo { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; color: var(--bone-dim); }
+.cellTitle {
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  margin: 1.2rem 0 0.6rem;
+  position: relative; z-index: 1;
+}
+.cellBody {
+  font-size: 0.95rem; line-height: 1.6;
+  color: color-mix(in srgb, var(--bone) 60%, transparent);
+  position: relative; z-index: 1;
+}
+.cellTag {
+  position: relative; z-index: 1;
+  margin-top: 1.4rem;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ember);
+}
+
+/* ── STUNT SHOWCASE — horizontal scorched filmstrip ──────────────────────── */
+.stunts {
+  display: grid;
+  gap: 1px;
+  background: color-mix(in srgb, var(--bone) 8%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--bone) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--bone) 8%, transparent);
+}
+.stunt {
+  position: relative;
+  background: var(--void);
+  padding: clamp(1.75rem, 4vw, 3rem) clamp(1.5rem, 5vw, 6rem);
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: clamp(1rem, 4vw, 3rem);
+  align-items: center;
+  transition: background 0.4s ease, padding-left 0.4s var(--ease, ease);
+  overflow: hidden;
+}
+.stunt::after { /* heat-line that ignites left→right on hover */
+  content: "";
+  position: absolute;
+  left: 0; bottom: 0; height: 2px; width: 100%;
+  transform: scaleX(0); transform-origin: left;
+  background: linear-gradient(90deg, var(--ember), var(--seam), var(--neon));
+  transition: transform 0.5s var(--ease, ease);
+}
+.stunt:hover { background: var(--void-2); padding-left: clamp(2rem, 6vw, 7rem); }
+.stunt:hover::after { transform: scaleX(1); }
+.stuntNo { font-family: var(--mono); font-size: 13px; color: var(--bone-dim); }
+.stunt:hover .stuntNo { color: var(--seam); }
+.stuntTitle { font-size: clamp(1.3rem, 2.6vw, 2.2rem); font-weight: 300; letter-spacing: -0.025em; }
+.stuntMeta { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--bone-dim); text-align: right; white-space: nowrap; }
+.stuntKpi { color: var(--neon); display: block; font-size: 13px; }
+
+/* ── MARQUEE — kinetic scorch/electric ticker ────────────────────────────── */
+.marqueeWrap {
+  position: relative;
+  border-top: 1px solid color-mix(in srgb, var(--bone) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--bone) 8%, transparent);
+  overflow: hidden;
+  padding: clamp(1rem, 2.5vw, 1.75rem) 0;
+  background: var(--void-2);
+}
+.marquee {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  animation: scroll 26s linear infinite;
+  white-space: nowrap;
+}
+.marquee span {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--bone) 35%, transparent);
+}
+.marquee span:nth-child(odd) { -webkit-text-stroke-color: var(--ember); }
+.marquee span:nth-child(even) { -webkit-text-stroke-color: var(--neon); }
+.marquee .dot { color: var(--seam); -webkit-text-stroke: 0; }
+@keyframes scroll { to { transform: translateX(-50%); } }
+
+/* ── CTA — the collision climax ──────────────────────────────────────────── */
+.cta {
+  position: relative;
+  min-height: 80svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: clamp(3rem, 8vw, 8rem) clamp(1.5rem, 5vw, 6rem);
+  overflow: hidden;
+  isolation: isolate;
+}
+.ctaGlow {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(60% 50% at 50% 0%, color-mix(in srgb, var(--ember) 28%, transparent), transparent 70%),
+    radial-gradient(60% 60% at 50% 100%, color-mix(in srgb, var(--neon-violet) 26%, transparent), transparent 70%),
+    var(--void);
+}
+.ctaHead {
+  font-size: clamp(2.5rem, 9vw, 8rem);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  margin: 0 0 1.5rem;
+}
+.ctaHead .a { color: var(--ember); }
+.ctaHead .b { color: var(--neon); }
+.ctaSub {
+  max-width: 40ch;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--bone) 65%, transparent);
+  font-weight: 300;
+  margin-bottom: clamp(2rem, 5vh, 3.5rem);
+}
+
+/* the signature button — a fuse that lights on hover */
+.briefBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--mono);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--void);
+  background: var(--bone);
+  border: none;
+  padding: 1.15rem 2.4rem;
+  cursor: crosshair;
+  overflow: hidden;
+  transition: color 0.35s ease;
+}
+.briefBtn span { position: relative; z-index: 2; }
+.briefBtn::before { /* the ignition sweep */
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, var(--ember), var(--seam) 50%, var(--neon));
+  transform: translateX(-101%);
+  transition: transform 0.45s var(--ease, cubic-bezier(0.16,1,0.3,1));
+}
+.briefBtn:hover { color: var(--bone); }
+.briefBtn:hover::before { transform: translateX(0); }
+.briefBtn .arrow { transition: transform 0.45s var(--ease, ease); }
+.briefBtn:hover .arrow { transform: translateX(6px); }
+
+.footerLine {
+  margin-top: clamp(3rem, 8vh, 5rem);
+  display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--bone-dim);
+}
+.footerLine .sep { color: var(--seam); }
+
+/* ── reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .grid, .haze, .marquee, .scrollHint .tick::after,
+  .glitchA, .glitchB, .caret { animation: none !important; }
+  .marquee { transform: none; }
+}
+
+@media (max-width: 640px) {
+  .stunt { grid-template-columns: 48px 1fr; }
+  .stuntMeta { grid-column: 2; text-align: left; margin-top: 0.5rem; }
+}
