@@ -1,6 +1,10 @@
 import { Metadata } from "next";
 import AuditWizard from "@/components/audit/AuditWizard";
 
+// Read STRIPE_READ_PAYMENT_LINK at REQUEST time, not build time — so setting the
+// env var takes effect on any deploy without a no-cache rebuild.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "The Audit · Patina",
   description:
