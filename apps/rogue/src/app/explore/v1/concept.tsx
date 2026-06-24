@@ -1,11 +1,13 @@
 "use client";
 
 /* ─────────────────────────────────────────────────────────────────────────
-   ROGUE — Explore V1 · "NOCTURNAL NEON / 5-Gum after dark"  (client concept)
+   ROGUE — Explore V1 · "AFTER DARK / editorial"  (client concept)
    Self-contained sandbox concept. Styling is fully local (v1.module.css +
    inline). Shares the LGIT family DNA — mono labels, numbered sections,
-   Geist type, restraint-as-structure, the glitch idea — but pushed dark,
-   electric and aggressive. Eigen hue: VOLTAGE VIOLET #5B2BFF.
+   Geist type, restraint-as-structure, the glitch idea — recomposed as
+   luxury fashion editorial: dangerous + bold, but expensive and classy.
+   Deep black + considered off-white; VOLTAGE VIOLET #5B2BFF spent sparingly
+   as precise punctuation. The wordmark glitch is a single, expensive accent.
    (metadata/noindex lives in the server page.tsx that renders this.)
    ──────────────────────────────────────────────────────────────────────── */
 
@@ -13,21 +15,13 @@ import React, { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import styles from "./v1.module.css";
 
+/* deliberate, weighted motion — slow and expensive, nothing twitchy */
 const rise: Variants = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 22 },
   visible: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.07, duration: 0.7, ease: [0.16, 1, 0.3, 1] },
-  }),
-};
-
-const cut: Variants = {
-  hidden: { opacity: 0, clipPath: "inset(0 100% 0 0)" },
-  visible: (i: number = 0) => ({
-    opacity: 1,
-    clipPath: "inset(0 0% 0 0)",
-    transition: { delay: i * 0.05, duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+    transition: { delay: i * 0.12, duration: 1.1, ease: [0.16, 1, 0.3, 1] },
   }),
 };
 
@@ -128,8 +122,8 @@ export default function RogueExploreV1Concept() {
               className={styles.heroLine}
               initial="hidden"
               animate="visible"
-              variants={cut}
-              custom={0}
+              variants={rise}
+              custom={1}
             >
               <span
                 className={styles.stamp}
@@ -175,12 +169,8 @@ export default function RogueExploreV1Concept() {
             custom={4}
           >
             <span className={styles.ticker}>
-              UNSANCTIONED <span>/</span> UNFORGETTABLE <span>/</span> EARNED
-              NOT BOUGHT <span>/</span> ONE NIGHT ONLY <span>/</span> NO
-              MEDIA BUY <span>/</span> ALL SIGNAL <span>/</span> UNSANCTIONED{" "}
-              <span>/</span> UNFORGETTABLE <span>/</span> EARNED NOT BOUGHT{" "}
-              <span>/</span> ONE NIGHT ONLY <span>/</span> NO MEDIA BUY{" "}
-              <span>/</span> ALL SIGNAL <span>/</span>
+              Unsanctioned <span>/</span> Unforgettable <span>/</span> Earned,
+              not bought <span>/</span> One night only <span>/</span> All signal
             </span>
           </motion.div>
         </div>
@@ -346,7 +336,7 @@ export default function RogueExploreV1Concept() {
       <footer className={styles.wrap}>
         <div className={styles.foot}>
           <span className={styles.footMono}>ROGUE — An LGIT brand</span>
-          <span className={styles.footMono}>Explore V1 · Nocturnal Neon</span>
+          <span className={styles.footMono}>Explore V1 · After Dark</span>
         </div>
       </footer>
     </div>

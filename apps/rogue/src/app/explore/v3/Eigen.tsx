@@ -5,17 +5,18 @@ import {
   motion,
   useScroll,
   useTransform,
-  useMotionValueEvent,
   useMotionTemplate,
 } from "framer-motion";
 import styles from "./v3.module.css";
 
 /* ── ROGUE · EXPLORE V3 — "EIGEN" ───────────────────────────────────────────
-   The signature synthesis. COLD-electric (5 Gum) collides with HOT-scorched
-   (european summer) along a single proprietary device: the FAULT LINE — a live
-   redline seam where heat-haze meets neon. Same house as LGIT (Geist, mono
-   labels, numbered sections, restraint-as-structure, the glitch idea) but
-   darker, edgier, weaponised. noindex — sandbox.
+   The signature synthesis, refined. COLD-electric collides with HOT-scorched
+   along a single proprietary device: the SEAM — one precise redline where heat
+   meets neon. Luxury-fashion-editorial register (032c / Arena Homme+ / Helmut
+   Lang / LGIT house): deep refined black, considered off-white, restraint and
+   negative space carry it. The hot/cold collision + a sparing wordmark glitch
+   are the ONE loud moment — everything else is silence and discipline.
+   noindex — sandbox.
    ──────────────────────────────────────────────────────────────────────────*/
 
 // metadata (noindex) is exported from the sibling server page.tsx that renders
@@ -54,33 +55,25 @@ export default function EigenV3() {
   const wordmarkRef = useRef<HTMLHeadingElement>(null);
   const [glitching, setGlitching] = useState(false);
 
-  // SIGNATURE INTERACTION: the fault line drives off scroll — the hot/cold
-  // collision seam slides through the wordmark as you descend. Cold rises,
-  // heat is pushed up and out. The split % is the brand's living value.
+  // SIGNATURE INTERACTION: the seam drives slowly off scroll — the hot/cold
+  // collision line settles through the wordmark as you descend. The split %
+  // is the brand's living value. Deliberate, weighted — not a slot-machine.
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const splitPct = useTransform(scrollYProgress, [0, 1], [54, 8]);
+  const splitPct = useTransform(scrollYProgress, [0, 1], [52, 20]);
   const splitTemplate = useMotionTemplate`${splitPct}%`;
 
-  // fire the glitch displacement when the seam crosses key thresholds
-  const lastBucket = useRef(-1);
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const bucket = Math.floor(v * 6);
-    if (bucket !== lastBucket.current) {
-      lastBucket.current = bucket;
-      triggerGlitch();
-    }
-  });
-
+  // The glitch is a deliberate moment, not constant: it fires once on load and
+  // on deliberate hover of the wordmark. No scroll-driven buzzing.
   function triggerGlitch() {
     setGlitching(false);
     // next frame so the animation restarts
     requestAnimationFrame(() => {
       requestAnimationFrame(() => setGlitching(true));
     });
-    window.setTimeout(() => setGlitching(false), 460);
+    window.setTimeout(() => setGlitching(false), 520);
   }
 
   return (
@@ -88,17 +81,13 @@ export default function EigenV3() {
       {/* ── HERO ──────────────────────────────────────────────────────── */}
       <section ref={heroRef} className={styles.hero}>
         <div className={styles.coldField} aria-hidden />
-        <div className={styles.grid} aria-hidden />
         <div className={styles.hotField} aria-hidden />
-        <div className={styles.haze} aria-hidden />
         <div className={styles.grain} aria-hidden />
 
         <div className={styles.heroInner}>
           <div className={styles.heroTopRow}>
             <span className={styles.mono}>ROGUE — A LGIT VENTURE</span>
-            <span className={`${styles.mono} ${styles.monoCold}`}>
-              EU · GUERRILLA / EXPERIENTIAL
-            </span>
+            <span className={styles.mono}>EU · GUERRILLA / EXPERIENTIAL</span>
           </div>
 
           <motion.h1
@@ -106,7 +95,8 @@ export default function EigenV3() {
             className={`${styles.wordmark} ${glitching ? "eigen-glitching" : ""}`}
             initial={{ opacity: 0, filter: "blur(14px)" }}
             animate={{ opacity: 1, filter: "blur(0px)" }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+            onAnimationComplete={triggerGlitch}
             style={
               { ["--split" as string]: splitTemplate } as React.CSSProperties
             }
@@ -124,7 +114,6 @@ export default function EigenV3() {
             </span>
             <motion.span
               className={styles.faultRule}
-              data-tag="◆ collision"
               aria-hidden
               style={{ top: splitTemplate }}
             />
@@ -135,12 +124,11 @@ export default function EigenV3() {
             <b>scorched heat</b> — the moment a campaign stops being seen and
             starts being <b>felt</b>. Guerrilla and experiential marketing for
             brands that would rather be unforgettable than safe.
-            <span className={styles.caret} aria-hidden />
           </p>
 
           <div className={styles.scrollHint}>
             <span className={styles.tick} aria-hidden />
-            <span className={styles.mono}>SCROLL — WATCH THE SEAM MOVE</span>
+            <span className={styles.mono}>SCROLL</span>
           </div>
         </div>
       </section>
@@ -157,15 +145,15 @@ export default function EigenV3() {
           <span className={styles.hlCold}>charge</span> a city.
         </h2>
 
-        <div className={styles.doctrine} style={{ marginTop: "clamp(2rem,5vh,3.5rem)" }}>
+        <div className={styles.doctrine} style={{ marginTop: "clamp(2.5rem,6vh,4.5rem)" }}>
           {DOCTRINE.map((d, i) => (
             <motion.div
               key={d.no}
               className={styles.cell}
-              initial={{ opacity: 0, y: 28 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
             >
               <span className={styles.cellNo}>{d.no}</span>
               <div>
@@ -201,7 +189,7 @@ export default function EigenV3() {
       {/* ── STUNT SHOWCASE ────────────────────────────────────────────── */}
       <section className={styles.section}>
         <div className={styles.sectionHead}>
-          <span className={`${styles.mono} ${styles.monoHot}`}>002 — FIELD WORK</span>
+          <span className={styles.mono}>002 — FIELD WORK</span>
         </div>
         <h2 className={styles.sectionTitle}>Selected detonations.</h2>
       </section>
@@ -211,10 +199,10 @@ export default function EigenV3() {
           <motion.div
             key={s.no}
             className={styles.stunt}
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 18 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.55, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
           >
             <span className={styles.stuntNo}>{s.no}</span>
             <span className={styles.stuntTitle}>{s.title}</span>
@@ -229,7 +217,7 @@ export default function EigenV3() {
       {/* ── CTA ───────────────────────────────────────────────────────── */}
       <section className={styles.cta}>
         <div className={styles.ctaGlow} aria-hidden />
-        <span className={styles.mono} style={{ marginBottom: "1.5rem" }}>
+        <span className={styles.mono} style={{ marginBottom: "1.75rem" }}>
           003 — IGNITION
         </span>
         <h2 className={styles.ctaHead}>

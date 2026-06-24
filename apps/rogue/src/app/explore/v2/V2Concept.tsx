@@ -1,23 +1,24 @@
 "use client";
 
 /* ──────────────────────────────────────────────────────────────────────────
-   ROGUE — EXPLORE V2  ·  "EUROPEAN SUMMER, SCORCHED"
+   ROGUE — EXPLORE V2  ·  "SCORCHED, COUTURE"
    Sandbox concept. Self-contained. Touches no shared files.
    Inherits the LGIT bones (mono labels, numbered sections, Geist type,
-   restraint-as-structure, the glitch/annotation canvas idea) and pushes the
-   palette/contrast/texture to a scorched-Mediterranean-at-3am edge.
+   restraint-as-structure, the glitch idea) but holds the heat to a single
+   considered warm light source — luxury-fashion editorial, not a casino.
+   Effects are sparing and slow; composition and type do the work.
    ────────────────────────────────────────────────────────────────────────── */
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import styles from "./v2.module.css";
 
-/* ── Heat-haze annotation canvas ──────────────────────────────────────────────
-   The LGIT glitch idea, warmed: ember dots wander the hero and connect with
-   thin amber lines and a mono index number — like surveillance markers seen
-   through heat shimmer. Local to the hero, pointer-none, respects reduced motion.
+/* ── Ember field ──────────────────────────────────────────────────────────────
+   A handful of dim, slow embers drifting upward like the last sparks off a
+   fire — no connection lines, no index labels, no surveillance grid. A quiet
+   warm presence behind the type. Local to the hero, respects reduced motion.
    ────────────────────────────────────────────────────────────────────────── */
-function HeatCanvas() {
+function EmberField() {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -35,18 +36,26 @@ function HeatCanvas() {
     let h = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    type Node = { x: number; y: number; vx: number; vy: number; r: number };
-    let nodes: Node[] = [];
+    type Ember = { x: number; y: number; vy: number; drift: number; r: number; a: number; phase: number };
+    let embers: Ember[] = [];
+
+    const make = (): Ember => ({
+      x: Math.random() * w,
+      y: h + Math.random() * 40,
+      vy: 0.12 + Math.random() * 0.18,   // slow, deliberate rise
+      drift: (Math.random() - 0.5) * 0.06,
+      r: 0.8 + Math.random() * 1.4,
+      a: 0.12 + Math.random() * 0.22,
+      phase: Math.random() * Math.PI * 2,
+    });
 
     const seed = () => {
-      const count = w < 700 ? 9 : 16;
-      nodes = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.18,
-        vy: (Math.random() - 0.5) * 0.18,
-        r: 2 + Math.random() * 4,
-      }));
+      const count = w < 700 ? 7 : 12;       // sparse
+      embers = Array.from({ length: count }, () => {
+        const e = make();
+        e.y = Math.random() * h;            // spread on first frame
+        return e;
+      });
     };
 
     const resize = () => {
@@ -61,64 +70,31 @@ function HeatCanvas() {
     resize();
     window.addEventListener("resize", resize);
 
-    const EMBER = "234, 90, 26";
-    const AMBER = "245, 158, 11";
+    const EMBER = "194, 84, 31"; // matches --ember, the single warm accent
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, w, h);
 
-      // advance
-      for (const n of nodes) {
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 0 || n.x > w) n.vx *= -1;
-        if (n.y < 0 || n.y > h) n.vy *= -1;
-      }
+      for (const e of embers) {
+        e.y -= e.vy;
+        e.x += e.drift;
+        if (e.y < -10) Object.assign(e, make());
 
-      // connection lines between near nodes
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const a = nodes[i];
-          const b = nodes[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.hypot(dx, dy);
-          const max = w < 700 ? 160 : 240;
-          if (dist < max) {
-            const alpha = (1 - dist / max) * 0.22;
-            ctx.strokeStyle = `rgba(${AMBER}, ${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // ember nodes + mono index, with a slow shimmer pulse
-      nodes.forEach((n, idx) => {
-        const pulse = 0.45 + 0.35 * Math.sin(t * 0.001 + idx);
+        // gentle breathing glow, never flickering
+        const glow = e.a * (0.7 + 0.3 * Math.sin(t * 0.0006 + e.phase));
+        const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r * 6);
+        g.addColorStop(0, `rgba(${EMBER}, ${glow})`);
+        g.addColorStop(1, `rgba(${EMBER}, 0)`);
+        ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${EMBER}, ${0.18 + pulse * 0.25})`;
+        ctx.arc(e.x, e.y, e.r * 6, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = `rgba(${AMBER}, ${0.25 + pulse * 0.3})`;
-        ctx.lineWidth = 0.7;
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r + 4, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.font = '10px "Geist Mono", ui-monospace, monospace';
-        ctx.fillStyle = `rgba(${AMBER}, ${0.3 + pulse * 0.25})`;
-        ctx.fillText(String(idx + 1).padStart(2, "0"), n.x + n.r + 8, n.y - n.r - 4);
-      });
+      }
 
       raf = requestAnimationFrame(draw);
     };
 
     if (reduce) {
-      // single static frame
       draw(0);
       cancelAnimationFrame(raf);
     } else {
@@ -134,13 +110,46 @@ function HeatCanvas() {
   return <canvas ref={ref} className={styles.heroCanvas} aria-hidden="true" />;
 }
 
-/* ── Motion presets ──────────────────────────────────────────────────────── */
+/* ── Wordmark ─────────────────────────────────────────────────────────────────
+   The refined logo treatment the operator liked: a sparing chromatic/heat
+   split on the ROGUE wordmark. Dead still at rest. Fires ONCE on mount, and
+   briefly on hover — an expensive accent, never a constant effect.
+   ────────────────────────────────────────────────────────────────────────── */
+function Wordmark() {
+  const [on, setOn] = useState(false);
+
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+    const id = window.setTimeout(() => fire(), 650);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  const fire = () => {
+    setOn(false);
+    // retrigger the animation cleanly
+    requestAnimationFrame(() => requestAnimationFrame(() => setOn(true)));
+    window.setTimeout(() => setOn(false), 560);
+  };
+
+  return (
+    <span
+      className={`${styles.wordmark} ${on ? styles.glitching : ""}`}
+      data-text="ROGUE"
+      onMouseEnter={fire}
+    >
+      ROGUE
+    </span>
+  );
+}
+
+/* ── Motion presets — slowed, weighted, deliberate ─────────────────────────── */
 const rise: Variants = {
-  hidden: { opacity: 0, y: 34 },
+  hidden: { opacity: 0, y: 26 },
   visible: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.08, duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    transition: { delay: i * 0.12, duration: 1.1, ease: [0.22, 1, 0.36, 1] },
   }),
 };
 
@@ -177,10 +186,10 @@ export default function V2Concept() {
     <div className={styles.root}>
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <header className={styles.hero}>
-        <HeatCanvas />
+        <EmberField />
         <div className={styles.wrap}>
           <div className={styles.heroTop}>
-            <span className={styles.heroMeta}>ROGUE — A LGIT AGENCY</span>
+            <Wordmark />
             <span className={styles.heroMeta}>EUROPE · ON THE GROUND</span>
           </div>
 
@@ -360,7 +369,7 @@ export default function V2Concept() {
       <footer className={styles.wrap}>
         <div className={styles.footStrip}>
           <span>ROGUE © {new Date().getFullYear()} — A LGIT AGENCY</span>
-          <span>EXPLORE / V2 — SCORCHED</span>
+          <span>EXPLORE / V2 — SCORCHED, COUTURE</span>
         </div>
       </footer>
     </div>

@@ -3,7 +3,7 @@ import V2Concept from "./V2Concept";
 
 // Sandbox exploration — keep it out of the index.
 export const metadata: Metadata = {
-  title: "Rogue — Explore V2 (Scorched)",
+  title: "Rogue — Explore V2 (Scorched, Couture)",
   robots: { index: false },
 };
 

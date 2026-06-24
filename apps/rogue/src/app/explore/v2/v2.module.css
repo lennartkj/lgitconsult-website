@@ -1,105 +1,80 @@
 /* ──────────────────────────────────────────────────────────────────────────
-   ROGUE — EXPLORE V2  ·  "EUROPEAN SUMMER, SCORCHED"
-   Mediterranean heat at 3am. Sun-scorched warm tones over a dark base.
-   All tokens are scoped to .root so we never touch shared globals.
-   Same family as LGIT (mono labels, numbered sections, Geist, restraint)
-   but pushed darker / hotter / louder.
+   ROGUE — EXPLORE V2  ·  "SCORCHED, COUTURE"
+   Sun-scorched European summer — but refined into luxury-fashion editorial.
+   Reference register: 032c / Arena Homme+ / Helmut Lang / the LGIT house.
+   Deep charred black + dusty bone. Ember/amber kept as a single, considered
+   warm light source — oxblood and bronze as couture neutrals, NOT a glowing
+   orange casino. Composition + typography carry it; effects are sparing.
+   All tokens scoped to .root — touches no shared globals.
    ────────────────────────────────────────────────────────────────────────── */
 
 .root {
-  /* Scorched palette — burnt orange, oxblood, bronze, heat-haze amber, tobacco */
-  --char: #0a0604;          /* charred near-black base */
-  --char-2: #120905;        /* slightly lifted panel */
-  --tobacco: #1c1009;       /* deep tobacco */
-  --oxblood: #5a1410;       /* oxblood */
-  --burnt: #c2410c;         /* burnt orange */
-  --ember: #ea5a1a;         /* ember / lit coal */
-  --amber: #f59e0b;         /* heat-haze amber */
-  --gold: #fbbf24;          /* golden-hour highlight */
-  --bone: #efe6d8;          /* dusty bone (warm off-white) */
-  --bone-dim: #c9b9a3;      /* dimmed bone */
-  --haze: #e8a06b;          /* sun-haze mid */
+  /* Couture-scorched palette — charred black, dusty bone, oxblood, bronze,
+     with a single restrained ember/amber accent. */
+  --char: #080605;          /* charred near-black base */
+  --char-2: #0e0a08;        /* slightly lifted panel */
+  --tobacco: #15100b;       /* deep tobacco */
+  --oxblood: #4a1512;       /* oxblood — couture neutral */
+  --bronze: #8a5a32;        /* bronze — couture neutral */
+  --burnt: #9a3b14;         /* dialled-back burnt sienna */
+  --ember: #c2541f;         /* ember — the single warm accent, restrained */
+  --amber: #d08a3c;         /* muted amber, used sparingly */
+  --bone: #e8e0d3;          /* dusty bone (warm off-white) */
+  --bone-dim: #9b9082;      /* dimmed bone */
+  --line: rgba(232, 224, 211, 0.10);  /* hairline — bone, not orange */
 
   position: relative;
   isolation: isolate;
+  /* One considered warm light source, top-right; everything else charred. */
   background:
-    radial-gradient(120% 90% at 78% -10%, rgba(234, 90, 26, 0.30) 0%, rgba(234, 90, 26, 0) 55%),
-    radial-gradient(90% 70% at 8% 110%, rgba(90, 20, 16, 0.55) 0%, rgba(90, 20, 16, 0) 60%),
-    linear-gradient(180deg, #0a0604 0%, #120905 45%, #0a0604 100%);
+    radial-gradient(80% 60% at 88% -8%, rgba(194, 84, 31, 0.14) 0%, rgba(194, 84, 31, 0) 58%),
+    radial-gradient(70% 60% at 4% 108%, rgba(74, 21, 18, 0.32) 0%, rgba(74, 21, 18, 0) 62%),
+    linear-gradient(180deg, #080605 0%, #0c0907 50%, #080605 100%);
   color: var(--bone);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
   min-height: 100vh;
   overflow-x: clip;
-  cursor: crosshair;
 }
 
-.root a,
-.root button,
-.root [role="button"] {
-  cursor: crosshair;
-}
-
-/* Heavy film grain + dust — sits over everything, low opacity, warm-multiply */
+/* Fine film grain — refined, like a printed editorial, not a buzzing screen. */
 .root::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 60;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-  background-size: 220px 220px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
   mix-blend-mode: soft-light;
-  opacity: 0.5;
+  opacity: 0.14;
 }
 
-/* Heat-haze shimmer band that drifts slowly up the page */
-.root::before {
-  content: "";
-  position: fixed;
-  inset: -20% 0;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(245, 158, 11, 0.05) 48%,
-    rgba(234, 90, 26, 0.08) 50%,
-    rgba(245, 158, 11, 0.05) 52%,
-    transparent 100%
-  );
-  mix-blend-mode: screen;
-  animation: heatDrift 14s linear infinite;
-}
-
-@keyframes heatDrift {
-  0%   { transform: translateY(8%); }
-  100% { transform: translateY(-8%); }
-}
+/* No drifting heat-shimmer band — composition carries it. (::before removed) */
 
 /* ── Shared bits ──────────────────────────────────────────────────────────── */
 
 .wrap {
   position: relative;
   z-index: 2;
-  max-width: 1320px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
 }
 
 .label {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.28em;
-  color: var(--ember);
+  letter-spacing: 0.34em;
+  color: var(--bone-dim);
 }
 
 .labelDim {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.28em;
-  color: color-mix(in srgb, var(--haze) 55%, transparent);
+  letter-spacing: 0.34em;
+  color: color-mix(in srgb, var(--bone-dim) 70%, transparent);
 }
 
 /* ── HERO ─────────────────────────────────────────────────────────────────── */
@@ -110,7 +85,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 7rem 0 4rem;
+  padding: 8rem 0 5rem;
   overflow: hidden;
 }
 
@@ -133,51 +108,97 @@
 
 .heroMeta {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.2em;
+  font-size: 10px;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--bone-dim);
 }
 
+/* ── The wordmark — refined chromatic/heat glitch, sparing & expensive ─────────
+   Adapted from the V1 "stamp" the operator liked: bone wordmark with two
+   sliced echo copies (ember above, oxblood below). At rest it is dead still.
+   It fires ONCE on entry, and briefly on hover — never a constant effect. */
+
+.wordmark {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--bone);
+  font-size: 12px;
+  line-height: 1;
+  cursor: default;
+}
+
+.wordmark::before,
+.wordmark::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wordmark::before {
+  color: var(--ember);
+  clip-path: polygon(0 0, 100% 0, 100% 46%, 0 46%);
+  mix-blend-mode: screen;
+}
+
+.wordmark::after {
+  color: var(--oxblood);
+  clip-path: polygon(0 54%, 100% 54%, 100% 100%, 0 100%);
+  mix-blend-mode: screen;
+}
+
+.wordmark.glitching::before {
+  animation: wmShift 0.5s steps(3, end) 1 both;
+}
+.wordmark.glitching::after {
+  animation: wmShift 0.5s steps(3, end) 1 both reverse;
+}
+
+@keyframes wmShift {
+  0%   { opacity: 0; transform: translateX(0); }
+  20%  { opacity: 0.9; transform: translateX(2.5px); }
+  55%  { opacity: 0.8; transform: translateX(-2px); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
 .heroTitle {
   font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 0.82;
+  letter-spacing: -0.05em;
+  line-height: 0.84;
   margin: 0;
-  font-size: clamp(4.5rem, 17vw, 16rem);
+  font-size: clamp(4.5rem, 16vw, 15rem);
   text-transform: uppercase;
-  /* scorched gradient ink — burnt edge to lit core */
-  background: linear-gradient(176deg, var(--gold) 0%, var(--ember) 38%, var(--burnt) 66%, var(--oxblood) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 70px rgba(234, 90, 26, 0.25);
+  color: var(--bone);           /* solid bone — no gradient-soup ink */
 }
 
 .heroTitle .strike {
   display: block;
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--burnt);
-  background: none;
-  text-shadow: none;
+  -webkit-text-stroke: 1.5px var(--ember);  /* the single warm accent */
 }
 
 .heroSub {
-  margin-top: 2.5rem;
-  max-width: 42ch;
-  font-size: clamp(1rem, 1.4vw, 1.35rem);
-  line-height: 1.55;
-  color: var(--bone);
+  margin-top: 3rem;
+  max-width: 44ch;
+  font-size: clamp(1rem, 1.3vw, 1.3rem);
+  line-height: 1.65;
+  color: var(--bone-dim);
   font-weight: 300;
 }
 
 .heroSub b {
-  color: var(--gold);
+  color: var(--bone);
   font-weight: 500;
 }
 
 .heroFoot {
-  margin-top: 3rem;
+  margin-top: 3.5rem;
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
@@ -185,47 +206,47 @@
 }
 
 .scrollHint {
-  margin-top: 3.5rem;
+  margin-top: 4rem;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 10px;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
   color: var(--bone-dim);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .scrollHint::before {
   content: "";
-  width: 48px;
+  width: 56px;
   height: 1px;
   background: linear-gradient(90deg, var(--ember), transparent);
+  opacity: 0.6;
 }
 
-/* ── BUTTONS (local, scorched) ────────────────────────────────────────────── */
+/* ── BUTTONS (local, refined) ─────────────────────────────────────────────── */
 
 .btnPrimary {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  padding: 0.95rem 1.6rem;
+  letter-spacing: 0.2em;
+  padding: 1rem 1.7rem;
   border: none;
   color: var(--char);
-  background: linear-gradient(120deg, var(--gold), var(--ember));
+  background: var(--bone);       /* bone fill — editorial, not a glowing pill */
   text-decoration: none;
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, filter 0.25s ease;
-  box-shadow: 0 0 0 rgba(234, 90, 26, 0);
+  transition: background 0.4s ease, color 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btnPrimary:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.08);
-  box-shadow: 0 12px 40px -8px rgba(234, 90, 26, 0.6);
+  background: var(--ember);      /* warms to the single accent on intent */
+  color: var(--bone);
+  transform: translateY(-1px);
 }
 
 .btnGhost {
@@ -233,21 +254,20 @@
   align-items: center;
   gap: 0.6rem;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  padding: 0.95rem 1.6rem;
-  color: var(--haze);
+  letter-spacing: 0.2em;
+  padding: 1rem 1.7rem;
+  color: var(--bone-dim);
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--burnt) 55%, transparent);
+  border: 1px solid var(--line);
   text-decoration: none;
-  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  transition: color 0.4s ease, border-color 0.4s ease;
 }
 
 .btnGhost:hover {
-  color: var(--gold);
-  border-color: var(--ember);
-  background: rgba(234, 90, 26, 0.06);
+  color: var(--bone);
+  border-color: color-mix(in srgb, var(--bone) 40%, transparent);
 }
 
 /* ── SECTION SCAFFOLD ─────────────────────────────────────────────────────── */
@@ -255,22 +275,22 @@
 .section {
   position: relative;
   z-index: 2;
-  padding: 8rem 0;
-  border-top: 1px solid color-mix(in srgb, var(--burnt) 22%, transparent);
+  padding: 10rem 0;
+  border-top: 1px solid var(--line);
 }
 
 .sectionHead {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.25rem;
-  margin-bottom: 4rem;
+  gap: 1.5rem;
+  margin-bottom: 5rem;
 }
 
 .sectionTitle {
   font-weight: 700;
-  letter-spacing: -0.035em;
-  line-height: 0.95;
-  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  font-size: clamp(2.5rem, 5.5vw, 5rem);
   text-transform: uppercase;
   color: var(--bone);
   margin: 0;
@@ -278,32 +298,32 @@
 
 .sectionTitle em {
   font-style: normal;
-  color: var(--ember);
+  color: var(--ember);          /* the single accent, used once per line */
 }
 
-/* ── WHAT WE DO — three scorched disciplines ──────────────────────────────── */
+/* ── WHAT WE DO — three disciplines ───────────────────────────────────────── */
 
 .doGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: color-mix(in srgb, var(--burnt) 20%, transparent);
-  border: 1px solid color-mix(in srgb, var(--burnt) 20%, transparent);
+  background: var(--line);
+  border: 1px solid var(--line);
 }
 
 .doCell {
   position: relative;
   background: var(--char-2);
-  padding: 2.75rem 2rem 3.25rem;
-  min-height: 360px;
+  padding: 3rem 2.25rem 3.5rem;
+  min-height: 380px;
   display: flex;
   flex-direction: column;
-  transition: background 0.35s ease;
+  transition: background 0.5s ease;
   overflow: hidden;
 }
 
 .doCell:hover {
-  background: linear-gradient(180deg, var(--tobacco), var(--char-2));
+  background: var(--tobacco);
 }
 
 .doCell:hover .doNum {
@@ -316,11 +336,11 @@
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, var(--ember), var(--gold));
+  height: 1px;                   /* hairline, not a 3px gradient bar */
+  background: var(--ember);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .doCell:hover::before {
@@ -329,26 +349,26 @@
 
 .doNum {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  color: color-mix(in srgb, var(--haze) 50%, transparent);
-  transition: color 0.3s ease;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--bone-dim);
+  transition: color 0.4s ease;
 }
 
 .doName {
   margin-top: auto;
-  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-size: clamp(1.7rem, 2.6vw, 2.4rem);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
   color: var(--bone);
   line-height: 1;
 }
 
 .doDesc {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.7;
   color: var(--bone-dim);
   font-weight: 300;
 }
@@ -365,21 +385,25 @@
   grid-template-columns: 5rem 1fr auto;
   gap: 2rem;
   align-items: center;
-  padding: 2.5rem 0;
-  border-top: 1px solid color-mix(in srgb, var(--burnt) 18%, transparent);
-  transition: padding-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 2.75rem 0;
+  border-top: 1px solid var(--line);
+  transition: padding-left 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .stunt:last-child {
-  border-bottom: 1px solid color-mix(in srgb, var(--burnt) 18%, transparent);
+  border-bottom: 1px solid var(--line);
 }
 
 .stunt:hover {
-  padding-left: 1.5rem;
+  padding-left: 1.75rem;
 }
 
 .stunt:hover .stuntName {
-  color: var(--gold);
+  color: var(--bone);
+}
+
+.stunt:hover .stuntIndex {
+  color: var(--ember);
 }
 
 .stunt:hover .stuntArrow {
@@ -390,27 +414,28 @@
 
 .stuntIndex {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 12px;
-  letter-spacing: 0.2em;
-  color: var(--ember);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--bone-dim);
+  transition: color 0.4s ease;
 }
 
 .stuntName {
-  font-size: clamp(1.5rem, 3.2vw, 3rem);
+  font-size: clamp(1.6rem, 3vw, 2.85rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
-  color: var(--bone);
+  color: color-mix(in srgb, var(--bone) 88%, transparent);
   line-height: 1;
-  transition: color 0.25s ease;
+  transition: color 0.4s ease;
 }
 
 .stuntMeta {
   display: block;
-  margin-top: 0.65rem;
+  margin-top: 0.75rem;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: 0.16em;
+  font-size: 10px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--bone-dim);
   font-weight: 400;
@@ -418,11 +443,11 @@
 
 .stuntArrow {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 1.5rem;
-  color: var(--haze);
-  opacity: 0.4;
-  transform: translateX(-12px);
-  transition: transform 0.3s ease, opacity 0.3s ease, color 0.25s ease;
+  font-size: 1.4rem;
+  color: var(--bone-dim);
+  opacity: 0.3;
+  transform: translateX(-10px);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, color 0.4s ease;
 }
 
 /* ── MANIFESTO / PULL QUOTE ───────────────────────────────────────────────── */
@@ -430,25 +455,22 @@
 .manifesto {
   position: relative;
   z-index: 2;
-  padding: 9rem 0;
-  border-top: 1px solid color-mix(in srgb, var(--burnt) 22%, transparent);
+  padding: 12rem 0;
+  border-top: 1px solid var(--line);
 }
 
 .manifestoText {
-  font-size: clamp(1.8rem, 4.2vw, 4rem);
+  font-size: clamp(1.9rem, 4vw, 3.8rem);
   font-weight: 300;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
   color: var(--bone);
-  max-width: 22ch;
+  max-width: 24ch;
 }
 
 .manifestoText b {
-  font-weight: 700;
-  color: transparent;
-  background: linear-gradient(120deg, var(--gold), var(--ember));
-  -webkit-background-clip: text;
-  background-clip: text;
+  font-weight: 600;
+  color: var(--ember);          /* one warm word — flat accent, no clip gradient */
 }
 
 /* ── CTA ──────────────────────────────────────────────────────────────────── */
@@ -456,8 +478,8 @@
 .cta {
   position: relative;
   z-index: 2;
-  padding: 9rem 0 10rem;
-  border-top: 1px solid color-mix(in srgb, var(--burnt) 22%, transparent);
+  padding: 11rem 0 12rem;
+  border-top: 1px solid var(--line);
   text-align: center;
   overflow: hidden;
 }
@@ -466,28 +488,26 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(60% 70% at 50% 120%, rgba(234, 90, 26, 0.35), transparent 70%);
+  /* one faint, low warm wash — a light source, not a casino floor */
+  background: radial-gradient(50% 55% at 50% 118%, rgba(194, 84, 31, 0.12), transparent 70%);
   pointer-events: none;
 }
 
 .ctaTitle {
-  font-size: clamp(3rem, 11vw, 11rem);
+  font-size: clamp(3rem, 10vw, 10rem);
   font-weight: 800;
-  letter-spacing: -0.05em;
-  line-height: 0.85;
+  letter-spacing: -0.055em;
+  line-height: 0.86;
   text-transform: uppercase;
   margin: 0 0 2.5rem;
-  background: linear-gradient(176deg, var(--gold), var(--ember) 55%, var(--oxblood));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--bone);           /* solid bone — no gradient ink */
 }
 
 .ctaSub {
-  max-width: 46ch;
+  max-width: 48ch;
   margin: 0 auto 3rem;
-  font-size: clamp(1rem, 1.4vw, 1.3rem);
-  line-height: 1.6;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  line-height: 1.7;
   color: var(--bone-dim);
   font-weight: 300;
 }
@@ -504,8 +524,8 @@
 .footStrip {
   position: relative;
   z-index: 2;
-  border-top: 1px solid color-mix(in srgb, var(--burnt) 22%, transparent);
-  padding: 2rem 0;
+  border-top: 1px solid var(--line);
+  padding: 2.5rem 0;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -515,7 +535,7 @@
 .footStrip span {
   font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-size: 10px;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--bone-dim);
 }
@@ -534,16 +554,20 @@
     display: none;
   }
   .section {
-    padding: 5rem 0;
+    padding: 6rem 0;
+  }
+  .manifesto {
+    padding: 8rem 0;
   }
   .heroTop {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .root::before {
+  .wordmark.glitching::before,
+  .wordmark.glitching::after {
     animation: none;
   }
 }
