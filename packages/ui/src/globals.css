@@ -9,6 +9,7 @@
 @source "./";
 @source "../../../apps/lgit/src";
 @source "../../../apps/rogue/src";
+@source "../../../apps/patina/src";
 
 :root {
   /* Colors — monochrome warm neutrals */

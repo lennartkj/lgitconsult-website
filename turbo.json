@@ -12,6 +12,7 @@
         "AUDIT_FROM_EMAIL",
         "WAITLIST_TO_EMAIL",
         "WAITLIST_FROM_EMAIL",
+        "STRIPE_READ_PAYMENT_LINK",
         "PREVIEW_SECRET",
         "NEXT_PUBLIC_SITE_URL"
       ]

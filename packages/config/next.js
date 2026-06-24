@@ -7,9 +7,10 @@
  *   @repo/content (and pass its own list if it adds more).
  * - app: stamps NEXT_PUBLIC_APP so the shared chrome (Navbar/Footer) knows which
  *   surface it is rendering on, and can rewrite cross-app links to absolute URLs
- *   on the right domain. Defaults to "lgit". Pass `{ app: "rogue" }` for Rogue.
+ *   on the right domain. Defaults to "lgit". Pass `{ app: "rogue" }` for Rogue,
+ *   `{ app: "patina" }` for Patina.
  *
- * @param {Partial<import('next').NextConfig> & { app?: "lgit" | "rogue" }} overrides
+ * @param {Partial<import('next').NextConfig> & { app?: "lgit" | "rogue" | "patina" }} overrides
  * @returns {import('next').NextConfig}
  */
 function createNextConfig(overrides = {}) {
