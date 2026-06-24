@@ -10,10 +10,10 @@ import "@repo/ui/globals.css";
 // untouched, so git-consult.group keeps its warm-neutral editorial theme.
 import "./rogue-theme.css";
 
-import {
-  ConditionalNavbar,
-  ConditionalFooter,
-} from "@repo/ui/navigation/ConditionalChrome";
+// Rogue's OWN chrome — its own header + footer in the V2 scorched identity,
+// decoupled from the shared @repo/ui Navbar/Footer (which stay LGIT's). Rogue
+// leads with its own nav world; a discreet "by LGIT" links back to git-consult.
+import { RogueHeader, RogueFooter } from "@/components/rogue/RogueChrome";
 import { PreviewProvider } from "@repo/ui/preview/PreviewProvider";
 import React, { Suspense } from "react";
 import GlitchCoreProvider from "@repo/ui/glitch/GlitchCoreProvider";
@@ -60,13 +60,13 @@ export default function RootLayout({
             <GlitchCoreProvider>
               <div className="flex min-h-screen flex-col">
                 <Suspense fallback={null}>
-                  <ConditionalNavbar />
+                  <RogueHeader />
                 </Suspense>
 
                 <main className="flex-grow">{children}</main>
 
                 <Suspense fallback={null}>
-                  <ConditionalFooter />
+                  <RogueFooter />
                 </Suspense>
               </div>
               {/* The canvas is rendered outside the main content to float over everything */}
