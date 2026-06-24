@@ -25,22 +25,143 @@ const HEADLINES: Record<Variant, { title: string; body: string }> = {
 
 // The instinct test. Either/or choices nudge two hidden axes:
 //   Restraint (R) ↔ Expression (E)   ·   Heritage (H) ↔ Avant-garde (V)
-// Two "flavour" text cards (sweet, inkblot) carry no score — human texture only.
+// Two "flavour" text cards (sweet, inkblot) carry no score — human texture only,
+// and stay FIXED beats (cover order). Everything else is a *scored* instinct card
+// drawn fresh each session from a larger pool (see ASKED_PER_AXIS / buildTest).
+//
+// Each instinct card is single-axis: its left/right are the two poles of ONE axis
+// (R↔E or H↔V). That invariant is what lets us (a) stratify the random draw by axis
+// and (b) normalise the type *within* each axis, so any balanced subset of the pool
+// yields the same stable, unbiased type as the full set would.
 type Pole = "R" | "E" | "H" | "V";
-type TestCard =
-  | { kind: "instinct"; lead: string; left: { label: string; v: Pole }; right: { label: string; v: Pole } }
-  | { kind: "text"; field: "sweet" | "seen"; lead: string; hint: string; placeholder: string; inkblot?: boolean };
+type Axis = "RE" | "HV"; // RE = Restraint↔Expression · HV = Heritage↔avant-garde
 
-const TEST: TestCard[] = [
-  { kind: "text", field: "sweet", lead: "What was your favourite sweet as a child?", hint: "It tells us more than you think.", placeholder: "In a word or two." },
-  { kind: "instinct", lead: "A room should —", left: { label: "Whisper", v: "R" }, right: { label: "Announce", v: "E" } },
-  { kind: "instinct", lead: "The material —", left: { label: "Marble", v: "H" }, right: { label: "Steel", v: "V" } },
-  { kind: "text", field: "seen", lead: "What do you see?", hint: "There is no right answer.", placeholder: "The first thing.", inkblot: true },
-  { kind: "instinct", lead: "On the wall —", left: { label: "One perfect thing", v: "R" }, right: { label: "A hundred", v: "E" } },
-  { kind: "instinct", lead: "You would rather own —", left: { label: "The first edition", v: "H" }, right: { label: "The latest thing", v: "V" } },
-  { kind: "instinct", lead: "Closer to you —", left: { label: "Silver", v: "R" }, right: { label: "Gold", v: "E" } },
-  { kind: "instinct", lead: "The best things are —", left: { label: "Inherited", v: "H" }, right: { label: "Discovered", v: "V" } },
+type InstinctCard = {
+  kind: "instinct";
+  axis: Axis;
+  lead: string;
+  left: { label: string; v: Pole };
+  right: { label: string; v: Pole };
+};
+type TextCard = { kind: "text"; field: "sweet" | "seen"; lead: string; hint: string; placeholder: string; inkblot?: boolean };
+type TestCard = InstinctCard | TextCard;
+
+// ── Fixed framing beats (unscored human texture). Sweet opens; inkblot sits mid-test.
+const SWEET_CARD: TextCard = { kind: "text", field: "sweet", lead: "What was your favourite sweet as a child?", hint: "It tells us more than you think.", placeholder: "In a word or two." };
+const INKBLOT_CARD: TextCard = { kind: "text", field: "seen", lead: "What do you see?", hint: "There is no right answer.", placeholder: "The first thing.", inkblot: true };
+
+// ── The scored pool. Two axes, sampled independently each session.
+//    Mix of either/or (phrase chips) + word-association (single-word, staccato).
+//    Left label = first pole, right = second; axis ties the two poles together.
+const POOL_RE: InstinctCard[] = [
+  { kind: "instinct", axis: "RE", lead: "A room should —", left: { label: "Whisper", v: "R" }, right: { label: "Announce", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "On the wall —", left: { label: "One perfect thing", v: "R" }, right: { label: "A hundred", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Closer to you —", left: { label: "Silver", v: "R" }, right: { label: "Gold", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "The better entrance —", left: { label: "Unnoticed", v: "R" }, right: { label: "Remembered", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "A label should sit —", left: { label: "Inside", v: "R" }, right: { label: "Out", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "The right amount is —", left: { label: "A little less", v: "R" }, right: { label: "A little more", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "A great suit is —", left: { label: "Quiet", v: "R" }, right: { label: "Cut to be seen", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Colour, in a home —", left: { label: "Held back", v: "R" }, right: { label: "Everywhere", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "The compliment you want —", left: { label: "Nobody noticed", v: "R" }, right: { label: "Everyone noticed", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "A watch is —", left: { label: "Time", v: "R" }, right: { label: "A statement", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Empty space is —", left: { label: "The point", v: "R" }, right: { label: "Wasted", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Logos —", left: { label: "Never", v: "R" }, right: { label: "When earned", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "You'd rather be called —", left: { label: "Discreet", v: "R" }, right: { label: "Magnetic", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "The host you admire —", left: { label: "Invisible", v: "R" }, right: { label: "Unforgettable", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "A gift should —", left: { label: "Be noticed later", v: "R" }, right: { label: "Land at once", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Your front door —", left: { label: "Plain, perfect", v: "R" }, right: { label: "Says who lives here", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "The car —", left: { label: "Understated", v: "R" }, right: { label: "Unmistakable", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "A good photograph of you —", left: { label: "Almost missed", v: "R" }, right: { label: "Centre frame", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Lighting —", left: { label: "Low", v: "R" }, right: { label: "Bright", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Jewellery —", left: { label: "One piece", v: "R" }, right: { label: "Several", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Scent —", left: { label: "Skin-close", v: "R" }, right: { label: "Enters first", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "The wine list —", left: { label: "One you trust", v: "R" }, right: { label: "The boldest name", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Your name on things —", left: { label: "Nowhere", v: "R" }, right: { label: "Tastefully", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "A wall of glass or —", left: { label: "A single window", v: "R" }, right: { label: "The whole wall", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Restraint", v: "R" }, right: { label: "Abundance", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Hush", v: "R" }, right: { label: "Dazzle", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Subtle", v: "R" }, right: { label: "Bold", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Bare", v: "R" }, right: { label: "Lavish", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Plain", v: "R" }, right: { label: "Ornate", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Cool", v: "R" }, right: { label: "Warm", v: "E" } },
 ];
+
+const POOL_HV: InstinctCard[] = [
+  { kind: "instinct", axis: "HV", lead: "The material —", left: { label: "Marble", v: "H" }, right: { label: "Steel", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "You would rather own —", left: { label: "The first edition", v: "H" }, right: { label: "The latest thing", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "The best things are —", left: { label: "Inherited", v: "H" }, right: { label: "Discovered", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "A great chair —", left: { label: "A century old", v: "H" }, right: { label: "Made last year", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "You trust —", left: { label: "What lasted", v: "H" }, right: { label: "What's next", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "The right table —", left: { label: "Oak, worn", v: "H" }, right: { label: "Concrete, new", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Art on the wall —", left: { label: "An old master", v: "H" }, right: { label: "A name nobody knows yet", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "A house should feel —", left: { label: "Like it has a past", v: "H" }, right: { label: "Like the future", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Patina or —", left: { label: "Patina", v: "H" }, right: { label: "Pristine", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "The watch —", left: { label: "Mechanical, heirloom", v: "H" }, right: { label: "The new thing", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "A library or —", left: { label: "A library", v: "H" }, right: { label: "A studio", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Floors —", left: { label: "Parquet", v: "H" }, right: { label: "Poured", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "You'd commission —", left: { label: "A copy of a classic", v: "H" }, right: { label: "Something never made", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "The tailor or —", left: { label: "The tailor", v: "H" }, right: { label: "The designer", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "A clock —", left: { label: "Grandfather", v: "H" }, right: { label: "None", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "The kitchen —", left: { label: "Copper and wood", v: "H" }, right: { label: "Steel and stone", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Your ideal city —", left: { label: "Old, layered", v: "H" }, right: { label: "Built yesterday", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "A toast is poured into —", left: { label: "Crystal", v: "H" }, right: { label: "Something new", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "The car —", left: { label: "A classic, restored", v: "H" }, right: { label: "The newest model", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Wallpaper or —", left: { label: "Wallpaper", v: "H" }, right: { label: "Bare wall", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "A scar on the wood —", left: { label: "History", v: "H" }, right: { label: "A flaw to fix", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "You collect —", left: { label: "The proven", v: "H" }, right: { label: "The unproven", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "The better word for a thing —", left: { label: "Timeless", v: "H" }, right: { label: "Ahead", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Glassware —", left: { label: "Cut, inherited", v: "H" }, right: { label: "Clean, designed", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Heritage", v: "H" }, right: { label: "Avant-garde", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Antique", v: "H" }, right: { label: "Modern", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Tradition", v: "H" }, right: { label: "Invention", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Worn", v: "H" }, right: { label: "New", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Roots", v: "H" }, right: { label: "Frontier", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Classic", v: "H" }, right: { label: "Radical", v: "V" } },
+];
+
+// How many *scored* cards to ask per axis each session (kept = today's split: 3 + 3).
+// Total scored asked = 6; the type is computed per-axis, so this stays balanced.
+const ASKED_PER_AXIS = 3;
+
+// Fisher–Yates: an unbiased shuffle, then take the first n. Each axis is sampled
+// independently so the asked set is always stratified (n per axis), never skewed.
+function sample<T>(pool: readonly T[], n: number): T[] {
+  const a = pool.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a.slice(0, Math.min(n, a.length));
+}
+
+// Build this session's TEST: fixed sweet → RE block → fixed inkblot → HV block.
+// Mirrors the original beat (sweet first, inkblot mid-test) while randomising the
+// scored questions. Asked-count is constant; only the pool grew.
+function buildTest(): TestCard[] {
+  const re = sample(POOL_RE, ASKED_PER_AXIS);
+  const hv = sample(POOL_HV, ASKED_PER_AXIS);
+  return [SWEET_CARD, ...re, INKBLOT_CARD, ...hv];
+}
+
+// Dev-only sanity checks (stripped from production builds). Guards the invariants
+// the type computation relies on: every pooled card is single-axis, both pools are
+// large enough to draw without repeats, and any random draw stays axis-balanced so
+// the per-axis-normalised type is stable. A naive over-sampling of one axis would
+// trip these.
+if (process.env.NODE_ENV !== "production") {
+  const ok = (cond: boolean, msg: string) => { if (!cond) console.error(`[audit-test] ${msg}`); };
+  ok(POOL_RE.every((c) => c.left.v === "R" && c.right.v === "E"), "POOL_RE card not single-axis R/E");
+  ok(POOL_HV.every((c) => c.left.v === "H" && c.right.v === "V"), "POOL_HV card not single-axis H/V");
+  ok(POOL_RE.length >= ASKED_PER_AXIS && POOL_HV.length >= ASKED_PER_AXIS, "pool smaller than asked-per-axis");
+  for (let i = 0; i < 200; i++) {
+    const t = buildTest();
+    const scored = t.filter((c): c is InstinctCard => c.kind === "instinct");
+    const reN = scored.filter((c) => c.axis === "RE").length;
+    const hvN = scored.filter((c) => c.axis === "HV").length;
+    ok(reN === ASKED_PER_AXIS && hvN === ASKED_PER_AXIS, `draw not balanced: RE=${reN} HV=${hvN}`);
+    ok(new Set(scored.map((c) => c.lead + c.left.label)).size === scored.length, "draw has duplicate cards");
+  }
+}
 
 type TypeKey = "RH" | "RV" | "EH" | "EV";
 const TYPES: Record<TypeKey, { name: string; line: string; note: string }> = {
@@ -70,7 +191,11 @@ const CAPTURE = ["name", "email", "budget", "photos", "consent"] as const;
 type CaptureId = (typeof CAPTURE)[number];
 const BUDGET_OPTIONS = ["Just exploring", "€10k – €50k", "€50k – €250k", "€250k +"];
 const MAX_IMAGES = 5;
-const TOTAL = TEST.length + CAPTURE.length;
+// Cards ASKED per session is fixed regardless of pool size: 2 framing text cards
+// (sweet + inkblot) + ASKED_PER_AXIS scored cards per axis. The progress indicator
+// must reflect this asked-count, never the size of the pool we draw from.
+const TEST_LEN = 2 + 2 * ASKED_PER_AXIS;
+const TOTAL = TEST_LEN + CAPTURE.length;
 
 const labelCls = "font-mono text-[11px] uppercase tracking-[0.25em] text-fg/40";
 const inputCls =
@@ -113,6 +238,10 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   const reduce = useReducedMotion();
 
   const [view, setView] = useState<View>("cover");
+  // This session's drawn test (stratified subset of the pool). Built once on mount;
+  // re-rolled when the visitor starts over (Begin). Asked-count is constant; only
+  // *which* scored questions appear changes between sessions.
+  const [test, setTest] = useState<TestCard[]>(() => buildTest());
   const [testIndex, setTestIndex] = useState(0);
   const [capIndex, setCapIndex] = useState(0);
   const [picks, setPicks] = useState<Pole[]>([]);
@@ -135,7 +264,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
 
   const cardRef = useRef<HTMLDivElement>(null);
   const capId: CaptureId = CAPTURE[capIndex];
-  const card = TEST[testIndex];
+  const card = test[testIndex];
 
   useEffect(() => {
     let v: Variant = "capital";
@@ -161,7 +290,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   }, []);
 
   useEffect(() => {
-    const isInput = view === "capture" || (view === "test" && TEST[testIndex].kind === "text");
+    const isInput = view === "capture" || (view === "test" && test[testIndex].kind === "text");
     if (!isInput) return;
     const t = setTimeout(() => {
       cardRef.current
@@ -169,14 +298,22 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         ?.focus();
     }, 70);
     return () => clearTimeout(t);
-  }, [view, testIndex, capIndex]);
+  }, [view, testIndex, capIndex, test]);
 
   function computeReveal(arr: Pole[]) {
+    // Per-axis normalisation: each axis is resolved ONLY from its own answers, so a
+    // random (but axis-stratified) subset of the pool yields the same stable type as
+    // the full pool would. The RE result never depends on how many HV cards we drew,
+    // and vice-versa — the draw can't bias the outcome.
     const r = arr.filter((p) => p === "R").length;
     const e = arr.filter((p) => p === "E").length;
     const h = arr.filter((p) => p === "H").length;
     const v = arr.filter((p) => p === "V").length;
-    const key = (`${r >= e ? "R" : "E"}${h >= v ? "H" : "V"}`) as TypeKey;
+    // Within-axis majority. ASKED_PER_AXIS is odd → no ties in normal play; the
+    // >= fallbacks keep it deterministic if an axis is ever empty/even (e.g. Back).
+    const rePole: Pole = r >= e ? "R" : "E";
+    const hvPole: Pole = h >= v ? "H" : "V";
+    const key = `${rePole}${hvPole}` as TypeKey;
     setTypeKey(key);
     track("type", { type: TYPES[key].name, variant });
     // ★ The money moment becomes visible: the €150 Read offer is on the reveal.
@@ -189,7 +326,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
     setPicked(label);
     const next = [...picks, pole];
     setPicks(next);
-    const last = testIndex === TEST.length - 1;
+    const last = testIndex === test.length - 1;
     window.setTimeout(() => {
       setPicked(null);
       if (!last) setTestIndex((i) => i + 1);
@@ -198,7 +335,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   }
 
   function advanceText() {
-    if (testIndex < TEST.length - 1) setTestIndex((i) => i + 1);
+    if (testIndex < test.length - 1) setTestIndex((i) => i + 1);
     else computeReveal(picks);
   }
 
@@ -301,7 +438,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
       else setCapIndex((i) => i - 1);
     } else if (view === "test") {
       if (testIndex === 0) { setView("cover"); return; }
-      if (TEST[testIndex - 1].kind === "instinct") setPicks((p) => p.slice(0, -1));
+      if (test[testIndex - 1].kind === "instinct") setPicks((p) => p.slice(0, -1));
       setTestIndex((i) => i - 1);
     }
   }
@@ -316,7 +453,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
     ? {}
     : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 }, transition: { duration: 0.45, ease: easeOut } };
 
-  const stepNo = view === "test" ? testIndex + 1 : view === "capture" ? TEST.length + capIndex + 1 : 0;
+  const stepNo = view === "test" ? testIndex + 1 : view === "capture" ? TEST_LEN + capIndex + 1 : 0;
   const showHeader = view === "test" || view === "capture";
 
   return (
@@ -356,7 +493,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                 </p>
                 <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40">First, a few questions. Don&apos;t think — answer.</p>
                 <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
-                  <button type="button" onClick={() => { track("audit_begin", { variant }); setPicks([]); setTestIndex(0); setView("test"); }}
+                  <button type="button" onClick={() => { track("audit_begin", { variant }); setTest(buildTest()); setPicks([]); setTestIndex(0); setView("test"); }}
                     className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Begin ▸</button>
                   <a href="/audit/read" onClick={() => track("read_click")} className="ac-link font-mono text-[11px] uppercase tracking-[0.15em]">Not ready? The Read ▸</a>
                   <a href="/audit/gift" onClick={() => track("gift_click")} className="ac-link font-mono text-[11px] uppercase tracking-[0.15em]">A gift? ▸</a>
