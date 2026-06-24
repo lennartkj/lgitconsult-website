@@ -7,9 +7,9 @@ const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://patina.berlin"
 ).replace(/\/$/, "");
 
-// Public, indexable routes. The /audit/* funnel is intentionally noindex
-// (set per-page via metadata.robots), so it is NOT listed here.
-const STATIC_ROUTES = ["/patina"];
+// Patina is the /audit funnel only, and the whole funnel is intentionally
+// noindex (set per-page via metadata.robots). Nothing public to list.
+const STATIC_ROUTES: string[] = [];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 
-// The Patina brand home is canonically /patina (the route Patina owns in the
-// shared siteConfig). The apex (patina.berlin/) sends visitors there so there is
-// a single canonical URL for the landing.
+// Patina is the funnel — there is no brand landing. The apex (patina.berlin/)
+// sends visitors straight into the Audit. Audit IS the entry.
 export default function RootPage() {
-  redirect("/patina");
+  redirect("/audit");
 }

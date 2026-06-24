@@ -10,8 +10,9 @@ const nextConfig: NextConfig = createNextConfig({
   async redirects() {
     return [
       {
+        // Patina has no brand landing now — it's the funnel. Send /patina to the Audit.
         source: "/patina",
-        destination: "https://patina.berlin/patina",
+        destination: "https://patina.berlin/audit",
         permanent: true,
       },
       {
