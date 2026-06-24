@@ -29,6 +29,12 @@ export async function generateMetadata({
   return {
     title: `${service.title} | LGIT Consult`,
     description: service.description,
+    keywords: service.keywords,
+    openGraph: {
+      title: `${service.title} | LGIT Consult`,
+      description: service.description,
+      type: "website",
+    },
   };
 }
 

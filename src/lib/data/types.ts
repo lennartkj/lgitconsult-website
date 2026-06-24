@@ -51,6 +51,7 @@ export interface Service {
     pillar: "digital" | "creative";
     features: string[];
     cta: string;
+    keywords?: string[];
 }
 
 // Pricing
