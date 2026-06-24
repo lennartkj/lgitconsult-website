@@ -20,18 +20,18 @@ export async function generateMetadata({
 
   if (!result) {
     return {
-      title: "Service Not Found | LGIT Consult",
+      title: "Service Not Found",
       description: "The requested service could not be found.",
     };
   }
 
   const service = result.content as unknown as Service;
   return {
-    title: `${service.title} | LGIT Consult`,
+    title: service.title,
     description: service.description,
     keywords: service.keywords,
     openGraph: {
-      title: `${service.title} | LGIT Consult`,
+      title: `${service.title} · Rogue`,
       description: service.description,
       type: "website",
     },

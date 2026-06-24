@@ -1,170 +1,29 @@
 "use client";
 
 /* ──────────────────────────────────────────────────────────────────────────
-   ROGUE — EXPLORE V2  ·  "SCORCHED, COUTURE"
-   Sandbox concept. Self-contained. Touches no shared files.
-   Inherits the LGIT bones (mono labels, numbered sections, Geist type,
-   restraint-as-structure, the glitch idea) but holds the heat to a single
-   considered warm light source — luxury-fashion editorial, not a casino.
-   Effects are sparing and slow; composition and type do the work.
+   ROGUE — home / landing  ·  "EUROPEAN SUMMER, SCORCHED"
+   The promoted V2 identity, now the real Rogue front door (rogue.berlin).
+   European, Berlin-coded register. Restraint in words, violence in art
+   direction. Leipzig is the base, not the positioning.
    ────────────────────────────────────────────────────────────────────────── */
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, type Variants } from "framer-motion";
-import styles from "./v2.module.css";
-
-/* ── Ember field ──────────────────────────────────────────────────────────────
-   A handful of dim, slow embers drifting upward like the last sparks off a
-   fire — no connection lines, no index labels, no surveillance grid. A quiet
-   warm presence behind the type. Local to the hero, respects reduced motion.
-   ────────────────────────────────────────────────────────────────────────── */
-function EmberField() {
-  const ref = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    let raf = 0;
-    let w = 0;
-    let h = 0;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-    type Ember = { x: number; y: number; vy: number; drift: number; r: number; a: number; phase: number };
-    let embers: Ember[] = [];
-
-    const make = (): Ember => ({
-      x: Math.random() * w,
-      y: h + Math.random() * 40,
-      vy: 0.12 + Math.random() * 0.18,   // slow, deliberate rise
-      drift: (Math.random() - 0.5) * 0.06,
-      r: 0.8 + Math.random() * 1.4,
-      a: 0.12 + Math.random() * 0.22,
-      phase: Math.random() * Math.PI * 2,
-    });
-
-    const seed = () => {
-      const count = w < 700 ? 7 : 12;       // sparse
-      embers = Array.from({ length: count }, () => {
-        const e = make();
-        e.y = Math.random() * h;            // spread on first frame
-        return e;
-      });
-    };
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      w = rect.width;
-      h = rect.height;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      seed();
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const EMBER = "194, 84, 31"; // matches --ember, the single warm accent
-
-    const draw = (t: number) => {
-      ctx.clearRect(0, 0, w, h);
-
-      for (const e of embers) {
-        e.y -= e.vy;
-        e.x += e.drift;
-        if (e.y < -10) Object.assign(e, make());
-
-        // gentle breathing glow, never flickering
-        const glow = e.a * (0.7 + 0.3 * Math.sin(t * 0.0006 + e.phase));
-        const g = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r * 6);
-        g.addColorStop(0, `rgba(${EMBER}, ${glow})`);
-        g.addColorStop(1, `rgba(${EMBER}, 0)`);
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(e.x, e.y, e.r * 6, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      raf = requestAnimationFrame(draw);
-    };
-
-    if (reduce) {
-      draw(0);
-      cancelAnimationFrame(raf);
-    } else {
-      raf = requestAnimationFrame(draw);
-    }
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
-  return <canvas ref={ref} className={styles.heroCanvas} aria-hidden="true" />;
-}
-
-/* ── Wordmark ─────────────────────────────────────────────────────────────────
-   The refined logo treatment the operator liked: a sparing chromatic/heat
-   split on the ROGUE wordmark. Dead still at rest. Fires ONCE on mount, and
-   briefly on hover — an expensive accent, never a constant effect.
-   ────────────────────────────────────────────────────────────────────────── */
-function Wordmark() {
-  const [on, setOn] = useState(false);
-
-  useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-    const id = window.setTimeout(() => fire(), 650);
-    return () => window.clearTimeout(id);
-  }, []);
-
-  const fire = () => {
-    setOn(false);
-    // retrigger the animation cleanly
-    requestAnimationFrame(() => requestAnimationFrame(() => setOn(true)));
-    window.setTimeout(() => setOn(false), 560);
-  };
-
-  return (
-    <span
-      className={`${styles.wordmark} ${on ? styles.glitching : ""}`}
-      data-text="ROGUE"
-      onMouseEnter={fire}
-    >
-      ROGUE
-    </span>
-  );
-}
-
-/* ── Motion presets — slowed, weighted, deliberate ─────────────────────────── */
-const rise: Variants = {
-  hidden: { opacity: 0, y: 26 },
-  visible: (i: number = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.12, duration: 1.1, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
+import React from "react";
+import { motion } from "framer-motion";
+import styles from "./rogue.module.css";
+import { EmberField, Wordmark, rise } from "./atmosphere";
 
 const DISCIPLINES = [
   {
     n: "01",
     name: "Guerrilla",
     desc:
-      "Unsanctioned, unforgettable. We hit the street where the buyer least expects it and leave a mark the algorithm can't bury.",
+      "Unsanctioned, unforgettable. We move on the city where the buyer least expects it and leave a mark the algorithm can't bury.",
   },
   {
     n: "02",
     name: "Experiential",
     desc:
-      "Heat you can stand inside. Installations, takeovers and one-night-only worlds that turn a city block into a memory.",
+      "Heat you can stand inside. Installations, takeovers and one-night-only worlds that turn a European block into a memory.",
   },
   {
     n: "03",
@@ -174,14 +33,14 @@ const DISCIPLINES = [
   },
 ];
 
-const STUNTS = [
+const WORK = [
   { i: "001", name: "Midnight Harvest", meta: "Berlin · Spirits launch · 1 night" },
   { i: "002", name: "The Salt Mirror", meta: "Lisbon · Fashion takeover · 9 days" },
   { i: "003", name: "Forty Degrees", meta: "Marseille · Festival ambush · live" },
   { i: "004", name: "Last Light", meta: "Milan · Automotive reveal · invite-only" },
 ];
 
-export default function V2Concept() {
+export default function RogueHome() {
   return (
     <div className={styles.root}>
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
@@ -213,7 +72,8 @@ export default function V2Concept() {
           >
             A European guerrilla and experiential agency for brands that refuse to
             be ignored. We <b>steal the moment</b> — on the street, after dark, in
-            the heat — and hand you the part the feed can&apos;t fake.
+            the heat — and hand you the part the feed can&apos;t fake. Based in
+            Leipzig, working Berlin to the Mediterranean.
           </motion.p>
 
           <motion.div
@@ -231,7 +91,7 @@ export default function V2Concept() {
             </a>
           </motion.div>
 
-          <div className={styles.scrollHint}>Scroll · 39°N</div>
+          <div className={styles.scrollHint}>Scroll · 51°N</div>
         </div>
       </header>
 
@@ -289,7 +149,7 @@ export default function V2Concept() {
         </div>
       </section>
 
-      {/* ── STUNT SHOWCASE ────────────────────────────────────────────────── */}
+      {/* ── SELECTED WORK ─────────────────────────────────────────────────── */}
       <section className={styles.section} id="work">
         <div className={styles.wrap}>
           <div className={styles.sectionHead}>
@@ -306,7 +166,7 @@ export default function V2Concept() {
           </div>
 
           <div className={styles.stunts}>
-            {STUNTS.map((s, i) => (
+            {WORK.map((s, i) => (
               <motion.a
                 key={s.i}
                 href="#brief"
@@ -356,11 +216,11 @@ export default function V2Concept() {
             We&apos;ll tell you what we&apos;d set on fire.
           </motion.p>
           <div className={styles.ctaActions}>
-            <a className={styles.btnPrimary} href="mailto:hello@git-consult.group">
+            <a className={styles.btnPrimary} href="mailto:hello@rogue.berlin?subject=ROGUE%20BRIEF">
               Start a brief →
             </a>
-            <a className={styles.btnGhost} href="#do">
-              How we work
+            <a className={styles.btnGhost} href="/creative">
+              The creative line
             </a>
           </div>
         </div>
@@ -369,7 +229,7 @@ export default function V2Concept() {
       <footer className={styles.wrap}>
         <div className={styles.footStrip}>
           <span>ROGUE © {new Date().getFullYear()} — A LGIT AGENCY</span>
-          <span>EXPLORE / V2 — SCORCHED, COUTURE</span>
+          <span>EUROPEAN SUMMER, SCORCHED</span>
         </div>
       </footer>
     </div>

@@ -1,4 +1,31 @@
 import Link from "next/link";
+import { resolveHref, isCrossDomain } from "./siteConfig";
+
+/* Resolves cross-app routes to absolute URLs on the other app's domain (plain
+   <a>) and keeps same-app routes as client-side <Link>s. */
+function FooterLink({
+  href,
+  className,
+  children,
+}: {
+  href: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const resolved = resolveHref(href);
+  if (isCrossDomain(href)) {
+    return (
+      <a href={resolved} className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={resolved} className={className}>
+      {children}
+    </Link>
+  );
+}
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -17,28 +44,28 @@ export default function Footer() {
           <div className="col-span-6 md:col-span-2 md:col-start-7">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/30 block mb-4">Navigation</span>
             <ul className="space-y-3">
-              <li><Link href="/" className="text-sm text-fg/40 transition-colors hover:text-fg">Home</Link></li>
-              <li><Link href="/work" className="text-sm text-fg/40 transition-colors hover:text-fg">Work</Link></li>
-              <li><Link href="/about" className="text-sm text-fg/40 transition-colors hover:text-fg">About</Link></li>
-              <li><Link href="/journal" className="text-sm text-fg/40 transition-colors hover:text-fg">Journal</Link></li>
+              <li><FooterLink href="/" className="text-sm text-fg/40 transition-colors hover:text-fg">Home</FooterLink></li>
+              <li><FooterLink href="/work" className="text-sm text-fg/40 transition-colors hover:text-fg">Work</FooterLink></li>
+              <li><FooterLink href="/about" className="text-sm text-fg/40 transition-colors hover:text-fg">About</FooterLink></li>
+              <li><FooterLink href="/journal" className="text-sm text-fg/40 transition-colors hover:text-fg">Journal</FooterLink></li>
             </ul>
           </div>
 
           <div className="col-span-6 md:col-span-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/30 block mb-4">Services</span>
             <ul className="space-y-3">
-              <li><Link href="/services" className="text-sm text-fg/40 transition-colors hover:text-fg">Digital</Link></li>
-              <li><Link href="/creative" className="text-sm text-fg/40 transition-colors hover:text-fg">Creative</Link></li>
-              <li><Link href="/contact" className="text-sm text-fg/40 transition-colors hover:text-fg">Contact</Link></li>
+              <li><FooterLink href="/services" className="text-sm text-fg/40 transition-colors hover:text-fg">Digital</FooterLink></li>
+              <li><FooterLink href="/creative" className="text-sm text-fg/40 transition-colors hover:text-fg">Creative</FooterLink></li>
+              <li><FooterLink href="/contact" className="text-sm text-fg/40 transition-colors hover:text-fg">Contact</FooterLink></li>
             </ul>
           </div>
 
           <div className="col-span-12 md:col-span-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/30 block mb-4">Legal</span>
             <ul className="space-y-3">
-              <li><Link href="/legal/privacy" className="text-sm text-fg/40 transition-colors hover:text-fg">Privacy</Link></li>
-              <li><Link href="/legal/terms" className="text-sm text-fg/40 transition-colors hover:text-fg">Terms</Link></li>
-              <li><Link href="/legal/impressum" className="text-sm text-fg/40 transition-colors hover:text-fg">Impressum</Link></li>
+              <li><FooterLink href="/legal/privacy" className="text-sm text-fg/40 transition-colors hover:text-fg">Privacy</FooterLink></li>
+              <li><FooterLink href="/legal/terms" className="text-sm text-fg/40 transition-colors hover:text-fg">Terms</FooterLink></li>
+              <li><FooterLink href="/legal/impressum" className="text-sm text-fg/40 transition-colors hover:text-fg">Impressum</FooterLink></li>
             </ul>
           </div>
         </div>

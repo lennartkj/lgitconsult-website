@@ -1,0 +1,114 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   ROGUE — APP THEME  ·  "EUROPEAN SUMMER, SCORCHED"  (promoted from explore/v2)
+
+   This is the Rogue app's OWN identity layer. It is imported by the Rogue
+   layout AFTER @repo/ui/globals.css, so it overrides the shared LGIT tokens
+   *for the Rogue app only*. The shared packages/ui/globals.css is NOT touched —
+   git-consult.group (the LGIT app) keeps its warm-neutral editorial theme.
+
+   What it does:
+   1. Re-points the shared design tokens (--bg / --fg / --muted / --subtle /
+      --accent …) to the charred-couture palette, so every existing Tailwind
+      utility on the real pages (bg-muted, text-fg/50, border-fg/10, bg-fg …)
+      renders in V2 colours with no page rewrite.
+   2. Adds the V2 atmospheres app-wide: a single warm top-right light source,
+      a fine ~14% editorial film grain, hairline bone borders.
+   3. Dresses the shared Button + prose in V2.
+   Charred black + dusty bone base; ember/oxblood/bronze as restrained couture
+   neutrals. Register: 032c / Arena Homme+ / Helmut Lang — not casino/tech.
+   ────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Couture-scorched palette (from explore/v2) ── */
+  --char: #080605;          /* charred near-black base */
+  --char-2: #0e0a08;        /* slightly lifted panel */
+  --tobacco: #15100b;       /* deep tobacco */
+  --oxblood: #4a1512;       /* oxblood — couture neutral */
+  --bronze: #8a5a32;        /* bronze — couture neutral */
+  --burnt: #9a3b14;         /* dialled-back burnt sienna */
+  --ember: #c2541f;         /* ember — the single warm accent, restrained */
+  --amber: #d08a3c;         /* muted amber, used sparingly */
+  --bone: #e8e0d3;          /* dusty bone (warm off-white) */
+  --bone-dim: #9b9082;      /* dimmed bone */
+
+  /* ── Re-point the SHARED tokens to the scorched palette ──
+     The real Rogue pages are built on these (bg-muted, text-fg, border-fg/10,
+     bg-fg primary buttons …), so overriding them re-skins the whole app. */
+  --bg: var(--char);
+  --fg: var(--bone);
+  --muted: var(--char-2);
+  --subtle: var(--bone-dim);
+  --accent: var(--ember);
+  --accent-contrast: var(--char);
+}
+
+/* Hold the scorched theme even when the OS prefers light — Rogue is always dark.
+   (Beats the shared globals.css `prefers-color-scheme: dark` block by also
+   covering the light case, scoped to the Rogue app.) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: var(--char);
+    --fg: var(--bone);
+    --muted: var(--char-2);
+    --subtle: var(--bone-dim);
+    --accent: var(--ember);
+    --accent-contrast: var(--char);
+  }
+}
+
+/* One considered warm light source, top-right; everything else charred.
+   Painted on the body so it sits under all page content, app-wide. */
+body {
+  background:
+    radial-gradient(80% 60% at 88% -8%, rgba(194, 84, 31, 0.12) 0%, rgba(194, 84, 31, 0) 58%),
+    radial-gradient(70% 60% at 4% 108%, rgba(74, 21, 18, 0.26) 0%, rgba(74, 21, 18, 0) 62%),
+    linear-gradient(180deg, #080605 0%, #0c0907 50%, #080605 100%);
+  background-attachment: fixed;
+  color: var(--fg);
+}
+
+/* Fine film grain — refined, like a printed editorial, not a buzzing screen.
+   Fixed full-viewport overlay, above content but click-through. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  mix-blend-mode: soft-light;
+  opacity: 0.14;
+}
+
+/* Hairline borders that read as bone, not pure white — used by border-fg/* on
+   the real pages. We can't restyle every alpha utility, but the base --fg is
+   now bone so border-fg/10 etc. already warm correctly. */
+
+/* ── Shared Button, dressed in V2 ──────────────────────────────────────────
+   The real pages use @repo/ui Button (variant="primary" = bg-fg text-bg;
+   variant="outline" = border-fg/20 hover bg-fg text-bg). With --fg = bone and
+   --bg = char those already invert correctly (bone fill, charred ink). We add
+   the V2 "warm to ember on intent" behaviour + the editorial mono weight. */
+.font-mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* Primary buttons (bone fill) warm to ember on hover, like the V2 concept. */
+a[class*="bg-fg"]:hover,
+button[class*="bg-fg"]:hover {
+  background-color: var(--ember) !important;
+  color: var(--bone) !important;
+}
+
+/* ── Prose (service detail MDX) in the scorched register ── */
+.prose {
+  --tw-prose-body: var(--bone-dim);
+  --tw-prose-headings: var(--bone);
+  --tw-prose-links: var(--bone);
+  --tw-prose-bold: var(--bone);
+  --tw-prose-quotes: var(--bone);
+}
+.prose strong { color: var(--ember); }
+.prose a { text-decoration-color: color-mix(in srgb, var(--ember) 60%, transparent); }
+.prose a:hover { text-decoration-color: var(--ember); }

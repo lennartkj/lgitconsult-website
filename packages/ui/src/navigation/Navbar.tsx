@@ -4,6 +4,36 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SearchButton } from "../search/SearchButton";
+import { resolveHref, isCrossDomain } from "./siteConfig";
+
+/* Renders a nav link, rewriting cross-app routes to an absolute URL on the
+   other app's domain (a plain <a>, since it leaves this domain) and keeping
+   same-app routes as client-side <Link>s. */
+function NavLink({
+  href,
+  className,
+  onClick,
+  children,
+}: {
+  href: string;
+  className?: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  const resolved = resolveHref(href);
+  if (isCrossDomain(href)) {
+    return (
+      <a href={resolved} className={className} onClick={onClick}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={resolved} className={className} onClick={onClick}>
+      {children}
+    </Link>
+  );
+}
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -97,7 +127,7 @@ function NavDropdown({ item }: { item: { name: string; children: { name: string;
             className="absolute top-full right-0 mt-4 w-72 border border-fg/10 bg-bg"
           >
             {item.children.map((child, idx) => (
-              <Link
+              <NavLink
                 key={child.name}
                 href={child.href}
                 className={`block px-6 py-5 transition-colors hover:bg-muted ${idx > 0 ? "border-t border-fg/10" : ""}`}
@@ -105,7 +135,7 @@ function NavDropdown({ item }: { item: { name: string; children: { name: string;
               >
                 <span className="font-mono text-[11px] uppercase tracking-[0.15em] block mb-1">{child.name}</span>
                 <span className="text-[12px] text-fg/40 leading-relaxed">{child.description}</span>
-              </Link>
+              </NavLink>
             ))}
           </motion.div>
         )}
@@ -136,9 +166,9 @@ export default function Navbar() {
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
         <div className="container mx-auto flex h-12 items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="font-mono text-[12px] uppercase tracking-[0.2em] font-medium">
+          <NavLink href="/" className="font-mono text-[12px] uppercase tracking-[0.2em] font-medium">
             LGIT
-          </Link>
+          </NavLink>
 
           <div className="flex items-center gap-6">
             <nav className="hidden md:block">
@@ -148,12 +178,12 @@ export default function Navbar() {
                     <NavDropdown key={item.name} item={item as { name: string; children: { name: string; href: string; description: string }[] }} />
                   ) : (
                     <li key={item.name}>
-                      <Link
+                      <NavLink
                         href={(item as { name: string; href: string }).href}
                         className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/50 transition-colors hover:text-fg"
                       >
                         {item.name}
-                      </Link>
+                      </NavLink>
                     </li>
                   )
                 )}
@@ -207,7 +237,7 @@ export default function Navbar() {
               <ul className="space-y-1">
                 {mobileItems.map((item, index) => (
                   <motion.li key={item.name} variants={staggerItem}>
-                    <Link
+                    <NavLink
                       href={item.href}
                       className="flex items-baseline gap-4 py-3 group"
                       onClick={() => setMobileOpen(false)}
@@ -218,7 +248,7 @@ export default function Navbar() {
                       <span className="text-3xl md:text-4xl font-light tracking-tight group-hover:text-fg/60 transition-colors">
                         {item.name}
                       </span>
-                    </Link>
+                    </NavLink>
                   </motion.li>
                 ))}
               </ul>

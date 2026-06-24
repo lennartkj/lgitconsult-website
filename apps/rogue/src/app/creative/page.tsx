@@ -7,8 +7,16 @@ export const revalidate = 60;
 // Generate SEO metadata
 export async function generateMetadata() {
   return {
-    title: 'Creative Consulting | LGIT Consult',
-    description: 'Campaign design, photography, physical media, music and video production, and creative direction. For artists, brands, and advertisers.',
+    title: 'Creative',
+    description: 'Art direction, film, sound and physical media for brands and artists across Europe. Built to detonate first and explain later. A European creative network, run out of Leipzig.',
+    keywords: [
+      'creative agency Europe',
+      'art direction',
+      'film production',
+      'music video production',
+      'brand creative direction',
+      'creative network Berlin',
+    ],
   };
 }
 

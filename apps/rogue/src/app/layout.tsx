@@ -4,6 +4,11 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "@repo/ui/globals.css";
+// Rogue's own identity layer — "European Summer, Scorched" (promoted from
+// explore/v2). Imported AFTER the shared globals so it overrides the LGIT
+// theme tokens for the Rogue app ONLY. The shared packages/ui/globals.css is
+// untouched, so git-consult.group keeps its warm-neutral editorial theme.
+import "./rogue-theme.css";
 
 import {
   ConditionalNavbar,
@@ -15,13 +20,24 @@ import GlitchCoreProvider from "@repo/ui/glitch/GlitchCoreProvider";
 import GlitchCoreCanvas from "@repo/ui/glitch/GlitchCoreCanvas";
 
 export const metadata: Metadata = {
-  title: "Rogue — Marketing, Campaigns & Creative | LGIT",
+  metadataBase: new URL("https://rogue.berlin"),
+  title: {
+    default: "Rogue — European Guerrilla & Experiential Agency",
+    template: "%s · Rogue",
+  },
   description:
-    "Leipzig-based creative consulting and digital agency. Technology, campaigns, and joint ventures with artists and brands.",
-  keywords: ["creative consulting", "digital agency", "Leipzig", "web development", "campaign design", "photography"],
-  authors: [{ name: "LGIT Consult" }],
-  creator: "LGIT Consult",
-  publisher: "LGIT Consult",
+    "A European guerrilla and experiential agency for brands that refuse to be ignored. Unsanctioned moments, installations and stunts — Berlin to the Mediterranean, based in Leipzig.",
+  keywords: [
+    "guerrilla marketing agency",
+    "experiential marketing Europe",
+    "brand activation",
+    "experiential agency Europe",
+    "stunt marketing",
+    "creative agency Berlin",
+  ],
+  authors: [{ name: "Rogue" }],
+  creator: "Rogue",
+  publisher: "LGIT",
   formatDetection: {
     email: false,
     telephone: false,

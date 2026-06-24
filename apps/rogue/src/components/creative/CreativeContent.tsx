@@ -1,220 +1,189 @@
 "use client";
 
+/* ──────────────────────────────────────────────────────────────────────────
+   ROGUE — Creative line  ·  "EUROPEAN SUMMER, SCORCHED"
+   The creative pillar, dressed in the promoted V2 identity. European register.
+   ────────────────────────────────────────────────────────────────────────── */
+
 import React from "react";
-import Image from "next/image";
-import { motion, type Variants } from "framer-motion";
-import { Button } from "@repo/ui/ui/Button";
+import NextLink from "next/link";
+import { motion } from "framer-motion";
 import { Service } from "@repo/content/types";
+import styles from "@/components/rogue/rogue.module.css";
+import { EmberField, Wordmark, rise } from "@/components/rogue/atmosphere";
 
 interface CreativeContentProps {
-    services: Service[];
+  services: Service[];
 }
 
-const fadeIn: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-        opacity: 1,
-        y: 0,
-        transition: {
-            delay: i * 0.1,
-            duration: 0.5,
-            ease: "easeOut" as const,
-        },
-    }),
-};
-
-const slideFromRight: Variants = {
-    hidden: { opacity: 0, x: 40 },
-    visible: {
-        opacity: 1,
-        x: 0,
-        transition: {
-            duration: 0.6,
-            ease: [0.16, 1, 0.3, 1],
-        },
-    },
-};
-
 export default function CreativeContent({ services }: CreativeContentProps) {
-    return (
-        <>
-            {/* Hero Section — left-aligned */}
-            <section className="py-32 md:py-48 bg-muted">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12">
-                        <motion.div
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeIn}
-                            custom={0}
-                            className="col-span-12 md:col-span-7"
-                        >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Creative Consulting</span>
-                            <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
-                                Creative
-                            </h1>
-                            <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
-                                For artists, brands, and advertisers who want more than the obvious. Campaigns, photography, music, video, and creative direction — powered by Leipzig&apos;s creative scene.
-                            </p>
-                        </motion.div>
-                    </div>
+  return (
+    <div className={styles.root}>
+      {/* ── HERO ──────────────────────────────────────────────────────────── */}
+      <header className={`${styles.hero} ${styles.heroCompact}`}>
+        <EmberField />
+        <div className={styles.wrap}>
+          <div className={styles.heroTop}>
+            <Wordmark text="ROGUE / CREATIVE" />
+            <span className={styles.heroMeta}>EUROPE · THE IDEA FIRST</span>
+          </div>
+
+          <motion.h1
+            className={`${styles.heroTitle} ${styles.heroTitleSub}`}
+            initial="hidden"
+            animate="visible"
+            variants={rise}
+          >
+            Creative
+          </motion.h1>
+
+          <motion.p
+            className={styles.heroSub}
+            initial="hidden"
+            animate="visible"
+            custom={1}
+            variants={rise}
+          >
+            For brands and artists who want more than the obvious. Art direction,
+            film, sound and physical media — <b>built to detonate first and
+            explain later.</b> A European creative network, run out of Leipzig.
+          </motion.p>
+        </div>
+      </header>
+
+      {/* ── APPROACH ──────────────────────────────────────────────────────── */}
+      <section className={styles.section} id="approach">
+        <div className={styles.wrap}>
+          <div className={styles.sectionHead}>
+            <span className={styles.label}>001 — Approach</span>
+            <motion.h2
+              className={styles.sectionTitle}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={rise}
+            >
+              We don&apos;t take briefs. We <em>build partnerships.</em>
+            </motion.h2>
+          </div>
+          <motion.p
+            className={styles.heroSub}
+            style={{ maxWidth: "62ch", marginTop: 0 }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={rise}
+          >
+            Shared vision, shared outcome. We assemble the right people for the
+            work — directors, photographers, composers, designers, strategists —
+            from a European network, then run it from concept to the final cut.
+            From a single image to a continental rollout.
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ── CAPABILITIES ──────────────────────────────────────────────────── */}
+      <section className={styles.section} id="services">
+        <div className={styles.wrap}>
+          <div className={styles.sectionHead}>
+            <span className={styles.label}>002 — Capabilities</span>
+            <motion.h2
+              className={styles.sectionTitle}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={rise}
+            >
+              What we make.
+            </motion.h2>
+          </div>
+
+          <div className={styles.stunts}>
+            {services.map((service, index) => (
+              <motion.div
+                key={service.id}
+                className={styles.svcRow}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                custom={index}
+                variants={rise}
+              >
+                <span className={styles.stuntIndex}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className={styles.svcName}>{service.title}</h3>
+                  <p className={styles.svcDesc}>{service.description}</p>
                 </div>
-            </section>
+                <ul className={styles.svcFeatures}>
+                  {service.features.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+                <a className={styles.btnGhost} href="mailto:hello@rogue.berlin?subject=ROGUE%20CREATIVE">
+                  {service.cta}
+                </a>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Full-bleed image — film negative, the analog process */}
-            <section className="relative w-full h-[40vh] md:h-[60vh] overflow-hidden img-editorial">
-                <Image
-                    src="/images/film-negative.jpg"
-                    alt="Film negative — analog photography process"
-                    fill
-                    className="object-cover"
-                    sizes="100vw"
-                />
-            </section>
+      {/* ── MANIFESTO ─────────────────────────────────────────────────────── */}
+      <section className={styles.manifesto}>
+        <div className={styles.wrap}>
+          <span className={styles.labelDim}>003 — Position</span>
+          <motion.p
+            className={styles.manifestoText}
+            style={{ marginTop: "2rem" }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={rise}
+          >
+            We don&apos;t make content. We build creative work that <b>earns its
+            place</b> in the room.
+          </motion.p>
+        </div>
+      </section>
 
-            {/* Approach — asymmetric two-column */}
-            <section className="py-24 md:py-32">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12 gap-12">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={fadeIn}
-                            custom={0}
-                            className="col-span-12 md:col-span-3"
-                        >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block">002 — Approach</span>
-                        </motion.div>
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={fadeIn}
-                            custom={1}
-                            className="col-span-12 md:col-span-7"
-                        >
-                            <h2 className="text-2xl md:text-3xl font-light tracking-tight mb-8">How We Work</h2>
-                            <p className="text-base text-fg/50 mb-6 leading-relaxed">
-                                We don&apos;t just take briefs — we build partnerships. Our creative consulting model is built on joint ventures with artists and brands, where we share the vision and the outcome.
-                            </p>
-                            <p className="text-base text-fg/50 leading-relaxed">
-                                Our pool of Leipzig-based creatives — photographers, videographers, musicians, designers, and strategists — means we can assemble the right team for any project, from a single shoot to a full campaign rollout.
-                            </p>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Full-bleed statement — rhythm break */}
-            <section className="py-20 md:py-28 border-t border-b border-fg/10">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        variants={slideFromRight}
-                        className="grid grid-cols-12"
-                    >
-                        <p className="col-span-12 md:col-span-8 md:col-start-3 text-2xl md:text-4xl font-light tracking-tight leading-snug text-fg/70">
-                            &ldquo;We don&apos;t make content — we build creative partnerships. Shared vision, shared outcome.&rdquo;
-                        </p>
-                    </motion.div>
-                </div>
-            </section>
-
-            {/* Services — ruled-line editorial layout */}
-            <section className="py-24 md:py-32 bg-muted">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12 mb-16">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={fadeIn}
-                            custom={0}
-                            className="col-span-12 md:col-span-6"
-                        >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">003 — Services</span>
-                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter">What We Offer</h2>
-                        </motion.div>
-                    </div>
-
-                    <div className="border-t border-fg/10">
-                        {services.map((service, index) => (
-                            <motion.div
-                                key={service.id}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true, margin: "-50px" }}
-                                variants={fadeIn}
-                                custom={index + 1}
-                                className="border-b border-fg/10 py-12 md:py-16"
-                            >
-                                <div className="grid grid-cols-12 gap-6 md:gap-12">
-                                    <div className="col-span-12 md:col-span-1">
-                                        <span className="font-mono text-[11px] text-fg/30">{String(index + 1).padStart(2, "0")}</span>
-                                    </div>
-                                    <div className="col-span-12 md:col-span-4">
-                                        <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 mb-3">{service.icon}</div>
-                                        <h3 className="text-2xl md:text-3xl font-light tracking-tight mb-3">{service.title}</h3>
-                                        <p className="text-sm text-fg/50 leading-relaxed">{service.description}</p>
-                                    </div>
-                                    <div className="col-span-12 md:col-span-4 md:col-start-7">
-                                        <ul className="space-y-3">
-                                            {service.features.map((feature) => (
-                                                <li key={feature} className="text-sm text-fg/60 border-t border-fg/5 pt-3 first:border-t-0 first:pt-0">
-                                                    {feature}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div className="col-span-12 md:col-span-2 md:col-start-11 flex md:items-end md:justify-end">
-                                        <Button href="/contact" variant="outline" size="sm">
-                                            {service.cta}
-                                        </Button>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Full-bleed texture — visual break */}
-            <section className="relative w-full h-[30vh] md:h-[40vh] overflow-hidden img-editorial">
-                <Image
-                    src="/images/texture-macro.jpg"
-                    alt="Surface texture detail"
-                    fill
-                    className="object-cover"
-                    sizes="100vw"
-                />
-            </section>
-
-            {/* CTA Section — left-aligned */}
-            <section className="py-24 md:py-32 border-t border-fg/10">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={fadeIn}
-                            custom={0}
-                            className="col-span-12 md:col-span-8"
-                        >
-                            <h2 className="text-4xl md:text-6xl font-light tracking-tighter mb-6">Got a Creative Project?</h2>
-                            <p className="text-fg/50 max-w-lg leading-relaxed mb-10">
-                                Whether it&apos;s a campaign, a shoot, a release, or something entirely new — let&apos;s talk.
-                            </p>
-                            <Button href="/contact">
-                                Get in Touch
-                            </Button>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
-        </>
-    );
+      {/* ── CTA ───────────────────────────────────────────────────────────── */}
+      <section className={styles.cta} id="brief">
+        <div className={styles.ctaGlow} />
+        <div className={styles.wrap}>
+          <span className={styles.label}>004 — Brief us</span>
+          <motion.h2
+            className={styles.ctaTitle}
+            style={{ marginTop: "1.5rem" }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={rise}
+          >
+            Got an idea?
+          </motion.h2>
+          <motion.p
+            className={styles.ctaSub}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={1}
+            variants={rise}
+          >
+            A campaign, a shoot, a release, or something with no name yet —
+            let&apos;s talk.
+          </motion.p>
+          <div className={styles.ctaActions}>
+            <a className={styles.btnPrimary} href="mailto:hello@rogue.berlin?subject=ROGUE%20CREATIVE">
+              Start a brief →
+            </a>
+            <NextLink className={styles.btnGhost} href="/">
+              Back to Rogue
+            </NextLink>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }

@@ -1,208 +1,196 @@
 "use client";
 
+/* ──────────────────────────────────────────────────────────────────────────
+   ROGUE — Services (digital)  ·  "EUROPEAN SUMMER, SCORCHED"
+   The technical line, dressed in the promoted V2 identity.
+   ────────────────────────────────────────────────────────────────────────── */
+
 import React from "react";
 import NextLink from "next/link";
-import { motion, type Variants } from "framer-motion";
-import { Button } from "@repo/ui/ui/Button";
+import { motion } from "framer-motion";
 import { Service, ProcessStep } from "@repo/content/types";
+import styles from "@/components/rogue/rogue.module.css";
+import { EmberField, Wordmark, rise } from "@/components/rogue/atmosphere";
 
 interface ServicesContentProps {
-    services: Service[];
-    processSteps: ProcessStep[];
+  services: Service[];
+  processSteps: ProcessStep[];
 }
 
-const fadeIn: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-        opacity: 1,
-        y: 0,
-        transition: {
-            delay: i * 0.1,
-            duration: 0.5,
-            ease: "easeOut" as const,
-        },
-    }),
-};
-
-const slideFromRight: Variants = {
-    hidden: { opacity: 0, x: 40 },
-    visible: {
-        opacity: 1,
-        x: 0,
-        transition: {
-            duration: 0.6,
-            ease: [0.16, 1, 0.3, 1],
-        },
-    },
-};
-
 export default function ServicesContent({ services, processSteps }: ServicesContentProps) {
-    return (
-        <>
-            {/* Hero Section — left-aligned, generous whitespace */}
-            <section className="py-32 md:py-48 bg-muted">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12">
-                        <motion.div
-                            initial="hidden"
-                            animate="visible"
-                            variants={fadeIn}
-                            custom={0}
-                            className="col-span-12 md:col-span-7"
-                        >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Digital Services</span>
-                            <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
-                                Digital
-                            </h1>
-                            <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
-                                Web development, mobile apps, design, and IT consulting. The technical backbone for your digital presence.
-                            </p>
-                        </motion.div>
-                    </div>
+  return (
+    <div className={styles.root}>
+      {/* ── HERO ──────────────────────────────────────────────────────────── */}
+      <header className={`${styles.hero} ${styles.heroCompact}`}>
+        <EmberField />
+        <div className={styles.wrap}>
+          <div className={styles.heroTop}>
+            <Wordmark text="ROGUE / DIGITAL" />
+            <span className={styles.heroMeta}>EUROPE · THE ENGINE</span>
+          </div>
+
+          <motion.h1
+            className={`${styles.heroTitle} ${styles.heroTitleSub}`}
+            initial="hidden"
+            animate="visible"
+            variants={rise}
+          >
+            Digital
+          </motion.h1>
+
+          <motion.p
+            className={styles.heroSub}
+            initial="hidden"
+            animate="visible"
+            custom={1}
+            variants={rise}
+          >
+            Web, product, design and IT consulting — the <b>technical backbone</b>
+            {" "}behind the work. Built so creative scales instead of breaking.
+          </motion.p>
+        </div>
+      </header>
+
+      {/* ── CAPABILITIES ──────────────────────────────────────────────────── */}
+      <section className={styles.section} id="services">
+        <div className={styles.wrap}>
+          <div className={styles.sectionHead}>
+            <span className={styles.label}>001 — Capabilities</span>
+            <motion.h2
+              className={styles.sectionTitle}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={rise}
+            >
+              What we <em>build</em>.
+            </motion.h2>
+          </div>
+
+          <div className={styles.stunts}>
+            {services.map((service, index) => (
+              <motion.div
+                key={service.id}
+                className={styles.svcRow}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                custom={index}
+                variants={rise}
+              >
+                <span className={styles.stuntIndex}>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className={styles.svcName}>
+                    <NextLink href={`/services/${service.slug}`}>{service.title}</NextLink>
+                  </h3>
+                  <p className={styles.svcDesc}>{service.description}</p>
                 </div>
-            </section>
+                <ul className={styles.svcFeatures}>
+                  {service.features.map((feature) => (
+                    <li key={feature}>{feature}</li>
+                  ))}
+                </ul>
+                <NextLink className={styles.btnGhost} href={`/services/${service.slug}`}>
+                  {service.cta}
+                </NextLink>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Services — ruled-line editorial layout */}
-            <section className="py-24 md:py-32">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12 mb-16">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={fadeIn}
-                            custom={0}
-                            className="col-span-12 md:col-span-6"
-                        >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">002 — Capabilities</span>
-                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter">What We Build</h2>
-                        </motion.div>
-                    </div>
+      {/* ── MANIFESTO ─────────────────────────────────────────────────────── */}
+      <section className={styles.manifesto}>
+        <div className={styles.wrap}>
+          <span className={styles.labelDim}>002 — Position</span>
+          <motion.p
+            className={styles.manifestoText}
+            style={{ marginTop: "2rem" }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={rise}
+          >
+            Technology is never the goal. It&apos;s the thing that lets the work
+            {" "}<b>scale</b>.
+          </motion.p>
+        </div>
+      </section>
 
-                    <div className="border-t border-fg/10">
-                        {services.map((service, index) => (
-                            <motion.div
-                                key={service.id}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true, margin: "-50px" }}
-                                variants={fadeIn}
-                                custom={index}
-                                className="border-b border-fg/10 py-12 md:py-16"
-                            >
-                                <div className="grid grid-cols-12 gap-6 md:gap-12">
-                                    <div className="col-span-12 md:col-span-1">
-                                        <span className="font-mono text-[11px] text-fg/30">{String(index + 1).padStart(2, "0")}</span>
-                                    </div>
-                                    <div className="col-span-12 md:col-span-4">
-                                        <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 mb-3">{service.icon}</div>
-                                        <NextLink href={`/services/${service.slug}`} className="group/svc inline-block mb-3">
-                                            <h2 className="text-2xl md:text-3xl font-light tracking-tight group-hover/svc:text-fg/60 transition-colors">{service.title}</h2>
-                                        </NextLink>
-                                        <p className="text-sm text-fg/50 leading-relaxed">{service.description}</p>
-                                    </div>
-                                    <div className="col-span-12 md:col-span-4 md:col-start-7">
-                                        <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 block mb-4">Capabilities</span>
-                                        <ul className="space-y-3">
-                                            {service.features.map((feature) => (
-                                                <li key={feature} className="text-sm text-fg/60 border-t border-fg/5 pt-3 first:border-t-0 first:pt-0">
-                                                    {feature}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                    <div className="col-span-12 md:col-span-2 md:col-start-11 flex md:items-end md:justify-end">
-                                        <Button href="/contact" variant="outline" size="sm">
-                                            {service.cta}
-                                        </Button>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+      {/* ── PROCESS ───────────────────────────────────────────────────────── */}
+      <section className={styles.section} id="process">
+        <div className={styles.wrap}>
+          <div className={styles.sectionHead}>
+            <span className={styles.label}>003 — Process</span>
+            <motion.h2
+              className={styles.sectionTitle}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={rise}
+            >
+              How we work.
+            </motion.h2>
+          </div>
 
-            {/* Full-bleed statement — rhythm break */}
-            <section className="py-20 md:py-28 border-t border-fg/10">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        variants={slideFromRight}
-                        className="grid grid-cols-12"
-                    >
-                        <p className="col-span-12 md:col-span-8 md:col-start-3 text-2xl md:text-4xl font-light tracking-tight leading-snug text-fg/70">
-                            &ldquo;Technology is never the goal — it&apos;s the enabler. We build digital systems that let creative work scale.&rdquo;
-                        </p>
-                    </motion.div>
-                </div>
-            </section>
+          <div className={styles.doGrid} style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+            {processSteps.map((step, index) => (
+              <motion.article
+                key={step.step}
+                className={styles.doCell}
+                style={{ minHeight: 240 }}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-60px" }}
+                custom={index}
+                variants={rise}
+              >
+                <span className={styles.doNum}>{String(step.step).padStart(2, "0")}</span>
+                <h3 className={styles.doName} style={{ fontSize: "1.4rem" }}>{step.title}</h3>
+                <p className={styles.doDesc}>{step.description}</p>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Process Section — horizontal ruled list, no cards */}
-            <section className="py-24 md:py-32 bg-muted">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12 mb-16">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={fadeIn}
-                            custom={0}
-                            className="col-span-12 md:col-span-6"
-                        >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">003 — Process</span>
-                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter mb-4">How We Work</h2>
-                            <p className="text-fg/50 leading-relaxed">
-                                Every project is different, but our approach stays consistent.
-                            </p>
-                        </motion.div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-0 border-t border-fg/10">
-                        {processSteps.map((step, index) => (
-                            <motion.div
-                                key={step.step}
-                                initial="hidden"
-                                whileInView="visible"
-                                viewport={{ once: true }}
-                                variants={fadeIn}
-                                custom={index + 1}
-                                className="py-8 md:pr-8 border-b md:border-b-0 md:border-r border-fg/10 last:border-b-0 last:border-r-0"
-                            >
-                                <span className="font-mono text-[11px] text-fg/30 block mb-4">{String(step.step).padStart(2, "0")}</span>
-                                <h3 className="text-base font-medium mb-2">{step.title}</h3>
-                                <p className="text-sm text-fg/40 leading-relaxed">{step.description}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA Section — left-aligned, ruled */}
-            <section className="py-24 md:py-32 border-t border-fg/10">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-12">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true }}
-                            variants={fadeIn}
-                            custom={0}
-                            className="col-span-12 md:col-span-8"
-                        >
-                            <h2 className="text-4xl md:text-6xl font-light tracking-tighter mb-6">Have a Digital Project in Mind?</h2>
-                            <p className="text-fg/50 max-w-lg leading-relaxed mb-10">
-                                Tell us what you need — we&apos;ll figure out the best way to build it.
-                            </p>
-                            <Button href="/contact">
-                                Get in Touch
-                            </Button>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
-        </>
-    );
+      {/* ── CTA ───────────────────────────────────────────────────────────── */}
+      <section className={styles.cta} id="brief">
+        <div className={styles.ctaGlow} />
+        <div className={styles.wrap}>
+          <span className={styles.label}>004 — Brief us</span>
+          <motion.h2
+            className={styles.ctaTitle}
+            style={{ marginTop: "1.5rem" }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={rise}
+          >
+            Building something?
+          </motion.h2>
+          <motion.p
+            className={styles.ctaSub}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={1}
+            variants={rise}
+          >
+            Tell us what you need — we&apos;ll figure out the best way to build it.
+          </motion.p>
+          <div className={styles.ctaActions}>
+            <a className={styles.btnPrimary} href="mailto:hello@rogue.berlin?subject=ROGUE%20DIGITAL">
+              Start a brief →
+            </a>
+            <NextLink className={styles.btnGhost} href="/">
+              Back to Rogue
+            </NextLink>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }

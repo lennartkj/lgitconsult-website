@@ -7,8 +7,15 @@ export const revalidate = 60;
 // Generate SEO metadata
 export async function generateMetadata() {
   return {
-    title: 'Digital Services | LGIT Consult',
-    description: 'Web development, mobile apps, UI/UX design, and IT consulting. The technical backbone for your digital presence.',
+    title: 'Digital',
+    description: 'Web, product, design and IT consulting — the technical backbone behind the work, built so creative scales instead of breaking.',
+    keywords: [
+      'web development Europe',
+      'product engineering',
+      'UI UX design',
+      'IT consulting',
+      'digital agency Berlin',
+    ],
   };
 }
 

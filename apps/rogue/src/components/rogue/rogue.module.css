@@ -1,55 +1,19 @@
 /* ──────────────────────────────────────────────────────────────────────────
-   ROGUE — EXPLORE V2  ·  "SCORCHED, COUTURE"
-   Sun-scorched European summer — but refined into luxury-fashion editorial.
-   Reference register: 032c / Arena Homme+ / Helmut Lang / the LGIT house.
-   Deep charred black + dusty bone. Ember/amber kept as a single, considered
-   warm light source — oxblood and bronze as couture neutrals, NOT a glowing
-   orange casino. Composition + typography carry it; effects are sparing.
-   All tokens scoped to .root — touches no shared globals.
+   ROGUE — page styles  ·  "EUROPEAN SUMMER, SCORCHED"  (promoted from explore/v2)
+
+   The palette tokens (--char, --ember, --bone …) and the app-wide atmospheres
+   (warm light source + film grain on <body>) are defined in app/rogue-theme.css.
+   This module holds the V2 *composition*: hero, sections, the disciplines grid,
+   the ruled showcase, manifesto, CTA. Reused across home / creative / services.
    ────────────────────────────────────────────────────────────────────────── */
 
 .root {
-  /* Couture-scorched palette — charred black, dusty bone, oxblood, bronze,
-     with a single restrained ember/amber accent. */
-  --char: #080605;          /* charred near-black base */
-  --char-2: #0e0a08;        /* slightly lifted panel */
-  --tobacco: #15100b;       /* deep tobacco */
-  --oxblood: #4a1512;       /* oxblood — couture neutral */
-  --bronze: #8a5a32;        /* bronze — couture neutral */
-  --burnt: #9a3b14;         /* dialled-back burnt sienna */
-  --ember: #c2541f;         /* ember — the single warm accent, restrained */
-  --amber: #d08a3c;         /* muted amber, used sparingly */
-  --bone: #e8e0d3;          /* dusty bone (warm off-white) */
-  --bone-dim: #9b9082;      /* dimmed bone */
-  --line: rgba(232, 224, 211, 0.10);  /* hairline — bone, not orange */
-
   position: relative;
   isolation: isolate;
-  /* One considered warm light source, top-right; everything else charred. */
-  background:
-    radial-gradient(80% 60% at 88% -8%, rgba(194, 84, 31, 0.14) 0%, rgba(194, 84, 31, 0) 58%),
-    radial-gradient(70% 60% at 4% 108%, rgba(74, 21, 18, 0.32) 0%, rgba(74, 21, 18, 0) 62%),
-    linear-gradient(180deg, #080605 0%, #0c0907 50%, #080605 100%);
   color: var(--bone);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  min-height: 100vh;
   overflow-x: clip;
 }
-
-/* Fine film grain — refined, like a printed editorial, not a buzzing screen. */
-.root::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
-  mix-blend-mode: soft-light;
-  opacity: 0.14;
-}
-
-/* No drifting heat-shimmer band — composition carries it. (::before removed) */
 
 /* ── Shared bits ──────────────────────────────────────────────────────────── */
 
@@ -89,6 +53,12 @@
   overflow: hidden;
 }
 
+/* Compact hero for sub-pages (creative / services / service detail). */
+.heroCompact {
+  min-height: 62vh;
+  padding: 11rem 0 6rem;
+}
+
 .heroCanvas {
   position: absolute;
   inset: 0;
@@ -114,10 +84,7 @@
   color: var(--bone-dim);
 }
 
-/* ── The wordmark — refined chromatic/heat glitch, sparing & expensive ─────────
-   Adapted from the V1 "stamp" the operator liked: bone wordmark with two
-   sliced echo copies (ember above, oxblood below). At rest it is dead still.
-   It fires ONCE on entry, and briefly on hover — never a constant effect. */
+/* ── The wordmark — refined chromatic/heat glitch, sparing & expensive ── */
 
 .wordmark {
   position: relative;
@@ -174,18 +141,23 @@
   margin: 0;
   font-size: clamp(4.5rem, 16vw, 15rem);
   text-transform: uppercase;
-  color: var(--bone);           /* solid bone — no gradient-soup ink */
+  color: var(--bone);
+}
+
+/* Slightly smaller title for sub-pages. */
+.heroTitleSub {
+  font-size: clamp(3.5rem, 11vw, 9rem);
 }
 
 .heroTitle .strike {
   display: block;
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--ember);  /* the single warm accent */
+  -webkit-text-stroke: 1.5px var(--ember);
 }
 
 .heroSub {
   margin-top: 3rem;
-  max-width: 44ch;
+  max-width: 48ch;
   font-size: clamp(1rem, 1.3vw, 1.3rem);
   line-height: 1.65;
   color: var(--bone-dim);
@@ -238,13 +210,14 @@
   padding: 1rem 1.7rem;
   border: none;
   color: var(--char);
-  background: var(--bone);       /* bone fill — editorial, not a glowing pill */
+  background: var(--bone);
   text-decoration: none;
+  cursor: pointer;
   transition: background 0.4s ease, color 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .btnPrimary:hover {
-  background: var(--ember);      /* warms to the single accent on intent */
+  background: var(--ember);
   color: var(--bone);
   transform: translateY(-1px);
 }
@@ -260,8 +233,9 @@
   padding: 1rem 1.7rem;
   color: var(--bone-dim);
   background: transparent;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(232, 224, 211, 0.12);
   text-decoration: none;
+  cursor: pointer;
   transition: color 0.4s ease, border-color 0.4s ease;
 }
 
@@ -276,7 +250,7 @@
   position: relative;
   z-index: 2;
   padding: 10rem 0;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(232, 224, 211, 0.10);
 }
 
 .sectionHead {
@@ -298,17 +272,17 @@
 
 .sectionTitle em {
   font-style: normal;
-  color: var(--ember);          /* the single accent, used once per line */
+  color: var(--ember);
 }
 
-/* ── WHAT WE DO — three disciplines ───────────────────────────────────────── */
+/* ── DISCIPLINES / CAPABILITIES GRID ──────────────────────────────────────── */
 
 .doGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
+  background: rgba(232, 224, 211, 0.10);
+  border: 1px solid rgba(232, 224, 211, 0.10);
 }
 
 .doCell {
@@ -336,7 +310,7 @@
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 1px;                   /* hairline, not a 3px gradient bar */
+  height: 1px;
   background: var(--ember);
   transform: scaleX(0);
   transform-origin: left;
@@ -373,7 +347,7 @@
   font-weight: 300;
 }
 
-/* ── STUNT SHOWCASE ───────────────────────────────────────────────────────── */
+/* ── RULED SHOWCASE / SERVICE LIST ────────────────────────────────────────── */
 
 .stunts {
   display: flex;
@@ -386,12 +360,13 @@
   gap: 2rem;
   align-items: center;
   padding: 2.75rem 0;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(232, 224, 211, 0.10);
+  text-decoration: none;
   transition: padding-left 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .stunt:last-child {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(232, 224, 211, 0.10);
 }
 
 .stunt:hover {
@@ -450,13 +425,73 @@
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease, color 0.4s ease;
 }
 
+/* ── SERVICE DETAIL ROW (expanded list with features) ─────────────────────── */
+
+.svcRow {
+  display: grid;
+  grid-template-columns: 3rem 1fr 1fr auto;
+  gap: 2.5rem;
+  align-items: start;
+  padding: 3rem 0;
+  border-top: 1px solid rgba(232, 224, 211, 0.10);
+}
+
+.svcRow:last-child {
+  border-bottom: 1px solid rgba(232, 224, 211, 0.10);
+}
+
+.svcName {
+  font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--bone);
+  line-height: 1.05;
+  margin: 0 0 1rem;
+}
+
+.svcName a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.svcName a:hover {
+  color: var(--ember);
+}
+
+.svcDesc {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--bone-dim);
+  font-weight: 300;
+}
+
+.svcFeatures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.svcFeatures li {
+  font-size: 0.9rem;
+  color: var(--bone-dim);
+  padding: 0.6rem 0;
+  border-top: 1px solid rgba(232, 224, 211, 0.07);
+}
+
+.svcFeatures li:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
 /* ── MANIFESTO / PULL QUOTE ───────────────────────────────────────────────── */
 
 .manifesto {
   position: relative;
   z-index: 2;
   padding: 12rem 0;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(232, 224, 211, 0.10);
 }
 
 .manifestoText {
@@ -465,12 +500,12 @@
   letter-spacing: -0.03em;
   line-height: 1.15;
   color: var(--bone);
-  max-width: 24ch;
+  max-width: 28ch;
 }
 
 .manifestoText b {
   font-weight: 600;
-  color: var(--ember);          /* one warm word — flat accent, no clip gradient */
+  color: var(--ember);
 }
 
 /* ── CTA ──────────────────────────────────────────────────────────────────── */
@@ -479,7 +514,7 @@
   position: relative;
   z-index: 2;
   padding: 11rem 0 12rem;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(232, 224, 211, 0.10);
   text-align: center;
   overflow: hidden;
 }
@@ -488,7 +523,6 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  /* one faint, low warm wash — a light source, not a casino floor */
   background: radial-gradient(50% 55% at 50% 118%, rgba(194, 84, 31, 0.12), transparent 70%);
   pointer-events: none;
 }
@@ -500,7 +534,7 @@
   line-height: 0.86;
   text-transform: uppercase;
   margin: 0 0 2.5rem;
-  color: var(--bone);           /* solid bone — no gradient ink */
+  color: var(--bone);
 }
 
 .ctaSub {
@@ -519,12 +553,16 @@
   flex-wrap: wrap;
 }
 
-/* ── FOOTER STRIP ─────────────────────────────────────────────────────────── */
+.ctaActionsLeft {
+  justify-content: flex-start;
+}
+
+/* ── FOOTER STRIP (page-level, distinct from shared site Footer) ──────────── */
 
 .footStrip {
   position: relative;
   z-index: 2;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(232, 224, 211, 0.10);
   padding: 2.5rem 0;
   display: flex;
   justify-content: space-between;
@@ -552,6 +590,10 @@
   }
   .stuntArrow {
     display: none;
+  }
+  .svcRow {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
   .section {
     padding: 6rem 0;
