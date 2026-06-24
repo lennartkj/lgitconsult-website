@@ -1,0 +1,265 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* This stylesheet lives in the shared @repo/ui package but is imported by every
+   app. Tailwind v4 auto-detects content relative to the CSS file, which would
+   only see the ui package. Declare every source tree that uses these classes so
+   utilities are generated regardless of which app imports this file. Paths are
+   resolved relative to THIS file (packages/ui/src/globals.css). */
+@source "./";
+@source "../../../apps/lgit/src";
+@source "../../../apps/rogue/src";
+
+:root {
+  /* Colors — monochrome warm neutrals */
+  --bg: #f8f7f4;
+  --fg: #111111;
+  --muted: #edecea;
+  --accent: #111111;
+  --accent-contrast: #f8f7f4;
+  --subtle: #8a8579;
+
+  /* Spacing (4pt scale) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Radii */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-subtle: var(--subtle);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c0c0c;
+    --fg: #e8e6e1;
+    --muted: #1a1918;
+    --accent: #e8e6e1;
+    --accent-contrast: #0c0c0c;
+    --subtle: #8a8579;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  cursor: crosshair;
+}
+
+a, button, [role="button"], input, select, textarea, label {
+  cursor: crosshair;
+}
+
+/* ── Audit — clinical "Severance" register, scoped to the intake ───────────── */
+/* Applied via the .audit-clinical wrapper on /audit only, so the rest of the   */
+/* site keeps its editorial register. Flat cool white, near-black, gallery-cold.*/
+.audit-clinical {
+  --bg: #fafafa;
+  --fg: #0a0a0a;
+  --muted: #f0f0ef;
+  --subtle: #9a9a96;
+  --accent: #0a0a0a;
+  --accent-contrast: #fafafa;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* Stay light + clinical even when the OS prefers dark. */
+@media (prefers-color-scheme: dark) {
+  .audit-clinical {
+    --bg: #fafafa;
+    --fg: #0a0a0a;
+    --muted: #f0f0ef;
+    --subtle: #9a9a96;
+    --accent: #0a0a0a;
+    --accent-contrast: #fafafa;
+  }
+}
+
+/* Clinical UI primitives — these use real var() colors. NOTE: the global
+   bg-fg / text-bg / bg-muted utilities are UNREGISTERED no-ops in this Tailwind
+   theme (only background/foreground/subtle are tokens), so inverted/active
+   states must not rely on them. These classes guarantee the feedback renders. */
+.audit-clinical .ac-btn {
+  border: 1px solid var(--fg);
+  color: var(--fg);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.audit-clinical .ac-btn:hover:not(:disabled) { background: var(--fg); color: var(--bg); }
+
+.audit-clinical .ac-link { color: color-mix(in srgb, var(--fg) 45%, transparent); transition: color 0.2s ease; }
+.audit-clinical .ac-link:hover { color: var(--fg); }
+
+.audit-clinical .ac-chip {
+  border: 1px solid color-mix(in srgb, var(--fg) 30%, transparent);
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.audit-clinical .ac-chip:hover { border-color: var(--fg); color: var(--fg); }
+.audit-clinical .ac-chip[aria-pressed="true"] {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.audit-clinical .ac-row { transition: background-color 0.15s ease; }
+.audit-clinical .ac-row[aria-pressed="true"] { background: color-mix(in srgb, var(--fg) 5%, transparent); }
+.audit-clinical .ac-swatch { border: 1px solid color-mix(in srgb, var(--fg) 30%, transparent); }
+.audit-clinical .ac-row:hover .ac-swatch { border-color: var(--fg); }
+.audit-clinical .ac-row[aria-pressed="true"] .ac-swatch { background: var(--fg); border-color: var(--fg); }
+
+/* Editorial image treatment — grain overlay */
+.img-editorial {
+  position: relative;
+  overflow: hidden;
+}
+
+.img-editorial::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  z-index: 1;
+}
+
+/* B&W treatment for editorial images */
+.img-bw {
+  filter: grayscale(100%) contrast(1.1);
+}
+
+/* Editorial prose — override typography plugin defaults */
+.prose {
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-links: var(--fg);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-quotes: var(--fg);
+  --tw-prose-quote-borders: color-mix(in srgb, var(--fg) 15%, transparent);
+  --tw-prose-counters: color-mix(in srgb, var(--fg) 40%, transparent);
+  --tw-prose-bullets: color-mix(in srgb, var(--fg) 30%, transparent);
+  --tw-prose-hr: color-mix(in srgb, var(--fg) 10%, transparent);
+  --tw-prose-captions: color-mix(in srgb, var(--fg) 50%, transparent);
+  --tw-prose-code: var(--fg);
+  --tw-prose-pre-bg: var(--muted);
+  --tw-prose-pre-code: var(--fg);
+  --tw-prose-th-borders: color-mix(in srgb, var(--fg) 15%, transparent);
+  --tw-prose-td-borders: color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.prose h2 {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
+  padding-top: 2rem;
+  border-top: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.prose h2:first-child {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.prose h3 {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.prose p {
+  color: color-mix(in srgb, var(--fg) 70%, transparent);
+  line-height: 1.8;
+}
+
+.prose strong {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.prose a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--fg) 30%, transparent);
+  transition: text-decoration-color 0.2s;
+}
+
+.prose a:hover {
+  text-decoration-color: var(--fg);
+}
+
+.prose blockquote {
+  font-style: normal;
+  font-weight: 300;
+  border-left-width: 1px;
+  padding-left: 1.5rem;
+  color: color-mix(in srgb, var(--fg) 60%, transparent);
+}
+
+.prose code {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.85em;
+  background: var(--muted);
+  padding: 0.15em 0.4em;
+  border-radius: 0.125rem;
+}
+
+.prose code::before,
+.prose code::after {
+  content: none;
+}
+
+.prose pre {
+  border-radius: 0;
+  border: 1px solid color-mix(in srgb, var(--fg) 10%, transparent);
+}
+
+.prose ul > li::marker {
+  color: color-mix(in srgb, var(--fg) 30%, transparent);
+}
+
+.prose hr {
+  border-top-width: 1px;
+}
+
+/* Mobile prose tightening */
+@media (max-width: 767px) {
+  .prose h2 {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+  }
+
+  .prose p {
+    line-height: 1.7;
+  }
+
+  .prose blockquote {
+    padding-left: 1rem;
+  }
+}

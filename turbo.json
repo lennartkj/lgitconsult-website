@@ -1,0 +1,32 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [".env"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": [
+        "ANTHROPIC_API_KEY",
+        "RESEND_API_KEY",
+        "AUDIT_TO_EMAIL",
+        "AUDIT_FROM_EMAIL",
+        "WAITLIST_TO_EMAIL",
+        "WAITLIST_FROM_EMAIL",
+        "PREVIEW_SECRET",
+        "NEXT_PUBLIC_SITE_URL"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "typecheck": {
+      "dependsOn": ["^build"]
+    }
+  }
+}

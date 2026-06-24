@@ -1,0 +1,20 @@
+{
+  "name": "@repo/content",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/data/types.ts",
+    "./lib": "./src/content.ts"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "next-mdx-remote": "^6.0.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@repo/config": "*",
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}
