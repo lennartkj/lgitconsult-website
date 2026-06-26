@@ -1,21 +1,21 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": [".env"],
+  "globalPassThroughEnv": [
+    "ANTHROPIC_API_KEY",
+    "RESEND_API_KEY",
+    "AUDIT_TO_EMAIL",
+    "AUDIT_FROM_EMAIL",
+    "WAITLIST_TO_EMAIL",
+    "WAITLIST_FROM_EMAIL",
+    "STRIPE_READ_PAYMENT_LINK",
+    "PREVIEW_SECRET"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"],
-      "env": [
-        "ANTHROPIC_API_KEY",
-        "RESEND_API_KEY",
-        "AUDIT_TO_EMAIL",
-        "AUDIT_FROM_EMAIL",
-        "WAITLIST_TO_EMAIL",
-        "WAITLIST_FROM_EMAIL",
-        "STRIPE_READ_PAYMENT_LINK",
-        "PREVIEW_SECRET",
-        "NEXT_PUBLIC_SITE_URL"
-      ]
+      "env": ["NEXT_PUBLIC_SITE_URL"]
     },
     "dev": {
       "cache": false,
