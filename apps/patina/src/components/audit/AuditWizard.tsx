@@ -5,21 +5,23 @@ import { AnimatePresence, motion, useReducedMotion, easeOut } from "framer-motio
 import { compressImage, type UploadedImage } from "./compressImage";
 import { track } from "@/lib/track";
 
-// Cover message A/B (MARKET.md §4). Sticky per visitor; tagged on funnel events.
-const VARIANTS = ["capital", "refuge", "invitation"] as const;
+// Cover message A/B (AD_TEST.md). The test axis is fear ↔ aspiration:
+// fear stops the scroll, aspiration earns the click, both walks the full arc.
+// Sticky per visitor; pinned by ?v=; tagged through the whole funnel.
+const VARIANTS = ["fear", "aspiration", "both"] as const;
 type Variant = (typeof VARIANTS)[number];
 const HEADLINES: Record<Variant, { title: string; body: string }> = {
-  capital: {
+  fear: {
+    title: "Everyone in the room can tell. You're the only one who can't.",
+    body: "New money has a sound. You stopped hearing yours years ago. A private read of what you own, wear and collect — what gives you away, and what to do about it. No list. No names.",
+  },
+  aspiration: {
     title: "You have the capital. We have the culture.",
     body: "Money comes quickly. Taste does not. We have spent the years, so your means are matched at last by your eye.",
   },
-  refuge: {
-    title: "Ask what you can't ask anyone.",
-    body: "An honest read of what you own and how it reads, given in private and kept between us. The judgment is yours alone.",
-  },
-  invitation: {
-    title: "The eye, by application.",
-    body: "We work with few, and closely. A quiet, unhurried read of what you own, wear, and collect — and what is worth your attention next.",
+  both: {
+    title: "Before the next acquisition.",
+    body: "The expensive mistakes are the ones that look almost right. One honest read before you spend — kept between us.",
   },
 };
 
@@ -164,25 +166,29 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 type TypeKey = "RH" | "RV" | "EH" | "EV";
-const TYPES: Record<TypeKey, { name: string; line: string; note: string }> = {
+const TYPES: Record<TypeKey, { name: string; line: string; tell: string; note: string }> = {
   RH: {
     name: "The Heir",
     line: "Old money you were not born into — and you carry it more easily than most who were. You want what lasts, what is quiet, what never has to explain itself.",
+    tell: "the one piece you bought to look inherited. It tries hardest — so it's the first thing the right eye finds.",
     note: "Our work with you is subtraction: removing the one false note that gives the game away.",
   },
   RV: {
     name: "The Ascetic",
     line: "Severe, modern, edited to the bone. One strange, perfect object over a hundred safe ones. To you, emptiness is not absence — it is the point.",
+    tell: "you trust that less is enough. Empty rooms forgive nothing; one wrong object is the whole room.",
     note: "Our work with you is the hunt: the few pieces worth the silence around them.",
   },
   EH: {
     name: "The Connoisseur",
     line: "You love the canon, and you want all of it. Your danger is the wall of treasures — abundance that starts to read as accumulation.",
+    tell: "you keep acquiring, and the wall has begun to read as a receipt, not a collection.",
     note: "Our work with you is the edit, so each piece is seen rather than counted.",
   },
   EV: {
     name: "The Provocateur",
     line: "You want to be the most interesting person in the room, and usually you are. The line you walk is the fine one between bold and costume.",
+    tell: "the line between bold and costume moves — and you are usually the last in the room to feel it cross.",
     note: "Our work with you is keeping you, always, on the right side of it.",
   },
 };
@@ -260,16 +266,22 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
 
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
-  const [variant, setVariant] = useState<Variant>("capital");
+  const [variant, setVariant] = useState<Variant>("aspiration");
 
   const cardRef = useRef<HTMLDivElement>(null);
   const capId: CaptureId = CAPTURE[capIndex];
   const card = test[testIndex];
 
+  // P0 #20 — lowest-intent soft-landing. A "Just exploring" buyer just did the
+  // whole test; the hardest ask (the €150 paywall) is wrong for them. Route them
+  // to the nurture done-state instead of Stripe, even when a payment link is set.
+  const isExploring = budget === BUDGET_OPTIONS[0];
+  const willPay = !!readPaymentLink && !isExploring;
+
   useEffect(() => {
-    let v: Variant = "capital";
+    let v: Variant = "aspiration";
     try {
-      // ?v=capital|refuge|invitation pins the variant (ad message ↔ cover match),
+      // ?v=fear|aspiration|both pins the variant (ad message ↔ cover match),
       // overriding the sticky/random assignment. Then persist it.
       const q = new URLSearchParams(window.location.search).get("v");
       const stored = window.localStorage.getItem("patina_audit_variant");
@@ -398,7 +410,8 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
       // Operator matches payment ↔ application by email for the MVP.
       // fast-follow: swap the static Payment Link for a Stripe Checkout Session
       // + webhook so delivery is auto-gated on confirmed payment (no manual match).
-      if (readPaymentLink) {
+      // P0 #20: "Just exploring" (isExploring) skips the paywall → nurture done-state.
+      if (willPay) {
         track("read_checkout_click", { variant, type: typeName });
         // Prefill the buyer's email on the Stripe page so payment ↔ application
         // reconcile cleanly. prefilled_email is a supported Payment Link param.
@@ -415,9 +428,10 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         return;
       }
 
-      // Graceful degrade — no payment link configured yet. The application is
-      // already captured; show a calm "we'll be in touch" state. Site stays safe
-      // before the operator sets STRIPE_READ_PAYMENT_LINK.
+      // Calm done-state, reached two ways: (a) no payment link configured yet
+      // (graceful degrade before the operator sets STRIPE_READ_PAYMENT_LINK), or
+      // (b) a "Just exploring" buyer we deliberately keep off the paywall (P0 #20).
+      // Either way the application is already captured; show "we'll be in touch".
       setStatus("idle");
       setView("done");
     } catch {
@@ -495,7 +509,8 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                 <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
                   <button type="button" onClick={() => { track("audit_begin", { variant }); setTest(buildTest()); setPicks([]); setTestIndex(0); setView("test"); }}
                     className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Begin ▸</button>
-                  <a href="/audit/read" onClick={() => track("read_click")} className="ac-link font-mono text-[11px] uppercase tracking-[0.15em]">Not ready? The Read ▸</a>
+                  {/* "Not ready? The Read ▸" link retired: the Read IS the offer now
+                      (€150, on the reveal), so a separate fake-door contradicts it. */}
                   <a href="/audit/gift" onClick={() => track("gift_click")} className="ac-link font-mono text-[11px] uppercase tracking-[0.15em]">A gift? ▸</a>
                 </div>
               </motion.div>
@@ -536,21 +551,34 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                 <span className={labelCls}>Your type</span>
                 <h1 className="mt-6 text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">{TYPES[typeKey].name}</h1>
                 <p className="mt-8 max-w-lg text-fg/70 text-lg leading-relaxed">{TYPES[typeKey].line}</p>
-                <p className="mt-6 max-w-lg text-fg/55 leading-relaxed">{TYPES[typeKey].note}</p>
+
+                {/* The tell — the sting. Reveal order: name → who you are → TELL → our work. */}
+                <div className="mt-8 max-w-lg">
+                  <span className={labelCls}>Your tell —</span>
+                  <p className="mt-3 text-fg/75 leading-relaxed">{TYPES[typeKey].tell}</p>
+                </div>
+
+                <p className="mt-8 max-w-lg text-fg/55 leading-relaxed">{TYPES[typeKey].note}</p>
 
                 {/* ★ The money moment — the €150 Read offer, in the clinical register. */}
                 <div className="mt-12 border-t border-fg/15 pt-8">
-                  <span className={labelCls}>The Read</span>
+                  <span className={labelCls}>The Read — €150</span>
                   <p className="mt-4 max-w-lg text-fg/70 leading-relaxed">
-                    An honest, written read of what you own and how it reads — built on your type and your photographs, returned within 48 hours, in confidence.
+                    The honest read your friends are too polite to give, and your decorator is too paid to. One eye, one verdict: what to keep, what gives you away, what to acquire next. Within 48 hours, in confidence. Credited in full toward an Audit.
                   </p>
-                  <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.2em] text-fg/45">
-                    €150 · Credited toward an Audit · Delivered within 48h
+                  <p className="mt-5 max-w-lg text-fg/55 leading-relaxed">
+                    If it doesn&apos;t show you something you couldn&apos;t see — it&apos;s free.
+                  </p>
+                  <p className="mt-7 max-w-lg text-fg/60 leading-relaxed">
+                    Your Read is built from the answers you just gave. The rest is ours.
                   </p>
                   <div className="mt-8">
                     <button type="button" onClick={() => { setCapIndex(0); setView("capture"); }}
                       className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Get my Read ▸</button>
                   </div>
+                  <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/35">
+                    The people with the best eye are the ones who knew to ask.
+                  </p>
                 </div>
               </motion.div>
             )}
@@ -584,8 +612,8 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                   className="ac-btn font-mono text-[12px] uppercase tracking-[0.15em] px-7 py-3 disabled:opacity-25 disabled:pointer-events-none">
                   {capIndex === CAPTURE.length - 1
                     ? status === "submitting"
-                      ? readPaymentLink ? "To checkout…" : "Sending…"
-                      : readPaymentLink ? "Pay €150 ▸" : "Submit ▸"
+                      ? willPay ? "To checkout…" : "Sending…"
+                      : willPay ? "Pay €150 ▸" : "Submit ▸"
                     : "Continue ▸"}
                 </button>
               </div>
@@ -642,14 +670,14 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         );
       case "consent":
         return (
-          <Field q="Your Read." hint={readPaymentLink ? "€150 · Credited toward an Audit · Delivered within 48h." : "By application."}>
+          <Field q="Your Read." hint={willPay ? "€150 · Credited toward an Audit · Delivered within 48h." : "By application."}>
             <label className="flex items-start gap-4 cursor-pointer">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1.5 accent-fg" data-autofocus />
               <span className="text-fg/60 text-lg leading-relaxed max-w-md">
                 I agree that Patina may keep and use what I share to prepare my Read, in confidence — per the privacy policy.
               </span>
             </label>
-            {readPaymentLink && (
+            {willPay && (
               <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/35 leading-relaxed max-w-md">
                 Next: secure checkout — €150. Your Read is prepared once payment is received.
               </p>
