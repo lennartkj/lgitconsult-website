@@ -509,9 +509,9 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                 <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
                   <button type="button" onClick={() => { track("audit_begin", { variant }); setTest(buildTest()); setPicks([]); setTestIndex(0); setView("test"); }}
                     className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Begin ▸</button>
-                  {/* "Not ready? The Read ▸" link retired: the Read IS the offer now
-                      (€150, on the reveal), so a separate fake-door contradicts it. */}
-                  <a href="/audit/gift" onClick={() => track("gift_click")} className="ac-link font-mono text-[11px] uppercase tracking-[0.15em]">A gift? ▸</a>
+                  {/* Cover secondary links retired: the Read IS the offer now (€150, on
+                      the reveal), and the "A gift?" fake-door is off the cover — a sleek
+                      funnel has one action: Begin. (/audit/gift page kept for later.) */}
                 </div>
               </motion.div>
             )}
