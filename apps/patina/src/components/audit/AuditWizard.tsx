@@ -193,9 +193,8 @@ const TYPES: Record<TypeKey, { name: string; line: string; tell: string; note: s
   },
 };
 
-const CAPTURE = ["name", "email", "budget", "photos", "consent"] as const;
+const CAPTURE = ["name", "email", "photos", "consent"] as const;
 type CaptureId = (typeof CAPTURE)[number];
-const BUDGET_OPTIONS = ["Just exploring", "€10k – €50k", "€50k – €250k", "€250k +"];
 const MAX_IMAGES = 5;
 // Cards ASKED per session is fixed regardless of pool size: 2 framing text cards
 // (sweet + inkblot) + ASKED_PER_AXIS scored cards per axis. The progress indicator
@@ -258,7 +257,6 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   const [seen, setSeen] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [budget, setBudget] = useState("");
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [imgError, setImgError] = useState("");
   const [consent, setConsent] = useState(false);
@@ -272,11 +270,9 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   const capId: CaptureId = CAPTURE[capIndex];
   const card = test[testIndex];
 
-  // P0 #20 — lowest-intent soft-landing. A "Just exploring" buyer just did the
-  // whole test; the hardest ask (the €150 paywall) is wrong for them. Route them
-  // to the nurture done-state instead of Stripe, even when a payment link is set.
-  const isExploring = budget === BUDGET_OPTIONS[0];
-  const willPay = !!readPaymentLink && !isExploring;
+  // Pay when a Read payment link is configured; otherwise graceful-degrade to the
+  // capture/nurture done-state (safe before STRIPE_READ_PAYMENT_LINK is set).
+  const willPay = !!readPaymentLink;
 
   useEffect(() => {
     let v: Variant = "aspiration";
@@ -368,16 +364,10 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   }
   const removeImage = (i: number) => setImages((prev) => prev.filter((_, idx) => idx !== i));
 
-  function selectBudget(b: string) {
-    setBudget(b);
-    window.setTimeout(() => setCapIndex((i) => Math.min(i + 1, CAPTURE.length - 1)), 220);
-  }
-
   function canContinue(): boolean {
     switch (capId) {
       case "name": return name.trim().length >= 2;
       case "email": return /\S+@\S+\.\S+/.test(email);
-      case "budget": return budget !== "";
       case "consent": return consent;
       default: return true;
     }
@@ -391,7 +381,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name, email, budget, consent, company, sweet, seen,
+          name, email, consent, company, sweet, seen,
           tasteType: typeKey ? TYPES[typeKey].name : "",
           images: images.map(({ mediaType, dataBase64 }) => ({ mediaType, dataBase64 })),
         }),
@@ -410,7 +400,6 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
       // Operator matches payment ↔ application by email for the MVP.
       // fast-follow: swap the static Payment Link for a Stripe Checkout Session
       // + webhook so delivery is auto-gated on confirmed payment (no manual match).
-      // P0 #20: "Just exploring" (isExploring) skips the paywall → nurture done-state.
       if (willPay) {
         track("read_checkout_click", { variant, type: typeName });
         // Prefill the buyer's email on the Stripe page so payment ↔ application
@@ -428,10 +417,9 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         return;
       }
 
-      // Calm done-state, reached two ways: (a) no payment link configured yet
-      // (graceful degrade before the operator sets STRIPE_READ_PAYMENT_LINK), or
-      // (b) a "Just exploring" buyer we deliberately keep off the paywall (P0 #20).
-      // Either way the application is already captured; show "we'll be in touch".
+      // Calm done-state when no payment link is configured yet (graceful degrade
+      // before the operator sets STRIPE_READ_PAYMENT_LINK). The application is
+      // already captured; show "we'll be in touch".
       setStatus("idle");
       setView("done");
     } catch {
@@ -634,20 +622,6 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         return (<Field q="Your name."><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className={inputCls} /></Field>);
       case "email":
         return (<Field q="Where can we reach you?" hint="In private."><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={inputCls} /></Field>);
-      case "budget":
-        return (
-          <Field q="What do you spend when something is right?" hint="It only helps us aim.">
-            <div className="border-t border-fg/15">
-              {BUDGET_OPTIONS.map((b) => (
-                <button key={b} type="button" aria-pressed={budget === b} onClick={() => selectBudget(b)}
-                  className="ac-row flex w-full cursor-pointer select-none items-center justify-between border-b border-fg/15 py-5 pl-4 text-left hover:pl-6 transition-all">
-                  <span className="text-xl font-light">{b}</span>
-                  <span className="ac-swatch mr-4 h-2.5 w-2.5 rotate-45" />
-                </button>
-              ))}
-            </div>
-          </Field>
-        );
       case "photos":
         return (
           <Field q="A few photographs help the eye." hint={`You, your rooms, your things. Up to ${MAX_IMAGES}. In confidence.`}>
