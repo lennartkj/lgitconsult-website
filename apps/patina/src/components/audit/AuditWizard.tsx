@@ -208,6 +208,11 @@ const inputCls =
 
 type View = "cover" | "test" | "reveal" | "capture" | "done";
 type Status = "idle" | "submitting" | "error";
+// The dual offer at the reveal: "read" = the €150 Read (→ capture → Stripe), the
+// primary path; "audit" = "apply for the Audit" — the SAME capture cards routed as
+// an application, no payment, to a calm by-application done-state. Carried to
+// /api/audit so the operator knows which, and tagged onto the funnel events.
+type Intent = "read" | "audit";
 
 function Inkblot() {
   // A symmetric, randomized "inkblot" — blurred mirrored blobs, thresholded solid.
@@ -265,6 +270,9 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [variant, setVariant] = useState<Variant>("aspiration");
+  // Which offer the buyer chose at the reveal. "read" → pays at Stripe (default);
+  // "audit" → captured as a by-application enquiry, no payment, calm done-state.
+  const [intent, setIntent] = useState<Intent>("read");
 
   const cardRef = useRef<HTMLDivElement>(null);
   const capId: CaptureId = CAPTURE[capIndex];
@@ -297,6 +305,21 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
     track("audit_view", { variant: v });
   }, []);
 
+  // Per-step drop-off tagging (P1-2). Each test/capture step fires `audit_step`
+  // carrying its absolute step index + the cover variant, so begin→reveal (and on
+  // into capture) drop-off is measurable PER message — we see where intent dies,
+  // per variant. Capture steps also carry the chosen intent (read vs audit-apply).
+  useEffect(() => {
+    if (view === "test") {
+      track("audit_step", { step: testIndex + 1, of: TOTAL, phase: "test", variant });
+    } else if (view === "capture") {
+      track("audit_step", { step: TEST_LEN + capIndex + 1, of: TOTAL, phase: "capture", intent, variant });
+    }
+    // Fire on each step change within test/capture. Intent only changes before
+    // capture begins, so including it here is safe (no spurious refires).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, testIndex, capIndex]);
+
   useEffect(() => {
     const isInput = view === "capture" || (view === "test" && test[testIndex].kind === "text");
     if (!isInput) return;
@@ -325,7 +348,9 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
     setTypeKey(key);
     track("type", { type: TYPES[key].name, variant });
     // ★ The money moment becomes visible: the €150 Read offer is on the reveal.
-    track("read_offer_view", { variant, type: TYPES[key].name });
+    // Carry step + variant (P1-2) so begin→reveal drop-off is measurable per
+    // cover message. The reveal sits just past the last test step.
+    track("read_offer_view", { variant, type: TYPES[key].name, step: TEST_LEN + 1, of: TOTAL });
     setView("reveal");
   }
 
@@ -381,7 +406,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name, email, consent, company, sweet, seen,
+          name, email, consent, company, sweet, seen, intent,
           tasteType: typeKey ? TYPES[typeKey].name : "",
           images: images.map(({ mediaType, dataBase64 }) => ({ mediaType, dataBase64 })),
         }),
@@ -393,11 +418,19 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         return;
       }
       const typeName = typeKey ? TYPES[typeKey].name : "";
-      track("audit_submit", { variant, type: typeName });
+      track("audit_submit", { variant, type: typeName, intent });
 
-      // ★ Submit-then-pay: the application is captured (assess + operator email
-      // run server-side, unchanged). Now send the buyer to the €150 Read checkout.
-      // Operator matches payment ↔ application by email for the MVP.
+      // The by-application Audit path: captured server-side (assess + operator email,
+      // unchanged), NO payment. Land on the calm application done-state.
+      if (intent === "audit") {
+        setStatus("idle");
+        setView("done");
+        return;
+      }
+
+      // ★ Submit-then-pay (Read path): the application is captured (assess + operator
+      // email run server-side, unchanged). Now send the buyer to the €150 Read
+      // checkout. Operator matches payment ↔ application by email for the MVP.
       // fast-follow: swap the static Payment Link for a Stripe Checkout Session
       // + webhook so delivery is auto-gated on confirmed payment (no manual match).
       if (willPay) {
@@ -552,7 +585,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                 <div className="mt-12 border-t border-fg/15 pt-8">
                   <span className={labelCls}>The Read — €150</span>
                   <p className="mt-4 max-w-lg text-fg/70 leading-relaxed">
-                    The honest read your friends are too polite to give, and your decorator is too paid to. One eye, one verdict: what to keep, what gives you away, what to acquire next. Within 48 hours, in confidence. Credited in full toward an Audit.
+                    A private, fast read of the eye — the verdict your friends are too polite to give, and your decorator is too paid to. What to keep, what gives you away, what to acquire next. Within 48 hours, in confidence. Credited in full toward an Audit.
                   </p>
                   <p className="mt-5 max-w-lg text-fg/55 leading-relaxed">
                     If it doesn&apos;t show you something you couldn&apos;t see — it&apos;s free.
@@ -560,11 +593,24 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                   <p className="mt-7 max-w-lg text-fg/60 leading-relaxed">
                     Your Read is built from the answers you just gave. The rest is ours.
                   </p>
-                  <div className="mt-8">
-                    <button type="button" onClick={() => { setCapIndex(0); setView("capture"); }}
+                  {/* Genuine supply scarcity (P0-3, ADS §1b lever 4). The operator-hours
+                      ceiling makes the cap real — one honest line, no demand-hype. */}
+                  <p className="mt-7 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40">
+                    We take a limited number of Reads each month.
+                  </p>
+                  <div className="mt-8 flex flex-col items-start gap-5">
+                    <button type="button" onClick={() => { setIntent("read"); setCapIndex(0); setView("capture"); }}
                       className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Get my Read ▸</button>
+                    {/* The dual offer (P1-1): a quieter, by-application path to the Audit.
+                        Same capture cards, routed as an application — no payment, no price
+                        on-page. Tracked distinctly as `audit_apply_click`. */}
+                    <button type="button"
+                      onClick={() => { track("audit_apply_click", { variant, type: TYPES[typeKey].name }); setIntent("audit"); setCapIndex(0); setView("capture"); }}
+                      className="ac-link font-mono text-[11px] uppercase tracking-[0.18em] text-fg/45">
+                      Or apply for the Audit →
+                    </button>
                   </div>
-                  <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/35">
+                  <p className="mt-7 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/35">
                     The people with the best eye are the ones who knew to ask.
                   </p>
                 </div>
@@ -578,9 +624,9 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
             {view === "done" && (
               <motion.div key="done" {...fade}>
                 <span className={labelCls}>Patina · In Confidence</span>
-                <h2 className="mt-8 text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">We have you.</h2>
+                <h2 className="mt-8 text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">Received.</h2>
                 <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">
-                  Your application is with us, in confidence{typeKey ? ` — noted as ${TYPES[typeKey].name}` : ""}. If there is a fit, you will hear from us — privately, and not from a list.
+                  We read every application, in confidence. If there&apos;s a fit, you&apos;ll hear from us — privately, and not from a list.
                 </p>
                 <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.25em] text-fg/30">Fewer things. Better ones.</p>
               </motion.div>
@@ -600,8 +646,8 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                   className="ac-btn font-mono text-[12px] uppercase tracking-[0.15em] px-7 py-3 disabled:opacity-25 disabled:pointer-events-none">
                   {capIndex === CAPTURE.length - 1
                     ? status === "submitting"
-                      ? willPay ? "To checkout…" : "Sending…"
-                      : willPay ? "Pay €150 ▸" : "Submit ▸"
+                      ? intent === "audit" ? "Submitting…" : willPay ? "To checkout…" : "Sending…"
+                      : intent === "audit" ? "Apply ▸" : willPay ? "Pay €150 ▸" : "Submit ▸"
                     : "Continue ▸"}
                 </button>
               </div>
@@ -642,22 +688,32 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
             )}
           </Field>
         );
-      case "consent":
+      case "consent": {
+        // The Audit path is by-application: no price on-page, no checkout note.
+        // The Read path keeps the €150 / secure-checkout framing (when willPay).
+        const isAudit = intent === "audit";
+        const payRead = willPay && !isAudit;
         return (
-          <Field q="Your Read." hint={willPay ? "€150 · Credited toward an Audit · Delivered within 48h." : "By application."}>
+          <Field
+            q={isAudit ? "Your application." : "Your Read."}
+            hint={isAudit ? "By application." : payRead ? "€150 · Credited toward an Audit · Delivered within 48h." : "By application."}
+          >
             <label className="flex items-start gap-4 cursor-pointer">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1.5 accent-fg" data-autofocus />
               <span className="text-fg/60 text-lg leading-relaxed max-w-md">
-                I agree that Patina may keep and use what I share to prepare my Read, in confidence — per the privacy policy.
+                {isAudit
+                  ? "I agree that Patina may keep and use what I share to consider my application, in confidence — per the privacy policy."
+                  : "I agree that Patina may keep and use what I share to prepare my Read, in confidence — per the privacy policy."}
               </span>
             </label>
-            {willPay && (
+            {payRead && (
               <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/35 leading-relaxed max-w-md">
                 Next: secure checkout — €150. Your Read is prepared once payment is received.
               </p>
             )}
           </Field>
         );
+      }
       default:
         return null;
     }

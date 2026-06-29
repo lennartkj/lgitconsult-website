@@ -15,6 +15,10 @@ const imageSchema = z.object({
 const auditSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
+  // The dual offer: "read" = the €150 Read (→ Stripe), "audit" = a by-application
+  // Audit enquiry (no payment). The operator triages by this so a Read and an Audit
+  // application never get confused. Defaults to "read" (the primary path).
+  intent: z.enum(["read", "audit"]).optional().default("read"),
   budget: z.string().optional().default(""),
   tasteType: z.string().optional().default(""),
   sweet: z.string().optional().default(""),
@@ -61,6 +65,7 @@ export async function POST(request: NextRequest) {
     const { images } = application;
     const intake = {
       name: application.name,
+      intent: application.intent,
       focus: application.focus,
       budget: application.budget,
       about: application.about,
@@ -74,9 +79,11 @@ export async function POST(request: NextRequest) {
     console.log("Audit application:", { ...intake, imageCount: images.length });
 
     if (resendKey) {
+      const isAuditApply = intake.intent === "audit";
       const lines = [
-        `New Audit application.`,
+        isAuditApply ? `New Audit application (by application — NO payment).` : `New Read order (€150 — pays at Stripe).`,
         ``,
+        `Path:    ${isAuditApply ? "Audit application" : "Read (€150)"}`,
         `Name:    ${intake.name}`,
         `Email:   ${application.email}`,
         intake.tasteType ? `Type:    ${intake.tasteType}` : `Type:    —`,
@@ -96,7 +103,7 @@ export async function POST(request: NextRequest) {
           from: FROM_EMAIL,
           to: TO_EMAIL,
           replyTo: application.email,
-          subject: `New Audit application — ${intake.name}${intake.tasteType ? ` (${intake.tasteType})` : ""}`,
+          subject: `${isAuditApply ? "New Audit application" : "New Read order (€150)"} — ${intake.name}${intake.tasteType ? ` (${intake.tasteType})` : ""}`,
           text: lines.join("\n"),
         });
       } catch (err) {
