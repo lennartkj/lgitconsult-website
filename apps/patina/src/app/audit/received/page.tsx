@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import ReadReceived from "@/components/audit/ReadReceived";
+import ReadIntake from "@/components/audit/ReadIntake";
 
 export const metadata: Metadata = {
   title: "Your Read · Patina",
@@ -8,11 +8,14 @@ export const metadata: Metadata = {
 };
 
 // Stripe returns the buyer here after a successful €150 Read payment (the
-// Payment Link's success URL → …/audit/received). This page fires `read_paid`
-// (the revenue event) on load. It is the page Stripe redirects to on success;
-// reaching it is the proxy for payment in the Payment-Link MVP.
+// Payment Link's success URL → …/audit/received). This is now the post-payment
+// READ INTAKE (the deep unlock — QUESTIONS.md §3): it fires `read_paid` (the
+// revenue event) on load AND collects R1–R6, reads the free-test answers the
+// wizard pinned to localStorage, and submits ONE combined payload (the assess
+// runs server-side on that combined picture). Reaching this page is the payment
+// proxy in the Payment-Link MVP.
 // fast-follow: gate this on a verified Checkout Session / webhook so the
 // `read_paid` event can't be triggered by anyone hitting the URL directly.
 export default function ReadReceivedPage() {
-  return <ReadReceived />;
+  return <ReadIntake />;
 }

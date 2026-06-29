@@ -30,12 +30,26 @@ export interface AuditIntake {
   sweet?: string;
   /** What they saw in the randomized pattern (Rorschach-style). */
   seen?: string;
+  /** F1 · why-now — the event that brought them now (the highest-leverage field). */
+  trigger?: string;
+  /** F3 · the oblique tell — the last thing they bought and showed no one. */
+  oblique?: string;
+  /** R2 · the audience they fear / want to clock them (status is relational). */
+  audience?: string;
+  /** R6 · the one piece they're unsure about (the prime `lose` candidate, their words). */
+  unsurePiece?: string;
+  /** R4 · acquisition budget band (anchors `starter` ranges). */
+  budgetBand?: string;
 }
 
 export interface AuditImage {
   mediaType: "image/jpeg" | "image/png" | "image/webp" | "image/gif";
   /** base64-encoded image data (no data: prefix) */
   dataBase64: string;
+  /** R5 · the surface this photo shows (e.g. "A room", "Wardrobe", "On the wall"). */
+  surface?: string;
+  /** Optional per-photo note from the client (e.g. "the room I can't finish"). */
+  caption?: string;
 }
 
 const StarterItemSchema = z.object({
@@ -65,6 +79,12 @@ Idiot tells: conspicuous logos / monogram-as-status; trend-chasing and hype; acc
 
 Per domain — money vs tell: objects/design = canon design, honest materials, function-first vs decorative branded tat. Fashion = quiet luxury, archive, fit+fabric vs logos, hype, head-to-toe one brand. Art = original, provenance, a point of view vs decorative status prints. Interiors = negative space, a few anchors, patina vs showroom-matched, everything new.
 
+CLOSED-LOOP CONSTRAINT (non-negotiable). You will receive the client's trigger (why they came now), the audience they fear (whose eye they would hate to fail), and the one piece they are unsure about (in their own words), plus photos each tagged with the surface it shows. You MUST use them:
+- Your summary MUST address the unsure piece directly — confirm their instinct or overturn it, and say why. Asked-but-ignored is worse than never-asked.
+- Your direction MUST be framed against their named audience and their trigger — not generic guidance; speak to the room they are actually trying to enter.
+- Where photos are captioned with a surface, your works/lose entries should cite the specific image/surface they refer to (e.g. "the wall", "the wardrobe") rather than speaking in the abstract.
+Do not produce generic, horoscope-style guidance. If a field is absent, work from what is present, but never invent a field that was not given.
+
 Voice for all written output: assured, precise, quiet authority. No hype, no emoji, no exclamation. Restraint as luxury.`;
 
 export async function assessAudit(
@@ -73,37 +93,56 @@ export async function assessAudit(
 ): Promise<AuditAssessment> {
   const client = new Anthropic(); // reads ANTHROPIC_API_KEY from the environment
 
+  // Budget can arrive as a free-text `budget` or the banded `budgetBand` (R4).
+  const budgetLine = intake.budgetBand || intake.budget;
+
   const briefText = [
-    `A new client has applied for an Audit. Produce the first-pass assessment.`,
+    `A new client has paid for a Read. Produce the first-pass assessment from the full picture below.`,
     ``,
     `Name: ${intake.name}`,
     intake.tasteType ? `Taste type (from the intake test): ${intake.tasteType}` : ``,
-    intake.budget ? `Acquisition budget: ${intake.budget}` : ``,
+    intake.trigger ? `WHY THEY CAME NOW (their trigger): ${intake.trigger}` : ``,
+    intake.audience ? `THE AUDIENCE THEY FEAR (whose eye they'd hate to fail): ${intake.audience}` : ``,
+    intake.unsurePiece ? `THE PIECE THEY ARE UNSURE ABOUT (their words — your summary MUST address this): ${intake.unsurePiece}` : ``,
+    budgetLine ? `Acquisition budget: ${budgetLine}` : ``,
     intake.focus.length ? `Wants the eye on: ${intake.focus.join(", ")}` : ``,
-    intake.about ? `About them / where they want to land: ${intake.about}` : ``,
+    intake.about ? `About them / what changed / where they want to land: ${intake.about}` : ``,
+    intake.oblique ? `The last thing they bought and showed no one (an un-performed taste signal): ${intake.oblique}` : ``,
     intake.sweet ? `Childhood sweet (a clue to their instinct): ${intake.sweet}` : ``,
     intake.seen ? `In a randomized pattern they saw: ${intake.seen}` : ``,
     intake.links ? `Links: ${intake.links}` : ``,
-    images.length ? `(${images.length} photo(s) of them / their space / current pieces attached.)` : ``,
+    images.length ? `(${images.length} photo(s) attached, each captioned below with the surface it shows — cite specific surfaces in works/lose.)` : ``,
+    ...images.map((img, i) => {
+      const surface = img.surface ? img.surface : "Unlabelled";
+      const note = img.caption ? ` — note: "${img.caption}"` : ``;
+      return `  Photo ${i + 1}: ${surface}${note}`;
+    }),
     ``,
     `Return:`,
-    `- summary: one-line read of where they stand.`,
-    `- works: what already reads right (keep).`,
-    `- lose: what gives them away as new-money.`,
-    `- direction: 2-4 short paragraphs of where to take it.`,
-    `- starter: 4-8 specific pieces to acquire — each with piece, where to source it, why it earns its place, and an optional price range.`,
+    `- summary: one-line read of where they stand — and it MUST address the piece they are unsure about (confirm or overturn their instinct, with the reason).`,
+    `- works: what already reads right (keep) — cite the specific surface/photo where relevant.`,
+    `- lose: what gives them away as new-money — cite the specific surface/photo where relevant.`,
+    `- direction: 2-4 short paragraphs of where to take it — framed against their named audience and their trigger, not generic.`,
+    `- starter: 4-8 specific pieces to acquire — each with piece, where to source it, why it earns its place, and an optional price range (anchored to their budget).`,
   ]
     .filter(Boolean)
     .join("\n");
 
   const content: Anthropic.ContentBlockParam[] = [
     { type: "text", text: briefText },
-    ...images.map(
-      (img): Anthropic.ContentBlockParam => ({
-        type: "image",
-        source: { type: "base64", media_type: img.mediaType, data: img.dataBase64 },
-      }),
-    ),
+    // Caption each image inline so works/lose can reference it by surface. The text
+    // tag precedes the image block it describes.
+    ...images.flatMap((img, i): Anthropic.ContentBlockParam[] => {
+      const surface = img.surface ? img.surface : "Unlabelled";
+      const note = img.caption ? ` (note: "${img.caption}")` : ``;
+      return [
+        { type: "text", text: `Photo ${i + 1} — ${surface}${note}:` },
+        {
+          type: "image",
+          source: { type: "base64", media_type: img.mediaType, data: img.dataBase64 },
+        },
+      ];
+    }),
   ];
 
   const response = await client.messages.parse({

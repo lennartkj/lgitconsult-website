@@ -46,11 +46,45 @@ type InstinctCard = {
   right: { label: string; v: Pole };
 };
 type TextCard = { kind: "text"; field: "sweet" | "seen"; lead: string; hint: string; placeholder: string; inkblot?: boolean };
-type TestCard = InstinctCard | TextCard;
+// The "why now" trigger card (QUESTIONS.md F1). A single-tap card that scores
+// NOTHING on either axis — it only routes the `trigger` field, the highest-leverage
+// missing signal, into the reveal + the operator's picture. Placed early (after
+// sweet, before the reveal), one tap, so the free-test ceiling is unchanged.
+type TriggerCard = { kind: "trigger"; lead: string; hint: string; options: { key: TriggerKey; label: string }[] };
+// The oblique-tell probe (QUESTIONS.md F3). A short free-text card that reads an
+// un-performable restraint/confidence signal. DACH-default: the free test leads
+// with the OBLIQUE probe — never the direct named-fear card (F2). Routes `tell`.
+type ObliqueCard = { kind: "oblique"; lead: string; hint: string; placeholder: string };
+type TestCard = InstinctCard | TextCard | TriggerCard | ObliqueCard;
+
+// The "why now" trigger values (QUESTIONS.md F1). Stored verbatim and read back
+// at the reveal + handed to the operator; scores nothing on the R/E · H/V axes.
+type TriggerKey = "place" | "chapter" | "room" | "before" | "know";
+const TRIGGERS: Record<TriggerKey, string> = {
+  place: "A new place",
+  chapter: "A new chapter",
+  room: "A room I can't finish",
+  before: "Before they see it",
+  know: "I just want to know",
+};
 
 // ── Fixed framing beats (unscored human texture). Sweet opens; inkblot sits mid-test.
 const SWEET_CARD: TextCard = { kind: "text", field: "sweet", lead: "What was your favourite sweet as a child?", hint: "It tells us more than you think.", placeholder: "In a word or two." };
 const INKBLOT_CARD: TextCard = { kind: "text", field: "seen", lead: "What do you see?", hint: "There is no right answer.", placeholder: "The first thing.", inkblot: true };
+// F1 · why-now (one tap, scores nothing — routes `trigger`).
+const TRIGGER_CARD: TriggerCard = {
+  kind: "trigger",
+  lead: "Something brought you here now —",
+  hint: "There is no wrong answer.",
+  options: (Object.keys(TRIGGERS) as TriggerKey[]).map((key) => ({ key, label: TRIGGERS[key] })),
+};
+// F3 · oblique tell (one short answer — the un-performable status signal).
+const OBLIQUE_CARD: ObliqueCard = {
+  kind: "oblique",
+  lead: "The last thing you bought that you've shown no one.",
+  hint: "For the wall, the wardrobe, or the drawer.",
+  placeholder: "In a word or two.",
+};
 
 // ── The scored pool. Two axes, sampled independently each session.
 //    Mix of either/or (phrase chips) + word-association (single-word, staccato).
@@ -136,13 +170,18 @@ function sample<T>(pool: readonly T[], n: number): T[] {
   return a.slice(0, Math.min(n, a.length));
 }
 
-// Build this session's TEST: fixed sweet → RE block → fixed inkblot → HV block.
-// Mirrors the original beat (sweet first, inkblot mid-test) while randomising the
-// scored questions. Asked-count is constant; only the pool grew.
+// Build this session's TEST: fixed sweet → why-now trigger → RE block → fixed
+// inkblot → HV block → oblique tell. Mirrors the original beat (sweet first,
+// inkblot mid-test) while randomising the scored questions. The trigger (F1, one
+// tap) sits early; the oblique tell (F3, one short answer) sits last, just before
+// the reveal — both score NOTHING, so the per-axis type is unchanged; they only
+// route `trigger` / `tell` into the evidence-citing reveal and the deep picture.
+// DACH-default: the free test leads with the oblique probe, NOT the direct
+// named-fear card (F2) — that lives in the post-payment intake or is omitted.
 function buildTest(): TestCard[] {
   const re = sample(POOL_RE, ASKED_PER_AXIS);
   const hv = sample(POOL_HV, ASKED_PER_AXIS);
-  return [SWEET_CARD, ...re, INKBLOT_CARD, ...hv];
+  return [SWEET_CARD, TRIGGER_CARD, ...re, INKBLOT_CARD, ...hv, OBLIQUE_CARD];
 }
 
 // Dev-only sanity checks (stripped from production builds). Guards the invariants
@@ -162,6 +201,12 @@ if (process.env.NODE_ENV !== "production") {
     const hvN = scored.filter((c) => c.axis === "HV").length;
     ok(reN === ASKED_PER_AXIS && hvN === ASKED_PER_AXIS, `draw not balanced: RE=${reN} HV=${hvN}`);
     ok(new Set(scored.map((c) => c.lead + c.left.label)).size === scored.length, "draw has duplicate cards");
+    // The trigger (F1) + oblique (F3) cards must be present and score nothing — a
+    // scored card masquerading as one of them would silently skew the type.
+    ok(t.filter((c) => c.kind === "trigger").length === 1, "missing/duplicate trigger card");
+    ok(t.filter((c) => c.kind === "oblique").length === 1, "missing/duplicate oblique card");
+    // Expected free-test length: sweet + trigger + RE block + inkblot + HV block + oblique.
+    ok(t.length === 3 + 2 * ASKED_PER_AXIS + 1, `unexpected test length ${t.length}`);
   }
 }
 
@@ -196,10 +241,10 @@ const TYPES: Record<TypeKey, { name: string; line: string; tell: string; note: s
 const CAPTURE = ["name", "email", "photos", "consent"] as const;
 type CaptureId = (typeof CAPTURE)[number];
 const MAX_IMAGES = 5;
-// Cards ASKED per session is fixed regardless of pool size: 2 framing text cards
-// (sweet + inkblot) + ASKED_PER_AXIS scored cards per axis. The progress indicator
-// must reflect this asked-count, never the size of the pool we draw from.
-const TEST_LEN = 2 + 2 * ASKED_PER_AXIS;
+// Cards ASKED per session is fixed regardless of pool size: 4 framing cards
+// (sweet + why-now trigger + inkblot + oblique tell) + ASKED_PER_AXIS scored cards
+// per axis. The progress indicator must reflect this asked-count, never the pool.
+const TEST_LEN = 4 + 2 * ASKED_PER_AXIS;
 const TOTAL = TEST_LEN + CAPTURE.length;
 
 const labelCls = "font-mono text-[11px] uppercase tracking-[0.25em] text-fg/40";
@@ -213,6 +258,32 @@ type Status = "idle" | "submitting" | "error";
 // an application, no payment, to a calm by-application done-state. Carried to
 // /api/audit so the operator knows which, and tagged onto the funnel events.
 type Intent = "read" | "audit";
+
+// The evidence-citing reveal (QUESTIONS.md §3). Synthesised from what the free
+// test already collected — no new question — so the read shows its working and
+// reads as "how did they know," not a horoscope. Crosses the type's `tell` with
+// the `trigger` (why-now) and the inkblot/sweet word. Each clause is gated on the
+// signal existing, so it degrades cleanly if a field is blank (e.g. inkblot left
+// empty). Kept in the clinical register: restrained, precise, a little uncanny.
+const TRIGGER_READBACK: Record<TriggerKey, string> = {
+  place: "You have come into a new place, and you want it to read as though it were always yours.",
+  chapter: "You are turning a page — and you want the rooms and the wardrobe to turn it with you.",
+  room: "There is a room you cannot finish. The eye stops on it, and you know why before we say it.",
+  before: "You want this settled before the wrong eye sees it. That instinct is the right one.",
+  know: "You did not come for reassurance. You came to know — which is the rarest thing in this room.",
+};
+
+function revealEvidence(args: { typeKey: TypeKey; trigger: TriggerKey | null; seen: string; sweet: string }): string[] {
+  const lines: string[] = [];
+  if (args.trigger) lines.push(TRIGGER_READBACK[args.trigger]);
+  const seen = args.seen.trim();
+  if (seen) {
+    // Read the inkblot word back, uncanny-but-true to the type. We don't interpret
+    // it cleverly — we simply note that of all the things to see, they saw this.
+    lines.push(`In the pattern, you saw ${seen.toLowerCase()}. Of everything it could have been, that is what surfaced first — and it fits the eye above more closely than chance.`);
+  }
+  return lines;
+}
 
 function Inkblot() {
   // A symmetric, randomized "inkblot" — blurred mirrored blobs, thresholded solid.
@@ -260,6 +331,10 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
 
   const [sweet, setSweet] = useState("");
   const [seen, setSeen] = useState("");
+  // F1 — the "why now" trigger (one tap, scores nothing; cited at the reveal).
+  const [trigger, setTrigger] = useState<TriggerKey | null>(null);
+  // F3 — the oblique tell (one short answer; the un-performable status signal).
+  const [tell, setTell] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [images, setImages] = useState<UploadedImage[]>([]);
@@ -321,7 +396,8 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   }, [view, testIndex, capIndex]);
 
   useEffect(() => {
-    const isInput = view === "capture" || (view === "test" && test[testIndex].kind === "text");
+    const k = view === "test" ? test[testIndex].kind : null;
+    const isInput = view === "capture" || k === "text" || k === "oblique";
     if (!isInput) return;
     const t = setTimeout(() => {
       cardRef.current
@@ -372,6 +448,20 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
     else computeReveal(picks);
   }
 
+  // F1 — the why-now trigger. One tap → store + advance (scores nothing, so it
+  // never touches `picks` / the type). Mirrors the instinct-card auto-advance feel.
+  function chooseTrigger(key: TriggerKey) {
+    if (picked) return;
+    setPicked(key);
+    setTrigger(key);
+    const last = testIndex === test.length - 1;
+    window.setTimeout(() => {
+      setPicked(null);
+      if (!last) setTestIndex((i) => i + 1);
+      else computeReveal(picks);
+    }, 220);
+  }
+
   async function handleFiles(fileList: FileList | null) {
     if (!fileList || fileList.length === 0) return;
     setImgError("");
@@ -401,13 +491,42 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   async function submit() {
     setStatus("submitting");
     setError("");
+    const tasteType = typeKey ? TYPES[typeKey].name : "";
+
+    // ★ Persist the free-test answers BEFORE the Stripe redirect. Same-origin
+    // localStorage survives the round-trip to Stripe and back to /audit/received,
+    // where the post-payment Read intake reads them (matched by email) and submits
+    // ONE combined payload. Written for the Read path only — the by-application
+    // Audit path closes here by call, with no deep intake. (No DB: MVP is email +
+    // localStorage; key mirrors `patina_audit_variant`.)
+    if (intent === "read") {
+      try {
+        window.localStorage.setItem(
+          "patina_freetest",
+          JSON.stringify({
+            email,
+            name,
+            tasteType,
+            trigger,        // F1 — why-now (key)
+            sweet,          // childhood sweet
+            seen,           // inkblot word
+            tell,           // F3 — the oblique tell
+            variant,
+            savedAt: Date.now(),
+          }),
+        );
+      } catch {
+        /* no localStorage → the intake will fall back to email-only continuity */
+      }
+    }
+
     try {
       const res = await fetch("/api/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name, email, consent, company, sweet, seen, intent,
-          tasteType: typeKey ? TYPES[typeKey].name : "",
+          name, email, consent, company, sweet, seen, intent, trigger, tell,
+          tasteType,
           images: images.map(({ mediaType, dataBase64 }) => ({ mediaType, dataBase64 })),
         }),
       });
@@ -417,8 +536,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         setError(data.message || "Please check your entries and try again.");
         return;
       }
-      const typeName = typeKey ? TYPES[typeKey].name : "";
-      track("audit_submit", { variant, type: typeName, intent });
+      track("audit_submit", { variant, type: tasteType, intent });
 
       // The by-application Audit path: captured server-side (assess + operator email,
       // unchanged), NO payment. Land on the calm application done-state.
@@ -434,7 +552,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
       // fast-follow: swap the static Payment Link for a Stripe Checkout Session
       // + webhook so delivery is auto-gated on confirmed payment (no manual match).
       if (willPay) {
-        track("read_checkout_click", { variant, type: typeName });
+        track("read_checkout_click", { variant, type: tasteType });
         // Prefill the buyer's email on the Stripe page so payment ↔ application
         // reconcile cleanly. prefilled_email is a supported Payment Link param.
         let url = readPaymentLink;
@@ -481,7 +599,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
     if (e.key !== "Enter") return;
     if ((e.target as HTMLElement).tagName === "TEXTAREA") return;
     if (view === "capture" && canContinue()) { e.preventDefault(); next(); }
-    else if (view === "test" && card.kind === "text") { e.preventDefault(); advanceText(); }
+    else if (view === "test" && (card.kind === "text" || card.kind === "oblique")) { e.preventDefault(); advanceText(); }
   }
 
   const fade = reduce
@@ -567,13 +685,60 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
               </motion.div>
             )}
 
+            {/* F1 — the why-now trigger. One tap, scores nothing; stacked chips. */}
+            {view === "test" && card.kind === "trigger" && (
+              <motion.div key={`t${testIndex}`} {...fade}>
+                <p className="text-center font-mono text-[11px] uppercase tracking-[0.25em] text-fg/40">{card.lead}</p>
+                <div className="mt-10 grid grid-cols-1 gap-3">
+                  {card.options.map((opt) => (
+                    <button key={opt.key} type="button" aria-pressed={picked === opt.key}
+                      onClick={() => chooseTrigger(opt.key)}
+                      className="ac-chip flex items-center justify-center px-6 py-7 text-xl font-light tracking-tight cursor-pointer select-none">
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-8 text-center font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30">{card.hint}</p>
+              </motion.div>
+            )}
+
+            {/* F3 — the oblique tell. One short answer; the un-performable signal. */}
+            {view === "test" && card.kind === "oblique" && (
+              <motion.div key={`t${testIndex}`} ref={cardRef} {...fade}>
+                <Field q={card.lead} hint={card.hint}>
+                  <input
+                    type="text"
+                    value={tell}
+                    onChange={(e) => setTell(e.target.value)}
+                    placeholder={card.placeholder}
+                    className={inputCls}
+                  />
+                </Field>
+              </motion.div>
+            )}
+
             {view === "reveal" && typeKey && (
               <motion.div key="reveal" {...fade}>
                 <span className={labelCls}>Your type</span>
                 <h1 className="mt-6 text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">{TYPES[typeKey].name}</h1>
                 <p className="mt-8 max-w-lg text-fg/70 text-lg leading-relaxed">{TYPES[typeKey].line}</p>
 
-                {/* The tell — the sting. Reveal order: name → who you are → TELL → our work. */}
+                {/* Evidence-citing reveal (QUESTIONS.md §3): the read shows its working —
+                    crossing the trigger (why-now) × the inkblot word × the type — so it
+                    reads as "how did they know," not a horoscope. Degrades cleanly if a
+                    signal is blank. Synthesised from the free test; no new question. */}
+                {(() => {
+                  const ev = revealEvidence({ typeKey, trigger, seen, sweet });
+                  return ev.length ? (
+                    <div className="mt-8 max-w-lg space-y-3">
+                      {ev.map((line, i) => (
+                        <p key={i} className="text-fg/70 leading-relaxed">{line}</p>
+                      ))}
+                    </div>
+                  ) : null;
+                })()}
+
+                {/* The tell — the sting. Reveal order: name → who you are → evidence → TELL → our work. */}
                 <div className="mt-8 max-w-lg">
                   <span className={labelCls}>Your tell —</span>
                   <p className="mt-3 text-fg/75 leading-relaxed">{TYPES[typeKey].tell}</p>
@@ -651,7 +816,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                     : "Continue ▸"}
                 </button>
               </div>
-            ) : card.kind === "text" ? (
+            ) : card.kind === "text" || card.kind === "oblique" ? (
               <button type="button" onClick={advanceText} className="ac-btn font-mono text-[12px] uppercase tracking-[0.15em] px-7 py-3">Continue ▸</button>
             ) : (
               <span className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/25">Choose one</span>
