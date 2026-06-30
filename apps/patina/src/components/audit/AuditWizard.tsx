@@ -78,11 +78,12 @@ const TRIGGER_CARD: TriggerCard = {
   hint: "There is no wrong answer.",
   options: (Object.keys(TRIGGERS) as TriggerKey[]).map((key) => ({ key, label: TRIGGERS[key] })),
 };
-// F3 · oblique tell (one short answer — the un-performable status signal).
+// F3 · oblique tell (one short answer — the un-performable status signal). Warmed
+// (2026-06-30): friendly curiosity about a small private pleasure, not a cold probe.
 const OBLIQUE_CARD: ObliqueCard = {
   kind: "oblique",
-  lead: "The last thing you bought that you've shown no one.",
-  hint: "For the wall, the wardrobe, or the drawer.",
+  lead: "Tell us about something you bought just for yourself —",
+  hint: "Something you love and haven't shown anyone. For the wall, the wardrobe, or the drawer.",
   placeholder: "In a word or two.",
 };
 
@@ -210,31 +211,35 @@ if (process.env.NODE_ENV !== "production") {
   }
 }
 
+// Each type = your STRENGTHS + the ONE thing worth watching, said kindly and usefully
+// (warmed 2026-06-30 — a friend with a great eye, not an accusatory "tell"). `line`
+// = what's strong about your eye; `tell` = the one thing to keep an eye on, framed as
+// help; `note` = how we'd work with you toward it.
 type TypeKey = "RH" | "RV" | "EH" | "EV";
 const TYPES: Record<TypeKey, { name: string; line: string; tell: string; note: string }> = {
   RH: {
     name: "The Heir",
-    line: "Old money you were not born into — and you carry it more easily than most who were. You want what lasts, what is quiet, what never has to explain itself.",
-    tell: "the one piece you bought to look inherited. It tries hardest — so it's the first thing the right eye finds.",
-    note: "Our work with you is subtraction: removing the one false note that gives the game away.",
+    line: "You carry old-money calm more easily than most who were born into it. You want what lasts, what is quiet, what never has to explain itself — and that instinct is exactly right.",
+    tell: "watch the one piece that's trying a little too hard to look inherited. A good eye relaxes when a thing simply is what it is — and you're closer to that than you think.",
+    note: "With you, our work is gentle subtraction: easing out the one note that's working overtime, so the whole reads effortless.",
   },
   RV: {
     name: "The Ascetic",
-    line: "Severe, modern, edited to the bone. One strange, perfect object over a hundred safe ones. To you, emptiness is not absence — it is the point.",
-    tell: "you trust that less is enough. Empty rooms forgive nothing; one wrong object is the whole room.",
-    note: "Our work with you is the hunt: the few pieces worth the silence around them.",
+    line: "Severe, modern, edited to the bone — one strange, perfect object over a hundred safe ones. To you emptiness isn't absence, it's the point, and that's a rare and enviable confidence.",
+    tell: "the thing worth watching is that a spare room forgives nothing — so every object has to earn its silence. The good news: you already choose like that.",
+    note: "With you, our work is the hunt: finding the few pieces genuinely worthy of all that quiet around them.",
   },
   EH: {
     name: "The Connoisseur",
-    line: "You love the canon, and you want all of it. Your danger is the wall of treasures — abundance that starts to read as accumulation.",
-    tell: "you keep acquiring, and the wall has begun to read as a receipt, not a collection.",
-    note: "Our work with you is the edit, so each piece is seen rather than counted.",
+    line: "You love the canon and you want all of it — and your knowledge is real. Few people see as much, or care as deeply about getting it right.",
+    tell: "the one thing to watch is the wall that's filling up: past a certain point, abundance reads as accumulation, and each wonderful piece stops being seen. That's a happy problem to have help with.",
+    note: "With you, our work is the edit, so each piece is finally seen on its own — counted by no one, admired by everyone.",
   },
   EV: {
     name: "The Provocateur",
-    line: "You want to be the most interesting person in the room, and usually you are. The line you walk is the fine one between bold and costume.",
-    tell: "the line between bold and costume moves — and you are usually the last in the room to feel it cross.",
-    note: "Our work with you is keeping you, always, on the right side of it.",
+    line: "You want to be the most interesting person in the room, and usually you are. You take real risks with taste, and most of them land — that nerve is the whole gift.",
+    tell: "the only thing to keep an eye on is the fine line between bold and costume; it moves, and it's hard to feel from the inside. A second pair of eyes is all it takes.",
+    note: "With you, our work is simply keeping you, always, on the right side of that line — so the boldness reads as authority, never effort.",
   },
 };
 
@@ -263,13 +268,14 @@ type Intent = "read" | "audit";
 // reads as "how did they know," not a horoscope. Crosses the type's `tell` with
 // the `trigger` (why-now) and the inkblot/sweet word. Each clause is gated on the
 // signal existing, so it degrades cleanly if a field is blank (e.g. inkblot left
-// empty). Kept in the clinical register: restrained, precise, a little uncanny.
+// empty). Warm register (2026-06-30): perceptive and on-your-side — "they really see
+// me," delivered kindly — rather than cold/uncanny.
 const TRIGGER_READBACK: Record<TriggerKey, string> = {
-  place: "You have come into a new place, and you want it to read as though it were always yours.",
-  chapter: "You are turning a page — and you want the rooms and the wardrobe to turn it with you.",
-  room: "There is a room you cannot finish. The eye stops on it, and you know why before we say it.",
-  before: "You want this settled before the wrong eye sees it. That instinct is the right one.",
-  know: "You did not come for reassurance. You came to know — which is the rarest thing in this room.",
+  place: "You've come into a new place, and you want it to feel like it was always yours — which it can.",
+  chapter: "You're turning a page, and you'd like the rooms and the wardrobe to turn it with you. They can.",
+  room: "There's a room you can't quite finish — and the instinct that it isn't done yet is a good one to trust.",
+  before: "You'd like this settled before the next big moment, and getting ahead of it is exactly the right move.",
+  know: "You didn't come for flattery — you came to actually know. That's the rarest and most useful instinct there is.",
 };
 
 function revealEvidence(args: { typeKey: TypeKey; trigger: TriggerKey | null; seen: string; sweet: string }): string[] {
@@ -279,7 +285,7 @@ function revealEvidence(args: { typeKey: TypeKey; trigger: TriggerKey | null; se
   if (seen) {
     // Read the inkblot word back, uncanny-but-true to the type. We don't interpret
     // it cleverly — we simply note that of all the things to see, they saw this.
-    lines.push(`In the pattern, you saw ${seen.toLowerCase()}. Of everything it could have been, that is what surfaced first — and it fits the eye above more closely than chance.`);
+    lines.push(`In the pattern, you saw ${seen.toLowerCase()}. Of everything it could have been, that's what surfaced first for you — and it fits the eye above more closely than chance would allow. We notice these things.`);
   }
   return lines;
 }
@@ -633,7 +639,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                 <p className="mt-7 max-w-md text-fg/75 leading-relaxed">
                   Everything here stays here. No client list. No names. No one will know you came.
                 </p>
-                <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40">First, a few questions. Don&apos;t think — answer.</p>
+                <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40">First, a few questions. Don&apos;t overthink them — just go with your gut.</p>
                 <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
                   <button type="button" onClick={() => { track("audit_begin", { variant }); setTest(buildTest()); setPicks([]); setTestIndex(0); setView("test"); }}
                     className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Begin ▸</button>
@@ -727,9 +733,10 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                   ) : null;
                 })()}
 
-                {/* The tell — the sting. Reveal order: name → who you are → evidence → TELL → our work. */}
+                {/* Strengths → the one thing worth watching (kind, useful — not a sting).
+                    Reveal order: name → what's strong → evidence → ONE THING TO WATCH → our work. */}
                 <div className="mt-8 max-w-lg">
-                  <span className={labelCls}>Your tell —</span>
+                  <span className={labelCls}>One thing worth watching —</span>
                   <p className="mt-3 text-fg/75 leading-relaxed">{TYPES[typeKey].tell}</p>
                 </div>
 

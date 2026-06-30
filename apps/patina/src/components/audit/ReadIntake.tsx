@@ -10,9 +10,18 @@ import { fbqTrack } from "@/lib/metaPixel";
 // Shown on the Stripe success page (/audit/received) AFTER the €150 is paid — never
 // before (that would reintroduce abandonment at the worst point). It reads the
 // free-test answers the wizard pinned to localStorage (so the experience is
-// continuous and we submit ONE combined payload), then asks R1–R6 in DESCENDING
-// SAFETY — the sting last. The clinical "Severance" register is reused throughout:
-// restrained, precise, a little uncanny, no emoji, no hype.
+// continuous and we submit ONE combined payload), then asks the deep questions in
+// DESCENDING SAFETY.
+//
+// REGISTER (revised 2026-06-30 after a real smoke test): WARM, perceptive, direct,
+// on-your-side — a trusted friend who happens to have an extraordinary eye, genuinely
+// curious about you and where you're trying to get to. Still elegant + intelligent
+// (no emoji, no hype, not chatty), but warm + clear, never cold/clinical/oblique. We
+// OPEN warm (goal + occasion set the friendly tone), then ask what changed, who you
+// want to feel at ease around (aspiration, not fear), where the eye starts, the
+// budget, the photos (SPECIFIC prompts driven by the focus you chose), and finally a
+// gentle "anything you've been wondering about" — the honest second opinion a good
+// friend would give, not a sting.
 //
 // On submit it POSTs the COMBINED payload to /api/audit with phase:"read-intake",
 // keyed by email — the operator gets the full intake AND the meaningful assess runs
@@ -37,14 +46,39 @@ type FreeTest = {
   variant?: string;
 };
 
-// R3 · the surfaces the eye starts on (multi-select).
+// R3 · the surfaces the eye starts on (multi-select). Each carries the SPECIFIC,
+// warm photo prompt it should generate at R5, and the surface tag those photos get.
 const FOCUS_OPTIONS = [
-  "The room I walk guests into",
-  "The wardrobe",
-  "The walls",
-  "The watch",
-  "The table",
-  "What I collect",
+  {
+    label: "The room I walk guests into",
+    prompt: "Show us the room as it is now — however it looks today.",
+    surface: "A room",
+  },
+  {
+    label: "The wardrobe",
+    prompt: "Show us a few pieces you reach for most — and one you're unsure about.",
+    surface: "Wardrobe",
+  },
+  {
+    label: "The walls",
+    prompt: "Show us your walls — whatever's hanging there now.",
+    surface: "On the wall",
+  },
+  {
+    label: "The watch",
+    prompt: "Show us the watch — on the wrist or off, however you like.",
+    surface: "Something I collect",
+  },
+  {
+    label: "The table",
+    prompt: "Show us the table — set, or just as it lives day to day.",
+    surface: "A room",
+  },
+  {
+    label: "What I collect",
+    prompt: "Show us the pieces — the ones you'd point to first.",
+    surface: "Something I collect",
+  },
 ] as const;
 
 // R4 · budget bands (single-select, auto-advance).
@@ -56,13 +90,22 @@ const BUDGET_BANDS = [
   "Whatever it takes, if it's right",
 ] as const;
 
-// R5 · the surface a photo shows (per-photo select).
+// R5 · the surface a photo shows (per-photo select — kept so an off-prompt extra
+// photo can still be tagged; the dynamic prompts pre-tag each upload).
 const SURFACES = ["A room", "Wardrobe", "On the wall", "Something I collect", "Me"] as const;
+
+// The general fallback prompt when the client selected no focus areas at R3.
+const GENERAL_PHOTO_PROMPT = {
+  prompt: "Show us a few things you'd most like an honest eye on.",
+  surface: SURFACES[0] as string,
+};
 
 type IntakeImage = UploadedImage & { surface: string; caption: string };
 
-// Steps, in descending safety. Each is one card.
-const STEPS = ["intro", "r1", "r2", "r3", "r4", "r5", "r6"] as const;
+// Steps, in WARM order then descending safety. The two warm openers (goal, occasion)
+// come first to set the friendly tone; focus (r3) comes BEFORE photos (r5) so it can
+// drive the specific photo prompts.
+const STEPS = ["intro", "goal", "occasion", "r1", "r2", "r3", "r4", "r5", "r6"] as const;
 type Step = (typeof STEPS)[number];
 
 type Status = "idle" | "submitting" | "error" | "done";
@@ -84,14 +127,16 @@ export default function ReadIntake() {
   const [stepIndex, setStepIndex] = useState(0);
   const step: Step = STEPS[stepIndex];
 
-  // R1–R6 answers.
-  const [about, setAbout] = useState(""); // R1
-  const [audience, setAudience] = useState(""); // R2
+  // The deep answers.
+  const [goal, setGoal] = useState(""); // warm opener — goals / aspiration
+  const [occasion, setOccasion] = useState(""); // the occasion / anchor
+  const [about, setAbout] = useState(""); // R1 — what changed
+  const [audience, setAudience] = useState(""); // R2 — who you want to feel at ease around
   const [focus, setFocus] = useState<string[]>([]); // R3
   const [budget, setBudget] = useState(""); // R4
   const [images, setImages] = useState<IntakeImage[]>([]); // R5
   const [imgError, setImgError] = useState("");
-  const [unsurePiece, setUnsurePiece] = useState(""); // R6 — the sting
+  const [unsurePiece, setUnsurePiece] = useState(""); // R6 — the honest second opinion
 
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
@@ -125,7 +170,7 @@ export default function ReadIntake() {
   // Focus the text input when a typed card appears.
   useEffect(() => {
     if (status === "done") return;
-    if (step === "r1" || step === "r2" || step === "r6") {
+    if (step === "goal" || step === "occasion" || step === "r1" || step === "r2" || step === "r6") {
       const t = setTimeout(() => {
         cardRef.current?.querySelector<HTMLElement>("input, textarea")?.focus();
       }, 70);
@@ -137,7 +182,19 @@ export default function ReadIntake() {
     setFocus((prev) => (prev.includes(opt) ? prev.filter((f) => f !== opt) : [...prev, opt]));
   }
 
-  async function handleFiles(fileList: FileList | null) {
+  // The dynamic, focus-driven photo prompts. One SPECIFIC prompt per focus area the
+  // client chose at R3 (each pre-tags its uploads with the right surface). If they
+  // chose nothing, fall back to a single warm general prompt.
+  const photoPrompts =
+    focus.length > 0
+      ? FOCUS_OPTIONS.filter((o) => focus.includes(o.label)).map((o) => ({
+          label: o.label,
+          prompt: o.prompt,
+          surface: o.surface as string,
+        }))
+      : [{ label: "", prompt: GENERAL_PHOTO_PROMPT.prompt, surface: GENERAL_PHOTO_PROMPT.surface }];
+
+  async function handleFiles(fileList: FileList | null, surface: string) {
     if (!fileList || fileList.length === 0) return;
     setImgError("");
     const room = MAX_IMAGES - images.length;
@@ -148,7 +205,9 @@ export default function ReadIntake() {
       const compressed = await Promise.all(toAdd.map((f) => compressImage(f)));
       setImages((prev) => [
         ...prev,
-        ...compressed.map((c, i) => ({ ...c, name: toAdd[i].name, surface: SURFACES[0], caption: "" })),
+        // Pre-tag each upload with the surface from the prompt it came from; keep the
+        // optional note empty for the client to fill.
+        ...compressed.map((c, i) => ({ ...c, name: toAdd[i].name, surface, caption: "" })),
       ]);
       if (incoming.length > room) setImgError(`Added the first ${room} — up to ${MAX_IMAGES}.`);
     } catch {
@@ -180,7 +239,7 @@ export default function ReadIntake() {
     setStatus("submitting");
     setError("");
     // Resolve the trigger label from the free-test key, then fold R1 into `about`
-    // so the eye reads the full why-now ("the version you wouldn't put in a form").
+    // so the eye reads the full why-now in the client's own words.
     const triggerLabel = freeTest.trigger || "";
     const about_full = [triggerLabel ? `Why now (chip): ${triggerLabel}.` : "", about.trim()]
       .filter(Boolean)
@@ -202,7 +261,9 @@ export default function ReadIntake() {
           sweet: freeTest.sweet || "",
           seen: freeTest.seen || "",
           tell: freeTest.tell || "",
-          // The deep answers (R1–R6).
+          // The deep answers.
+          goal: goal.trim(),
+          occasion: occasion.trim(),
           about: about_full,
           audience: audience.trim(),
           focus,
@@ -235,27 +296,29 @@ export default function ReadIntake() {
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key !== "Enter") return;
     if ((e.target as HTMLElement).tagName === "TEXTAREA") return;
-    if (step === "r2" || step === "r6") { e.preventDefault(); advance(); }
+    if (step === "r2") { e.preventDefault(); advance(); }
   }
 
   const fade = reduce
     ? {}
     : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -12 }, transition: { duration: 0.45, ease: easeOut } };
 
-  // The calm done-state.
+  // The calm, warm done-state.
   if (status === "done") {
     return (
       <div className="audit-clinical flex min-h-screen flex-col items-center justify-center bg-bg text-fg px-6 py-16 sm:px-10">
         <div className="w-full max-w-xl">
           <motion.div {...(reduce ? {} : { initial: { opacity: 0, y: 12 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.45, ease: easeOut } })}>
             <span className={labelCls}>Patina · In Confidence</span>
-            <h1 className="mt-8 text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">Received.</h1>
+            <h1 className="mt-8 text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">Thank you.</h1>
             <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">
-              Your Read is being written — within 48 hours, in confidence. It is built
-              from your answers; the eye does the rest.
+              We have everything we need. Your Read is being written by hand —
+              honestly, and on your side — and it reaches you within 48 hours, in
+              confidence.
             </p>
             <p className="mt-6 max-w-md text-fg/55 leading-relaxed">
-              The €150 is credited toward an Audit, should you go further.
+              The €150 is credited in full toward an Audit, should you want to go
+              further.
             </p>
             <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.25em] text-fg/30">Fewer things. Better ones.</p>
           </motion.div>
@@ -266,7 +329,7 @@ export default function ReadIntake() {
 
   const showFooter = step !== "intro" && step !== "r4";
   const total = STEPS.length - 1; // intro is framing, not a numbered step
-  const stepNo = stepIndex; // intro = 0; r1 = 1; …
+  const stepNo = stepIndex; // intro = 0; goal = 1; …
 
   return (
     <div className="audit-clinical relative flex min-h-screen flex-col bg-bg text-fg" onKeyDown={onKeyDown}>
@@ -291,15 +354,16 @@ export default function ReadIntake() {
               <motion.div key="intro" {...fade}>
                 <span className={labelCls}>Patina · In Confidence</span>
                 <h1 className="mt-8 max-w-2xl text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">
-                  Your Read is being prepared.
+                  Thank you — now, tell us about you.
                 </h1>
                 <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">
-                  A few things only you can tell us. Your Read is built from your
-                  answers — the more you tell us, the sharper the eye.
+                  A few questions, the way a friend with a good eye would ask them.
+                  There are no wrong answers — the more you share, the more useful and
+                  personal your Read will be.
                 </p>
                 <p className="mt-6 max-w-md text-fg/55 leading-relaxed">
-                  Everything here stays here. It reaches you within 48 hours,
-                  privately.
+                  It takes a few minutes. Everything stays between us, and your Read
+                  reaches you within 48 hours.
                 </p>
                 <div className="mt-12">
                   <button type="button" onClick={() => setStepIndex(1)}
@@ -308,38 +372,60 @@ export default function ReadIntake() {
               </motion.div>
             )}
 
-            {/* R1 · the trigger in full — descending safety starts gently. */}
-            {step === "r1" && (
-              <motion.div key="r1" ref={cardRef} {...fade}>
-                <Field q="What changed?" hint="Tell us the version you wouldn't put in a form.">
-                  <textarea rows={3} value={about} onChange={(e) => setAbout(e.target.value)}
-                    placeholder="A move, a chapter, a room, a moment before someone sees it…"
+            {/* GOAL · the warm, forward-looking opener — sets a friendly tone. */}
+            {step === "goal" && (
+              <motion.div key="goal" ref={cardRef} {...fade}>
+                <Field q="When this is all working — how do you want to feel?" hint="And who do you want to feel completely at ease around?">
+                  <textarea rows={3} value={goal} onChange={(e) => setGoal(e.target.value)}
+                    placeholder="At home in your own taste — easy in any room, with the people you most respect…"
                     className={`${inputCls} resize-none text-xl md:text-2xl`} />
                 </Field>
               </motion.div>
             )}
 
-            {/* R2 · the audience they fear. */}
+            {/* OCCASION · a concrete anchor + a soft deadline. */}
+            {step === "occasion" && (
+              <motion.div key="occasion" ref={cardRef} {...fade}>
+                <Field q="Is there a moment this is for?" hint="A move, an evening, a new chapter — tell us what, and roughly when.">
+                  <textarea rows={3} value={occasion} onChange={(e) => setOccasion(e.target.value)}
+                    placeholder="A new home in the spring, a dinner I'm hosting, the year I finally get this right…"
+                    className={`${inputCls} resize-none text-xl md:text-2xl`} />
+                </Field>
+              </motion.div>
+            )}
+
+            {/* R1 · what changed — warm, curious. */}
+            {step === "r1" && (
+              <motion.div key="r1" ref={cardRef} {...fade}>
+                <Field q="What made you want a fresh eye on this now?" hint="Tell it however you'd tell a friend — the real version.">
+                  <textarea rows={3} value={about} onChange={(e) => setAbout(e.target.value)}
+                    placeholder="A move, a new chapter, a room you can't quite finish, a feeling something's a little off…"
+                    className={`${inputCls} resize-none text-xl md:text-2xl`} />
+                </Field>
+              </motion.div>
+            )}
+
+            {/* R2 · audience — ASPIRATION-framed, not fear-framed. */}
             {step === "r2" && (
               <motion.div key="r2" ref={cardRef} {...fade}>
-                <Field q="When this is right — who notices first?" hint="And whose eye would you hate to fail?">
+                <Field q="Who do you most want to feel at ease around?" hint="Whose company would feel like a win to feel completely yourself in?">
                   <input type="text" value={audience} onChange={(e) => setAudience(e.target.value)}
-                    placeholder="A partner's family, a crowd, a board, an ex, a journalist…"
+                    placeholder="A partner's family, a circle you admire, a board, people whose taste you respect…"
                     className={inputCls} />
                 </Field>
               </motion.div>
             )}
 
-            {/* R3 · focus (multi-select). */}
+            {/* R3 · focus (multi-select) — moved BEFORE photos so it drives the prompts. */}
             {step === "r3" && (
               <motion.div key="r3" {...fade}>
-                <Field q="Where does the eye start?" hint="Choose any that matter.">
+                <Field q="Where would you like us to look first?" hint="Choose anything that matters to you — we'll ask for a few photos next.">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {FOCUS_OPTIONS.map((opt) => (
-                      <button key={opt} type="button" aria-pressed={focus.includes(opt)}
-                        onClick={() => toggleFocus(opt)}
+                      <button key={opt.label} type="button" aria-pressed={focus.includes(opt.label)}
+                        onClick={() => toggleFocus(opt.label)}
                         className="ac-chip flex items-center justify-center px-6 py-6 text-lg font-light tracking-tight cursor-pointer select-none text-center">
-                        {opt}
+                        {opt.label}
                       </button>
                     ))}
                   </div>
@@ -350,7 +436,7 @@ export default function ReadIntake() {
             {/* R4 · budget band (single-select, auto-advance). */}
             {step === "r4" && (
               <motion.div key="r4" {...fade}>
-                <Field q="When you acquire something that matters now —" hint="A piece, not a coffee. What does it tend to cost?">
+                <Field q="When you bring in something you love these days —" hint="A real piece, not a coffee. Roughly what does it tend to cost?">
                   <div className="grid grid-cols-1 gap-3">
                     {BUDGET_BANDS.map((band) => (
                       <button key={band} type="button" aria-pressed={budget === band}
@@ -364,13 +450,21 @@ export default function ReadIntake() {
               </motion.div>
             )}
 
-            {/* R5 · captioned photos. */}
+            {/* R5 · DYNAMIC captioned photos — one specific prompt per focus chosen at R3. */}
             {step === "r5" && (
               <motion.div key="r5" {...fade}>
-                <Field q="Show us the surface you most want judged." hint={`Tag each one. Up to ${MAX_IMAGES}. In confidence.`}>
-                  <input id="r-photos" type="file" accept="image/*" multiple
-                    onChange={(e) => { handleFiles(e.target.files); e.target.value = ""; }}
-                    className="block w-full text-sm text-fg/50 file:mr-4 file:rounded-none file:border file:border-fg/25 file:bg-transparent file:px-4 file:py-2 file:font-mono file:text-[11px] file:uppercase file:tracking-[0.1em] file:text-fg/70 hover:file:border-fg/60" />
+                <Field q="Now, show us a little." hint={`Up to ${MAX_IMAGES} photos, in total. In confidence — no need to tidy first.`}>
+                  {/* One prompt per focus area selected (or a single general prompt). */}
+                  <div className="space-y-7">
+                    {photoPrompts.map((p, pi) => (
+                      <div key={pi}>
+                        <p className="text-lg md:text-xl font-light leading-snug text-fg/80">{p.prompt}</p>
+                        <input id={`r-photos-${pi}`} type="file" accept="image/*" multiple
+                          onChange={(e) => { handleFiles(e.target.files, p.surface); e.target.value = ""; }}
+                          className="mt-3 block w-full text-sm text-fg/50 file:mr-4 file:rounded-none file:border file:border-fg/25 file:bg-transparent file:px-4 file:py-2 file:font-mono file:text-[11px] file:uppercase file:tracking-[0.1em] file:text-fg/70 hover:file:border-fg/60" />
+                      </div>
+                    ))}
+                  </div>
                   {imgError && <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.1em] text-fg/60">{imgError}</p>}
                   {images.length > 0 && (
                     <div className="mt-8 space-y-6">
@@ -393,7 +487,7 @@ export default function ReadIntake() {
                               ))}
                             </div>
                             <input type="text" value={img.caption} onChange={(e) => setCaption(i, e.target.value)}
-                              placeholder="A note (optional) — e.g. the room I can't finish"
+                              placeholder="Want to add a note? (optional) — e.g. the one I'm unsure about"
                               className="w-full bg-transparent border-b border-fg/20 py-1.5 text-sm font-light text-fg placeholder:text-fg/25 focus:border-fg focus:outline-none transition-colors rounded-none" />
                           </div>
                         </div>
@@ -404,12 +498,12 @@ export default function ReadIntake() {
               </motion.div>
             )}
 
-            {/* R6 · THE STING (last, lowest safety). */}
+            {/* R6 · the honest second opinion — warm, friendly, not a sting. */}
             {step === "r6" && (
               <motion.div key="r6" ref={cardRef} {...fade}>
-                <Field q="The one thing you own you're not sure about —" hint="What is it, and why did you buy it?">
+                <Field q="Anything you've been wondering about?" hint="A piece, a choice — something you'd love an honest, friendly read on.">
                   <textarea rows={3} value={unsurePiece} onChange={(e) => setUnsurePiece(e.target.value)}
-                    placeholder="The piece you'd quietly move before a certain guest arrived…"
+                    placeholder="The thing you keep going back and forth on — tell us what it is, and what drew you to it…"
                     className={`${inputCls} resize-none text-xl md:text-2xl`} />
                 </Field>
               </motion.div>

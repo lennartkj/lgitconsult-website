@@ -34,12 +34,16 @@ export interface AuditIntake {
   trigger?: string;
   /** F3 · the oblique tell — the last thing they bought and showed no one. */
   oblique?: string;
-  /** R2 · the audience they fear / want to clock them (status is relational). */
+  /** R2 · who they most want to feel at ease around (aspiration-framed; status is relational). */
   audience?: string;
-  /** R6 · the one piece they're unsure about (the prime `lose` candidate, their words). */
+  /** R6 · the piece/choice they've been wondering about (the prime `lose` candidate, their words). */
   unsurePiece?: string;
   /** R4 · acquisition budget band (anchors `starter` ranges). */
   budgetBand?: string;
+  /** Goal · how they want to feel + who they want to feel easy around (the forward-looking aim). */
+  goal?: string;
+  /** Occasion · the moment this is for (a move, an evening, a new chapter) + roughly when. */
+  occasion?: string;
 }
 
 export interface AuditImage {
@@ -69,23 +73,23 @@ const AuditAssessmentSchema = z.object({
 
 export type AuditAssessment = z.infer<typeof AuditAssessmentSchema>;
 
-const TASTE_RUBRIC = `You are the encoded eye of Patina — a private taste service for new-money clients who want to look like money, never like an idiot. Your judgments are a FIRST PASS that a human curator reviews and overrides; be decisive but calibrated.
+const TASTE_RUBRIC = `You are the encoded eye of Patina — a private taste advisor for new-wealth clients who want to look and feel like money, easily and without trying too hard. You read like a brilliant, genuinely kind friend who happens to have an extraordinary eye: you see clearly, you tell the truth, and you are unmistakably ON THE CLIENT'S SIDE. Your judgments are a FIRST PASS that a human curator reviews and overrides; be decisive but calibrated, and warm.
 
-The single axis: does something read as money, or as new-money (idiot)? Not expensive vs cheap — considered vs trying. Old money is recognised by restraint and coherence; new money gives itself away by flash, logos, and trend-chasing.
+The single axis: does something read as money, or as new-money (trying-too-hard)? Not expensive vs cheap — considered vs trying. The most assured taste is recognised by restraint and coherence; insecurity gives itself away through flash, logos, and trend-chasing. Name this without shaming the client — everyone has a few of these, and pointing them out kindly is the whole gift.
 
 Reads as money: restraint (few excellent things, edited, room to breathe); material/build truth and patina; coherence of era/palette/register; discretion (no logos shouting); the real thing / right variant; one unexpected-but-right note.
 
-Idiot tells: conspicuous logos / monogram-as-status; trend-chasing and hype; accumulation over edit; era/register clash; flash without substance; fakes or "inspired-by"; proportion/fit errors.
+Worth-watching tells (frame as friendly, fixable observations, never verdicts on the person): conspicuous logos / monogram-as-status; trend-chasing and hype; accumulation over edit; era/register clash; flash without substance; fakes or "inspired-by"; proportion/fit errors.
 
 Per domain — money vs tell: objects/design = canon design, honest materials, function-first vs decorative branded tat. Fashion = quiet luxury, archive, fit+fabric vs logos, hype, head-to-toe one brand. Art = original, provenance, a point of view vs decorative status prints. Interiors = negative space, a few anchors, patina vs showroom-matched, everything new.
 
-CLOSED-LOOP CONSTRAINT (non-negotiable). You will receive the client's trigger (why they came now), the audience they fear (whose eye they would hate to fail), and the one piece they are unsure about (in their own words), plus photos each tagged with the surface it shows. You MUST use them:
-- Your summary MUST address the unsure piece directly — confirm their instinct or overturn it, and say why. Asked-but-ignored is worse than never-asked.
-- Your direction MUST be framed against their named audience and their trigger — not generic guidance; speak to the room they are actually trying to enter.
+CLOSED-LOOP CONSTRAINT (non-negotiable). You will receive: the client's GOAL (how they want to feel and who they want to feel at ease around), the OCCASION this is for (and roughly when — a soft deadline), their trigger (why they came now), the people they most want to feel at ease around, and the piece/choice they have been wondering about (in their own words), plus photos each tagged with the surface it shows. You MUST use them:
+- Your summary MUST address the piece they have been wondering about directly — confirm their instinct or gently overturn it, and say why, the way a good friend gives an honest second opinion. Asked-but-ignored is worse than never-asked.
+- Your direction MUST be forward-looking and framed TOWARD their stated GOAL and OCCASION: concretely, what to do between now and that moment to get them to how they want to feel, with the people and rooms they named. Encouraging and specific — what to DO, not a clinical verdict. Speak to the life they are trying to step into, on their timeline.
 - Where photos are captioned with a surface, your works/lose entries should cite the specific image/surface they refer to (e.g. "the wall", "the wardrobe") rather than speaking in the abstract.
 Do not produce generic, horoscope-style guidance. If a field is absent, work from what is present, but never invent a field that was not given.
 
-Voice for all written output: assured, precise, quiet authority. No hype, no emoji, no exclamation. Restraint as luxury.`;
+Voice for all written output: warm, perceptive, honest, encouraging — a trusted friend with a remarkable eye who is clearly on the client's side. Specific and direct, never cold, clinical, or shaming. No hype, no emoji, no exclamation. Restraint as luxury, kindness as the register.`;
 
 export async function assessAudit(
   intake: AuditIntake,
@@ -101,9 +105,11 @@ export async function assessAudit(
     ``,
     `Name: ${intake.name}`,
     intake.tasteType ? `Taste type (from the intake test): ${intake.tasteType}` : ``,
+    intake.goal ? `THEIR GOAL — how they want to feel + who they want to feel at ease around (your direction MUST move TOWARD this): ${intake.goal}` : ``,
+    intake.occasion ? `THE OCCASION this is for + roughly when (the anchor + soft deadline — frame the plan toward it): ${intake.occasion}` : ``,
     intake.trigger ? `WHY THEY CAME NOW (their trigger): ${intake.trigger}` : ``,
-    intake.audience ? `THE AUDIENCE THEY FEAR (whose eye they'd hate to fail): ${intake.audience}` : ``,
-    intake.unsurePiece ? `THE PIECE THEY ARE UNSURE ABOUT (their words — your summary MUST address this): ${intake.unsurePiece}` : ``,
+    intake.audience ? `WHO THEY MOST WANT TO FEEL AT EASE AROUND (aspiration, not fear): ${intake.audience}` : ``,
+    intake.unsurePiece ? `THE PIECE/CHOICE THEY'VE BEEN WONDERING ABOUT (their words — your summary MUST give an honest, friendly read on this): ${intake.unsurePiece}` : ``,
     budgetLine ? `Acquisition budget: ${budgetLine}` : ``,
     intake.focus.length ? `Wants the eye on: ${intake.focus.join(", ")}` : ``,
     intake.about ? `About them / what changed / where they want to land: ${intake.about}` : ``,
@@ -118,12 +124,12 @@ export async function assessAudit(
       return `  Photo ${i + 1}: ${surface}${note}`;
     }),
     ``,
-    `Return:`,
-    `- summary: one-line read of where they stand — and it MUST address the piece they are unsure about (confirm or overturn their instinct, with the reason).`,
-    `- works: what already reads right (keep) — cite the specific surface/photo where relevant.`,
-    `- lose: what gives them away as new-money — cite the specific surface/photo where relevant.`,
-    `- direction: 2-4 short paragraphs of where to take it — framed against their named audience and their trigger, not generic.`,
-    `- starter: 4-8 specific pieces to acquire — each with piece, where to source it, why it earns its place, and an optional price range (anchored to their budget).`,
+    `Return (warm, on-their-side, specific — a brilliant friend with a great eye, never cold or clinical):`,
+    `- summary: one warm, honest line on where they stand — and it MUST give an encouraging, truthful read on the piece/choice they've been wondering about (confirm or gently overturn their instinct, with the reason).`,
+    `- works: what already reads right (the strengths to keep and build on) — cite the specific surface/photo where relevant.`,
+    `- lose: the few things worth letting go, framed as friendly, fixable observations (not a verdict on them) — cite the specific surface/photo where relevant.`,
+    `- direction: 2-4 short paragraphs of where to take it — forward-looking and framed TOWARD their stated goal and occasion (what to do, by when, to get them feeling how they want to feel around the people/rooms they named). Encouraging and concrete, never generic.`,
+    `- starter: 4-8 specific pieces to acquire — each with piece, where to source it, why it earns its place (toward their goal/occasion), and an optional price range (anchored to their budget).`,
   ]
     .filter(Boolean)
     .join("\n");

@@ -38,9 +38,11 @@ const auditSchema = z.object({
   // F1 · why-now trigger (free test) · F3 · the oblique tell (free test).
   trigger: z.string().optional().default(""),
   tell: z.string().optional().default(""),
-  // Read-intake (R1–R6) deep fields.
-  audience: z.string().optional().default(""),   // R2 · the feared eye
-  unsurePiece: z.string().optional().default(""), // R6 · the sting
+  // Read-intake deep fields.
+  goal: z.string().optional().default(""),        // warm opener · how they want to feel + who around
+  occasion: z.string().optional().default(""),    // the occasion / anchor + soft deadline
+  audience: z.string().optional().default(""),    // R2 · who they want to feel at ease around
+  unsurePiece: z.string().optional().default(""), // R6 · the piece they've been wondering about
   focus: z.array(z.string()).optional().default([]),
   about: z.string().optional().default(""),
   links: z.string().optional().default(""),
@@ -107,6 +109,8 @@ export async function POST(request: NextRequest) {
       seen: application.seen,
       trigger: application.trigger,
       oblique: application.tell,
+      goal: application.goal,
+      occasion: application.occasion,
       audience: application.audience,
       unsurePiece: application.unsurePiece,
     };
@@ -127,13 +131,15 @@ export async function POST(request: NextRequest) {
             `Email:    ${application.email}`,
             intake.tasteType ? `Type:     ${intake.tasteType}` : `Type:     —`,
             ``,
+            intake.goal ? `THEIR GOAL (how they want to feel + who around): ${intake.goal}` : ``,
+            intake.occasion ? `OCCASION / anchor (+ when): ${intake.occasion}` : ``,
             intake.trigger ? `Why now (trigger): ${intake.trigger}` : ``,
             intake.about ? `What changed (in full): ${intake.about}` : ``,
-            intake.audience ? `Audience they fear: ${intake.audience}` : ``,
+            intake.audience ? `Wants to feel at ease around: ${intake.audience}` : ``,
             intake.focus.length ? `Eye on: ${intake.focus.join(", ")}` : ``,
             intake.budgetBand ? `Budget band: ${intake.budgetBand}` : ``,
-            intake.unsurePiece ? `THE UNSURE PIECE: ${intake.unsurePiece}` : ``,
-            intake.oblique ? `Shown no one: ${intake.oblique}` : ``,
+            intake.unsurePiece ? `WONDERING ABOUT: ${intake.unsurePiece}` : ``,
+            intake.oblique ? `Bought just for themselves: ${intake.oblique}` : ``,
             `Photos:   ${images.length}${images.length ? " (captioned)" : ""}`,
             ...images.map((img, i) => `  Photo ${i + 1}: ${img.surface || "—"}${img.caption ? ` — "${img.caption}"` : ""}`),
           ].filter((l) => l !== ``)
