@@ -12,8 +12,8 @@ const VARIANTS = ["fear", "aspiration", "both"] as const;
 type Variant = (typeof VARIANTS)[number];
 const HEADLINES: Record<Variant, { title: string; body: string }> = {
   fear: {
-    title: "Everyone in the room can read it. You're the only one who can't.",
-    body: "New money has a sound. You stopped hearing yours years ago. A short assessment of the eye — what you keep, what you wear, what you collect, and the one thing in it that gives you away. We don't flatter. That's the point.",
+    title: "Everyone in the room can tell. You're the only one who can't.",
+    body: "New money has a sound. You stopped hearing yours years ago. A private read of what you own, wear and collect — what gives you away, and what to do about it. No list. No names.",
   },
   aspiration: {
     title: "You have the capital. We have the culture.",
@@ -620,7 +620,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
       {showHeader && (
         <header className="px-6 pt-8 sm:px-10">
           <div className="mx-auto flex max-w-2xl items-baseline justify-between">
-            <span className={labelCls}>PATINA · ASSESSMENT · IN CONFIDENCE</span>
+            <span className={labelCls}>Patina · In Confidence</span>
             <span className={labelCls}>{String(stepNo).padStart(2, "0")} / {String(TOTAL).padStart(2, "0")}</span>
           </div>
           <div className="mx-auto mt-4 h-px max-w-2xl" style={{ background: "color-mix(in srgb, var(--fg) 15%, transparent)" }}>
@@ -636,7 +636,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
           <AnimatePresence mode="wait">
             {view === "cover" && (
               <motion.div key="cover" {...fade}>
-                <span className={labelCls}>PATINA · ASSESSMENT · IN CONFIDENCE</span>
+                <span className={labelCls}>Patina · In Confidence</span>
                 <h1 className="mt-8 max-w-2xl text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">{HEADLINES[variant].title}</h1>
                 <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">{HEADLINES[variant].body}</p>
                 <p className="mt-7 max-w-md text-fg/75 leading-relaxed">
