@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, easeOut } from "framer-motion";
 import { compressImage, type UploadedImage } from "./compressImage";
 import { track } from "@/lib/track";
+import { fbqTrack } from "@/lib/metaPixel";
 
 // ── The post-payment Read intake (QUESTIONS.md §3 "READ INTAKE — a confession").
 // Shown on the Stripe success page (/audit/received) AFTER the €150 is paid — never
@@ -113,6 +114,12 @@ export default function ReadIntake() {
     // payment proxy in the Payment-Link MVP, unchanged from ReadReceived.
     track("read_paid", { variant });
     track("read_intake_view", { variant });
+    // Meta pixel: the €150 Read purchase. CAVEAT — the static Stripe Payment Link
+    // means this (like `read_paid` above) fires on ANY direct /audit/received hit,
+    // not only confirmed payments. The Stripe Checkout Session + webhook fast-follow
+    // (noted in BUILD.md) makes Purchase accurate; until then the Stripe dashboard
+    // is the revenue source of truth. content_name carries the variant.
+    fbqTrack("Purchase", { value: 150, currency: "EUR", content_name: variant, content_category: "read" });
   }, []);
 
   // Focus the text input when a typed card appears.

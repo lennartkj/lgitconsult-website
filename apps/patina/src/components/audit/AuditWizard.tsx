@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, easeOut } from "framer-motion";
 import { track } from "@/lib/track";
+import { fbqTrack } from "@/lib/metaPixel";
 
 // Cover message A/B (AD_TEST.md). The test axis is fear ↔ aspiration:
 // fear stops the scroll, aspiration earns the click, both walks the full arc.
@@ -374,6 +375,10 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
     }
     setVariant(v);
     track("audit_view", { variant: v });
+    // Meta pixel: the funnel view. `content_name` carries the cover variant so
+    // per-variant attribution is possible in Ads Manager. No-ops if the pixel
+    // env id is unset (see metaPixel.ts).
+    fbqTrack("ViewContent", { content_name: v, content_category: "audit_funnel" });
   }, []);
 
   // Per-step drop-off tagging (P1-2). Each test/capture step fires `audit_step`
@@ -534,6 +539,9 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
       // + webhook so delivery is auto-gated on confirmed payment (no manual match).
       if (willPay) {
         track("read_checkout_click", { variant, type: tasteType });
+        // Meta pixel: checkout intent, fired right before the Stripe redirect.
+        // value/currency match the €150 Read; content_name carries the variant.
+        fbqTrack("InitiateCheckout", { value: 150, currency: "EUR", content_name: variant, content_category: tasteType });
         // Prefill the buyer's email on the Stripe page so payment ↔ application
         // reconcile cleanly. prefilled_email is a supported Payment Link param.
         let url = readPaymentLink;

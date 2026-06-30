@@ -13,6 +13,9 @@ import "./patina-theme.css";
 
 import { PreviewProvider } from "@repo/ui/preview/PreviewProvider";
 import React, { Suspense } from "react";
+// The Meta (Facebook) base pixel — env-gated on NEXT_PUBLIC_META_PIXEL_ID, so it
+// no-ops cleanly (renders null) until the operator sets the id on Vercel.
+import MetaPixel from "@/components/MetaPixel";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://patina.berlin"),
@@ -48,6 +51,7 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased audit-clinical`}
       >
+        <MetaPixel />
         <Suspense fallback={null}>
           <PreviewProvider>
             <main className="min-h-screen">{children}</main>
