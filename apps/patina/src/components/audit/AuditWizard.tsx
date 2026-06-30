@@ -12,8 +12,8 @@ const VARIANTS = ["fear", "aspiration", "both"] as const;
 type Variant = (typeof VARIANTS)[number];
 const HEADLINES: Record<Variant, { title: string; body: string }> = {
   fear: {
-    title: "Everyone in the room can tell. You're the only one who can't.",
-    body: "New money has a sound. You stopped hearing yours years ago. A private read of what you own, wear and collect — what gives you away, and what to do about it. No list. No names.",
+    title: "Everyone in the room can read it. You're the only one who can't.",
+    body: "New money has a sound. You stopped hearing yours years ago. A short assessment of the eye — what you keep, what you wear, what you collect, and the one thing in it that gives you away. We don't flatter. That's the point.",
   },
   aspiration: {
     title: "You have the capital. We have the culture.",
@@ -69,22 +69,23 @@ const TRIGGERS: Record<TriggerKey, string> = {
 };
 
 // ── Fixed framing beats (unscored human texture). Sweet opens; inkblot sits mid-test.
-const SWEET_CARD: TextCard = { kind: "text", field: "sweet", lead: "What was your favourite sweet as a child?", hint: "It tells us more than you think.", placeholder: "In a word or two." };
-const INKBLOT_CARD: TextCard = { kind: "text", field: "seen", lead: "What do you see?", hint: "There is no right answer.", placeholder: "The first thing.", inkblot: true };
+const SWEET_CARD: TextCard = { kind: "text", field: "sweet", lead: "Start with the easy one. Your favourite sweet as a child.", hint: "We begin where there's nothing to manage.", placeholder: "In a word or two." };
+const INKBLOT_CARD: TextCard = { kind: "text", field: "seen", lead: "What do you see.", hint: "First word. Don't choose it.", placeholder: "The first thing.", inkblot: true };
 // F1 · why-now (one tap, scores nothing — routes `trigger`).
 const TRIGGER_CARD: TriggerCard = {
   kind: "trigger",
-  lead: "Something brought you here now —",
-  hint: "There is no wrong answer.",
+  lead: "Something brought you here now. Which.",
+  hint: "",
   options: (Object.keys(TRIGGERS) as TriggerKey[]).map((key) => ({ key, label: TRIGGERS[key] })),
 };
-// F3 · oblique tell (one short answer — the un-performable status signal). Warmed
-// (2026-06-30): friendly curiosity about a small private pleasure, not a cold probe.
+// F3 · oblique tell (one short answer — the un-performable status signal). Cold
+// (2026-06-30): a flat examiner's probe that reads a tell, not a friendly question.
+// The ask stays un-incriminating — one short answer, a tell revealed without realising.
 const OBLIQUE_CARD: ObliqueCard = {
   kind: "oblique",
-  lead: "Tell us about something you bought just for yourself —",
-  hint: "Something you love and haven't shown anyone. For the wall, the wardrobe, or the drawer.",
-  placeholder: "In a word or two.",
+  lead: "One thing you own that no one has seen.",
+  hint: "The wall, the wardrobe, or the drawer. A word is enough.",
+  placeholder: "What was it.",
 };
 
 // ── The scored pool. Two axes, sampled independently each session.
@@ -115,12 +116,12 @@ const POOL_RE: InstinctCard[] = [
   { kind: "instinct", axis: "RE", lead: "The wine list —", left: { label: "One you trust", v: "R" }, right: { label: "The boldest name", v: "E" } },
   { kind: "instinct", axis: "RE", lead: "Your name on things —", left: { label: "Nowhere", v: "R" }, right: { label: "Tastefully", v: "E" } },
   { kind: "instinct", axis: "RE", lead: "A wall of glass or —", left: { label: "A single window", v: "R" }, right: { label: "The whole wall", v: "E" } },
-  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Restraint", v: "R" }, right: { label: "Abundance", v: "E" } },
-  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Hush", v: "R" }, right: { label: "Dazzle", v: "E" } },
-  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Subtle", v: "R" }, right: { label: "Bold", v: "E" } },
-  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Bare", v: "R" }, right: { label: "Lavish", v: "E" } },
-  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Plain", v: "R" }, right: { label: "Ornate", v: "E" } },
-  { kind: "instinct", axis: "RE", lead: "Word —", left: { label: "Cool", v: "R" }, right: { label: "Warm", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Stimulus —", left: { label: "Restraint", v: "R" }, right: { label: "Abundance", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Stimulus —", left: { label: "Hush", v: "R" }, right: { label: "Dazzle", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Stimulus —", left: { label: "Subtle", v: "R" }, right: { label: "Bold", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Stimulus —", left: { label: "Bare", v: "R" }, right: { label: "Lavish", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Stimulus —", left: { label: "Plain", v: "R" }, right: { label: "Ornate", v: "E" } },
+  { kind: "instinct", axis: "RE", lead: "Stimulus —", left: { label: "Cool", v: "R" }, right: { label: "Warm", v: "E" } },
 ];
 
 const POOL_HV: InstinctCard[] = [
@@ -148,12 +149,12 @@ const POOL_HV: InstinctCard[] = [
   { kind: "instinct", axis: "HV", lead: "You collect —", left: { label: "The proven", v: "H" }, right: { label: "The unproven", v: "V" } },
   { kind: "instinct", axis: "HV", lead: "The better word for a thing —", left: { label: "Timeless", v: "H" }, right: { label: "Ahead", v: "V" } },
   { kind: "instinct", axis: "HV", lead: "Glassware —", left: { label: "Cut, inherited", v: "H" }, right: { label: "Clean, designed", v: "V" } },
-  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Heritage", v: "H" }, right: { label: "Avant-garde", v: "V" } },
-  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Antique", v: "H" }, right: { label: "Modern", v: "V" } },
-  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Tradition", v: "H" }, right: { label: "Invention", v: "V" } },
-  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Worn", v: "H" }, right: { label: "New", v: "V" } },
-  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Roots", v: "H" }, right: { label: "Frontier", v: "V" } },
-  { kind: "instinct", axis: "HV", lead: "Word —", left: { label: "Classic", v: "H" }, right: { label: "Radical", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Stimulus —", left: { label: "Heritage", v: "H" }, right: { label: "Avant-garde", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Stimulus —", left: { label: "Antique", v: "H" }, right: { label: "Modern", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Stimulus —", left: { label: "Tradition", v: "H" }, right: { label: "Invention", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Stimulus —", left: { label: "Worn", v: "H" }, right: { label: "New", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Stimulus —", left: { label: "Roots", v: "H" }, right: { label: "Frontier", v: "V" } },
+  { kind: "instinct", axis: "HV", lead: "Stimulus —", left: { label: "Classic", v: "H" }, right: { label: "Radical", v: "V" } },
 ];
 
 // How many *scored* cards to ask per axis each session (kept = today's split: 3 + 3).
@@ -211,35 +212,36 @@ if (process.env.NODE_ENV !== "production") {
   }
 }
 
-// Each type = your STRENGTHS + the ONE thing worth watching, said kindly and usefully
-// (warmed 2026-06-30 — a friend with a great eye, not an accusatory "tell"). `line`
-// = what's strong about your eye; `tell` = the one thing to keep an eye on, framed as
-// help; `note` = how we'd work with you toward it.
+// Each type = a flat statement of the STRENGTH (`line`) + the cold, specific finding
+// (`tell` — the one thing the eye gives away, named like a doctor naming something true:
+// external, fixable, left open for the Read to close). Cold examiner register
+// (2026-06-30): no reassurance, no "we'd work with you" coda; the shared TELL_HINGE line
+// stands in its place. The menace at the reveal is specific to type × trigger × inkblot,
+// never a generic unearned accusation.
 type TypeKey = "RH" | "RV" | "EH" | "EV";
-const TYPES: Record<TypeKey, { name: string; line: string; tell: string; note: string }> = {
+// One shared hinge under every type's tell: states what this is (the finding) and what
+// it is not (the fix), and leaves the gap open for the Read.
+const TELL_HINGE = "This is the finding, not the fix.";
+const TYPES: Record<TypeKey, { name: string; line: string; tell: string }> = {
   RH: {
     name: "The Heir",
-    line: "You carry old-money calm more easily than most who were born into it. You want what lasts, what is quiet, what never has to explain itself — and that instinct is exactly right.",
-    tell: "watch the one piece that's trying a little too hard to look inherited. A good eye relaxes when a thing simply is what it is — and you're closer to that than you think.",
-    note: "With you, our work is gentle subtraction: easing out the one note that's working overtime, so the whole reads effortless.",
+    line: "You read as old money more cleanly than most who are. You want what lasts, what is quiet, what never explains itself.",
+    tell: "one piece in the room is trying to look inherited. It's the one you reach to mention. A real heir never would.",
   },
   RV: {
     name: "The Ascetic",
-    line: "Severe, modern, edited to the bone — one strange, perfect object over a hundred safe ones. To you emptiness isn't absence, it's the point, and that's a rare and enviable confidence.",
-    tell: "the thing worth watching is that a spare room forgives nothing — so every object has to earn its silence. The good news: you already choose like that.",
-    note: "With you, our work is the hunt: finding the few pieces genuinely worthy of all that quiet around them.",
+    line: "Severe, modern, edited to the bone — one strange, perfect object over a hundred safe ones. To you, emptiness is the point, not the absence of one.",
+    tell: "a spare room forgives nothing, so an empty wall starts to read as a wall you couldn't fill. The line between edited and unfinished is thinner than it feels from inside.",
   },
   EH: {
     name: "The Connoisseur",
-    line: "You love the canon and you want all of it — and your knowledge is real. Few people see as much, or care as deeply about getting it right.",
-    tell: "the one thing to watch is the wall that's filling up: past a certain point, abundance reads as accumulation, and each wonderful piece stops being seen. That's a happy problem to have help with.",
-    note: "With you, our work is the edit, so each piece is finally seen on its own — counted by no one, admired by everyone.",
+    line: "You love the canon and you want all of it. Your knowledge is real — few people see as much, or care as much about getting it right.",
+    tell: "past a certain count, the wall stops being a collection and becomes inventory. Each piece is excellent. Together they argue you needed to prove it.",
   },
   EV: {
     name: "The Provocateur",
-    line: "You want to be the most interesting person in the room, and usually you are. You take real risks with taste, and most of them land — that nerve is the whole gift.",
-    tell: "the only thing to keep an eye on is the fine line between bold and costume; it moves, and it's hard to feel from the inside. A second pair of eyes is all it takes.",
-    note: "With you, our work is simply keeping you, always, on the right side of that line — so the boldness reads as authority, never effort.",
+    line: "You want to be the most interesting person in the room, and usually you are. You take real risks with taste, and most of them land.",
+    tell: "the gap between bold and costume is a few centimetres wide, and you cannot feel it from where you stand. Most of the room can.",
   },
 };
 
@@ -268,14 +270,15 @@ type Intent = "read" | "audit";
 // reads as "how did they know," not a horoscope. Crosses the type's `tell` with
 // the `trigger` (why-now) and the inkblot/sweet word. Each clause is gated on the
 // signal existing, so it degrades cleanly if a field is blank (e.g. inkblot left
-// empty). Warm register (2026-06-30): perceptive and on-your-side — "they really see
-// me," delivered kindly — rather than cold/uncanny.
+// empty). Cold examiner register (2026-06-30): a flat read-back that names what they
+// already half-feel — recognition, not reassurance; the menace is specific, never
+// flattering.
 const TRIGGER_READBACK: Record<TriggerKey, string> = {
-  place: "You've come into a new place, and you want it to feel like it was always yours — which it can.",
-  chapter: "You're turning a page, and you'd like the rooms and the wardrobe to turn it with you. They can.",
-  room: "There's a room you can't quite finish — and the instinct that it isn't done yet is a good one to trust.",
-  before: "You'd like this settled before the next big moment, and getting ahead of it is exactly the right move.",
-  know: "You didn't come for flattery — you came to actually know. That's the rarest and most useful instinct there is.",
+  place: "You've taken a new place and you need it to look like it was always yours. Right now it doesn't.",
+  chapter: "You're turning a page and you want the rooms and the wardrobe to have turned already. They haven't.",
+  room: "There's a room you can't finish. You already know which thing is wrong; you can't name it.",
+  before: "You want this settled before the next time you're seen. The clock is the reason you're here.",
+  know: "You didn't come to be flattered. Good. Neither did we.",
 };
 
 function revealEvidence(args: { typeKey: TypeKey; trigger: TriggerKey | null; seen: string; sweet: string }): string[] {
@@ -283,9 +286,9 @@ function revealEvidence(args: { typeKey: TypeKey; trigger: TriggerKey | null; se
   if (args.trigger) lines.push(TRIGGER_READBACK[args.trigger]);
   const seen = args.seen.trim();
   if (seen) {
-    // Read the inkblot word back, uncanny-but-true to the type. We don't interpret
-    // it cleverly — we simply note that of all the things to see, they saw this.
-    lines.push(`In the pattern, you saw ${seen.toLowerCase()}. Of everything it could have been, that's what surfaced first for you — and it fits the eye above more closely than chance would allow. We notice these things.`);
+    // Read the inkblot word back, flat and clinical. We don't interpret it cleverly —
+    // we note that of all the things to see, they saw this, and that we record it.
+    lines.push(`In the pattern, you saw ${seen.toLowerCase()}. Of everything it could have been, that surfaced first. We note these things; we don't read them aloud.`);
   }
   return lines;
 }
@@ -617,7 +620,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
       {showHeader && (
         <header className="px-6 pt-8 sm:px-10">
           <div className="mx-auto flex max-w-2xl items-baseline justify-between">
-            <span className={labelCls}>Patina · In Confidence</span>
+            <span className={labelCls}>PATINA · ASSESSMENT · IN CONFIDENCE</span>
             <span className={labelCls}>{String(stepNo).padStart(2, "0")} / {String(TOTAL).padStart(2, "0")}</span>
           </div>
           <div className="mx-auto mt-4 h-px max-w-2xl" style={{ background: "color-mix(in srgb, var(--fg) 15%, transparent)" }}>
@@ -633,13 +636,13 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
           <AnimatePresence mode="wait">
             {view === "cover" && (
               <motion.div key="cover" {...fade}>
-                <span className={labelCls}>Patina · In Confidence</span>
+                <span className={labelCls}>PATINA · ASSESSMENT · IN CONFIDENCE</span>
                 <h1 className="mt-8 max-w-2xl text-5xl md:text-7xl font-light tracking-tighter leading-[0.95]">{HEADLINES[variant].title}</h1>
                 <p className="mt-8 max-w-md text-fg/55 text-lg leading-relaxed">{HEADLINES[variant].body}</p>
                 <p className="mt-7 max-w-md text-fg/75 leading-relaxed">
-                  Everything here stays here. No client list. No names. No one will know you came.
+                  Nothing here is shared. No list, no names, no record you came. That is a condition of the work, not a promise we ask you to trust.
                 </p>
-                <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40">First, a few questions. Don&apos;t overthink them — just go with your gut.</p>
+                <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40">Answer fast. First instinct only — the considered answer is the performed one.</p>
                 <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
                   <button type="button" onClick={() => { track("audit_begin", { variant }); setTest(buildTest()); setPicks([]); setTestIndex(0); setView("test"); }}
                     className="ac-btn font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">Begin ▸</button>
@@ -693,7 +696,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                     </button>
                   ))}
                 </div>
-                <p className="mt-8 text-center font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30">{card.hint}</p>
+                {card.hint && <p className="mt-8 text-center font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30">{card.hint}</p>}
               </motion.div>
             )}
 
@@ -733,14 +736,14 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                   ) : null;
                 })()}
 
-                {/* Strengths → the one thing worth watching (kind, useful — not a sting).
-                    Reveal order: name → what's strong → evidence → ONE THING TO WATCH → our work. */}
+                {/* Strength (flat) → the cold, specific finding (the tell). Reveal order:
+                    name → what's strong → evidence → THE TELL → the shared hinge line. */}
                 <div className="mt-8 max-w-lg">
-                  <span className={labelCls}>One thing worth watching —</span>
+                  <span className={labelCls}>Your tell —</span>
                   <p className="mt-3 text-fg/75 leading-relaxed">{TYPES[typeKey].tell}</p>
                 </div>
 
-                <p className="mt-8 max-w-lg text-fg/55 leading-relaxed">{TYPES[typeKey].note}</p>
+                <p className="mt-8 max-w-lg text-fg/55 leading-relaxed">{TELL_HINGE}</p>
 
                 {/* ★ The money moment — the €150 Read offer, in the clinical register. */}
                 <div className="mt-12 border-t border-fg/15 pt-8">
@@ -752,7 +755,7 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                     If it doesn&apos;t show you something you couldn&apos;t see — it&apos;s free.
                   </p>
                   <p className="mt-7 max-w-lg text-fg/60 leading-relaxed">
-                    Your Read is built from the answers you just gave. The rest is ours.
+                    Everything above, this assessment already saw. The Read is the part it won&apos;t tell you for free — which piece, which line, what to do before the next room sees it.
                   </p>
                   {/* Genuine supply scarcity (P0-3, ADS §1b lever 4). The operator-hours
                       ceiling makes the cap real — one honest line, no demand-hype. */}
