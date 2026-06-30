@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, easeOut } from "framer-motion";
-import { compressImage, type UploadedImage } from "./compressImage";
 import { track } from "@/lib/track";
 
 // Cover message A/B (AD_TEST.md). The test axis is fear ↔ aspiration:
@@ -238,9 +237,8 @@ const TYPES: Record<TypeKey, { name: string; line: string; tell: string; note: s
   },
 };
 
-const CAPTURE = ["name", "email", "photos", "consent"] as const;
+const CAPTURE = ["name", "email", "consent"] as const;
 type CaptureId = (typeof CAPTURE)[number];
-const MAX_IMAGES = 5;
 // Cards ASKED per session is fixed regardless of pool size: 4 framing cards
 // (sweet + why-now trigger + inkblot + oblique tell) + ASKED_PER_AXIS scored cards
 // per axis. The progress indicator must reflect this asked-count, never the pool.
@@ -337,8 +335,6 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
   const [tell, setTell] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [images, setImages] = useState<UploadedImage[]>([]);
-  const [imgError, setImgError] = useState("");
   const [consent, setConsent] = useState(false);
   const [company, setCompany] = useState(""); // honeypot
 
@@ -462,23 +458,6 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
     }, 220);
   }
 
-  async function handleFiles(fileList: FileList | null) {
-    if (!fileList || fileList.length === 0) return;
-    setImgError("");
-    const room = MAX_IMAGES - images.length;
-    if (room <= 0) { setImgError(`Up to ${MAX_IMAGES} photographs.`); return; }
-    const incoming = Array.from(fileList);
-    const toAdd = incoming.slice(0, room);
-    try {
-      const compressed = await Promise.all(toAdd.map((f) => compressImage(f)));
-      setImages((prev) => [...prev, ...compressed.map((c, i) => ({ ...c, name: toAdd[i].name }))]);
-      if (incoming.length > room) setImgError(`Added the first ${room} — up to ${MAX_IMAGES}.`);
-    } catch {
-      setImgError("Could not read one of those — try a different file.");
-    }
-  }
-  const removeImage = (i: number) => setImages((prev) => prev.filter((_, idx) => idx !== i));
-
   function canContinue(): boolean {
     switch (capId) {
       case "name": return name.trim().length >= 2;
@@ -527,7 +506,9 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         body: JSON.stringify({
           name, email, consent, company, sweet, seen, intent, trigger, tell,
           tasteType,
-          images: images.map(({ mediaType, dataBase64 }) => ({ mediaType, dataBase64 })),
+          // Photos are no longer collected in the free-test capture — they're now
+          // gathered captioned in the post-payment Read intake (ReadIntake.tsx, R5).
+          images: [],
         }),
       });
       const data = await res.json();
@@ -833,26 +814,6 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
         return (<Field q="Your name."><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" className={inputCls} /></Field>);
       case "email":
         return (<Field q="Where can we reach you?" hint="In private."><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className={inputCls} /></Field>);
-      case "photos":
-        return (
-          <Field q="A few photographs help the eye." hint={`You, your rooms, your things. Up to ${MAX_IMAGES}. In confidence.`}>
-            <input id="photos" type="file" accept="image/*" multiple onChange={(e) => { handleFiles(e.target.files); e.target.value = ""; }}
-              className="block w-full text-sm text-fg/50 file:mr-4 file:rounded-none file:border file:border-fg/25 file:bg-transparent file:px-4 file:py-2 file:font-mono file:text-[11px] file:uppercase file:tracking-[0.1em] file:text-fg/70 hover:file:border-fg/60" />
-            {imgError && <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.1em] text-fg/60">{imgError}</p>}
-            {images.length > 0 && (
-              <div className="mt-6 grid grid-cols-3 sm:grid-cols-5 gap-3">
-                {images.map((img, i) => (
-                  <div key={i} className="relative aspect-square overflow-hidden border border-fg/15">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img.previewUrl} alt={img.name} className="h-full w-full object-cover" />
-                    <button type="button" onClick={() => removeImage(i)} aria-label="Remove photograph"
-                      className="absolute top-1 right-1 flex h-5 w-5 items-center justify-center border border-fg/20 bg-bg/80 text-xs leading-none text-fg">×</button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Field>
-        );
       case "consent": {
         // The Audit path is by-application: no price on-page, no checkout note.
         // The Read path keeps the €150 / secure-checkout framing (when willPay).
