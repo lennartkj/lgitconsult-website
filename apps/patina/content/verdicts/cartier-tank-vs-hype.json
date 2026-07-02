@@ -1,0 +1,23 @@
+{
+  "slug": "cartier-tank-vs-hype",
+  "order": 2,
+  "domain": "watches",
+  "mode": "contrast",
+  "call": {
+    "label": "Vintage Cartier Tank",
+    "sub": "quiet, worn",
+    "image": "/eye/cartier-tank-vs-hype/call.jpg",
+    "alt": "A vintage Cartier Tank watch on a plain surface"
+  },
+  "tell": {
+    "label": "Iced hype-sport watch",
+    "sub": "grey-market, at 2×",
+    "image": "/eye/cartier-tank-vs-hype/tell.jpg",
+    "alt": "A diamond-set steel sports watch"
+  },
+  "verdict": "The tell isn't that the watch is expensive. It's that everyone in the room can see exactly how expensive.",
+  "provenance": null,
+  "source": null,
+  "published": true,
+  "featured": false
+}

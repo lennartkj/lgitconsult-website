@@ -1,0 +1,23 @@
+{
+  "slug": "example",
+  "order": 0,
+  "domain": "cameras",
+  "mode": "contrast",
+  "call": {
+    "label": "The right call",
+    "sub": "the object as it should be",
+    "image": "/eye/example/call.jpg",
+    "alt": "Placeholder for the call object"
+  },
+  "tell": {
+    "label": "The expensive mistake",
+    "sub": "the tell",
+    "image": "/eye/example/tell.jpg",
+    "alt": "Placeholder for the tell object"
+  },
+  "verdict": "This is the format reference. Copy to content/verdicts/<slug>.json, set published:true, drop call.jpg + tell.jpg in public/eye/<slug>/, keep the verdict to one line.",
+  "provenance": null,
+  "source": null,
+  "published": false,
+  "featured": false
+}

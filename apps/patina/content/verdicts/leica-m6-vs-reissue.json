@@ -1,0 +1,23 @@
+{
+  "slug": "leica-m6-vs-reissue",
+  "order": 4,
+  "domain": "cameras",
+  "mode": "contrast",
+  "call": {
+    "label": "Leica M6 · 0.72",
+    "sub": "brassed, used",
+    "image": "/eye/leica-m6-vs-reissue/call.jpg",
+    "alt": "A worn chrome Leica M6 with brassing at the edges"
+  },
+  "tell": {
+    "label": "Leica M6 “reissue”",
+    "sub": "boxed, mint",
+    "image": "/eye/leica-m6-vs-reissue/tell.jpg",
+    "alt": "A boxed, mint-condition Leica special edition"
+  },
+  "verdict": "The special edition is the tell: the object designed to be noticed. Worn brass says you use it; the boxed set says you shopped.",
+  "provenance": null,
+  "source": null,
+  "published": true,
+  "featured": true
+}

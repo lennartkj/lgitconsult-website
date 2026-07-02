@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getVerdictSlugs } from "@/lib/verdict/verdicts";
 
 export const revalidate = 60;
 
@@ -7,13 +8,17 @@ const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://patina.berlin"
 ).replace(/\/$/, "");
 
-// Patina is the /audit funnel only, and the whole funnel is intentionally
-// noindex (set per-page via metadata.robots). Nothing public to list.
-const STATIC_ROUTES: string[] = [];
+// The /audit funnel is intentionally noindex. The one PUBLIC surface is The Eye
+// (the proof library) — awareness loud, access scarce (PROOF_ENGINE.md).
+const STATIC_ROUTES: string[] = ["/eye"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  return STATIC_ROUTES.map((route) => ({
+  const routes = [
+    ...STATIC_ROUTES,
+    ...getVerdictSlugs().map((slug) => `/eye/${slug}`),
+  ];
+  return routes.map((route) => ({
     url: `${BASE_URL}${route}`,
     lastModified: now,
   }));

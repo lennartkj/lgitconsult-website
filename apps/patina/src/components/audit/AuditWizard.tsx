@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion, easeOut } from "framer-motion";
+import Link from "next/link";
 import { track } from "@/lib/track";
 import { fbqTrack } from "@/lib/metaPixel";
+import VerdictCard, { type Verdict } from "@/components/eye/VerdictCard";
 
 // Cover message A/B (AD_TEST.md). The test axis is fear ↔ aspiration:
 // fear stops the scroll, aspiration earns the click, both walks the full arc.
@@ -323,7 +325,13 @@ function Inkblot() {
   );
 }
 
-export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?: string }) {
+export default function AuditWizard({
+  readPaymentLink = "",
+  featuredVerdict = null,
+}: {
+  readPaymentLink?: string;
+  featuredVerdict?: Verdict | null;
+}) {
   const reduce = useReducedMotion();
 
   const [view, setView] = useState<View>("cover");
@@ -744,6 +752,25 @@ export default function AuditWizard({ readPaymentLink = "" }: { readPaymentLink?
                 </div>
 
                 <p className="mt-8 max-w-lg text-fg/55 leading-relaxed">{TELL_HINGE}</p>
+
+                {/* ★ Proof-of-method — the eye demonstrated on a public object, seconds
+                    before the ask (v2 Proof Engine, PROOF_ENGINE.md). Degrades cleanly
+                    when no verdict is featured. */}
+                {featuredVerdict ? (
+                  <div className="mt-12 border-t border-fg/15 pt-8">
+                    <span className={labelCls}>The eye, at work</span>
+                    <div className="mt-6">
+                      <VerdictCard verdict={featuredVerdict} variant="inline" />
+                    </div>
+                    <Link
+                      href="/eye"
+                      onClick={() => track("eye_from_reveal_click", { variant, slug: featuredVerdict.slug })}
+                      className="ac-link mt-6 inline-block font-mono text-[11px] uppercase tracking-[0.18em]"
+                    >
+                      See the eye at work →
+                    </Link>
+                  </div>
+                ) : null}
 
                 {/* ★ The money moment — the €150 Read offer, in the clinical register. */}
                 <div className="mt-12 border-t border-fg/15 pt-8">

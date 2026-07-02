@@ -1,0 +1,23 @@
+{
+  "slug": "ph5-vs-chandelier",
+  "order": 3,
+  "domain": "design",
+  "mode": "contrast",
+  "call": {
+    "label": "Poul Henningsen PH5",
+    "sub": "Louis Poulsen",
+    "image": "/eye/ph5-vs-chandelier/call.jpg",
+    "alt": "A Poul Henningsen PH5 pendant lamp"
+  },
+  "tell": {
+    "label": "Statement chandelier",
+    "sub": "crystal, branded",
+    "image": "/eye/ph5-vs-chandelier/tell.jpg",
+    "alt": "An ornate branded crystal chandelier"
+  },
+  "verdict": "The PH5 is built around a principle you can't see — no glare. The chandelier is built around a price everyone can.",
+  "provenance": null,
+  "source": null,
+  "published": true,
+  "featured": false
+}

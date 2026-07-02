@@ -1,0 +1,23 @@
+{
+  "slug": "wartime-leica",
+  "order": 5,
+  "domain": "cameras",
+  "mode": "forensic",
+  "call": {
+    "label": "Leica IIIf (1952)",
+    "sub": "honest, ~€900",
+    "image": "/eye/wartime-leica/call.jpg",
+    "alt": "An honest 1950s chrome Leica IIIf"
+  },
+  "tell": {
+    "label": "“Luftwaffen-Eigentum” Leica",
+    "sub": "engraved, listed €12k",
+    "image": "/eye/wartime-leica/tell.jpg",
+    "alt": "The same camera body with added military engraving"
+  },
+  "verdict": "The serial says 1952; the engraving claims 1943. The eye that catches that is the one you want before you wire.",
+  "provenance": "Leitz kept factory shipping ledgers: the serial number dates the body to a 1952 civilian batch — years after the 'wartime' issue the engraving claims. The militaria was added to a common postwar body to multiply the price.",
+  "source": { "house": "Public auction / listing record", "lot": "settled case" },
+  "published": true,
+  "featured": false
+}
