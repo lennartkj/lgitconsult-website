@@ -43,7 +43,7 @@ const navItems = [
   {
     name: "Services",
     children: [
-      { name: "Digital", href: "/auftritt", description: "Websites, Webanwendungen, KI-Integration — für Leipziger Unternehmen, SAB-gefördert" },
+      { name: "Digital", href: "/auftritt", description: "Websites, Webanwendungen, KI-Integration für Leipziger Unternehmen. Derzeit SAB-bezuschussbar (Stand 09/2026)" },
       { name: "Creative", href: "/creative", description: "Campaigns, photography, music, video, creative direction" },
     ],
   },
