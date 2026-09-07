@@ -7,16 +7,16 @@ export const revalidate = 60;
 // Generate SEO metadata
 export async function generateMetadata() {
   return {
-    title: 'Work | LGIT Consult',
-    description: 'Client work and in-house ventures from LGIT Consult, Leipzig: the XTE Webcourse for HTWK Leipzig, Patina, and the products in development.',
+    title: 'Projekte | LGIT Consult',
+    description: 'Der XTE Webcourse für die HTWK Leipzig und Patina, ein eigenes Produkt: was LGIT Consult in Leipzig gebaut hat.',
   };
 }
 
 export default async function WorkPage() {
-  // Nur die Projekte werden auf dem Server einmal abgerufen.
+  // Projects are sections on this page (anchored by slug); there is no
+  // /work/<slug> route.
   const projects = await getAllProjects();
 
-  // Da die Filterung client-seitig erfolgt, übergeben wir die gesamte Liste.
   return (
       <WorkContent
           projects={projects}

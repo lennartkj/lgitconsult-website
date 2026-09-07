@@ -3,10 +3,11 @@ import type { NextConfig } from "next";
 const { createNextConfig } = require("@repo/config/next");
 
 const nextConfig: NextConfig = createNextConfig({
-  // Phase 2 cutover: Patina (the /patina brand landing + the whole /audit funnel)
-  // moved to its own app on https://patina.berlin. These permanent (301) redirects
-  // keep the old git-consult.group URLs alive so live links, bookmarks, Stripe
-  // success URLs and search results don't 404 after the split.
+  // Redirects keep old git-consult.group URLs alive after two cuts:
+  //  · Phase 2 (Patina moved to patina.berlin) — permanent.
+  //  · 2026-09-07 consolidation (one site, one digital offer; the standalone
+  //    product pages and the Creative line are off this domain) — temporary
+  //    (307), because those products are parked, not dead.
   async redirects() {
     return [
       {
@@ -17,8 +18,7 @@ const nextConfig: NextConfig = createNextConfig({
       },
       {
         // The entire /audit funnel — /audit, /audit/received, /audit/sample,
-        // /audit/read, /audit/gift, /audit/d/<slug>, etc. :path* matches the
-        // bare /audit (empty path) as well as every sub-route.
+        // /audit/read, /audit/gift, /audit/d/<slug>, etc.
         source: "/audit/:path*",
         destination: "https://patina.berlin/audit/:path*",
         permanent: true,
@@ -30,9 +30,16 @@ const nextConfig: NextConfig = createNextConfig({
       },
       {
         // The XTE case was filed under a misleading slug; keep the old URL alive.
+        // Projects are sections on /work (there never was a /work/<slug> page).
         source: "/work/e-commerce-platform",
-        destination: "/work/xte-webcourse",
+        destination: "/work#xte-webcourse",
         permanent: true,
+      },
+      {
+        // Every other /work/<slug> (the six retired write-ups, old search hits).
+        source: "/work/:slug",
+        destination: "/work",
+        permanent: false,
       },
       {
         // The generic "digital services" pages are gone (2026-09-07). The one
@@ -40,6 +47,18 @@ const nextConfig: NextConfig = createNextConfig({
         source: "/services/:slug(web-development|mobile-development|ui-ux-design|it-consulting)",
         destination: "/auftritt",
         permanent: true,
+      },
+      {
+        // Standalone product pages and the Creative line left this domain on
+        // 2026-09-07 (consolidation). Parked, not dead → temporary redirects.
+        source: "/:page(coterie|sibyl|creative)",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/provenance/:path*",
+        destination: "/",
+        permanent: false,
       },
     ];
   },

@@ -4,7 +4,11 @@ import React from "react";
 import NextLink from "next/link";
 import { Post } from "@repo/content/types";
 import { motion, type Easing, type Variants } from "framer-motion";
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
+
+// The article body arrives pre-rendered from the server page
+// (next-mdx-remote/rsc), so this client component never touches the MDX
+// runtime: the legacy client <MDXRemote> broke static prerendering under
+// React 19 (null hooks) once the pages were actually server-rendered.
 
 const fadeIn: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -21,11 +25,11 @@ const fadeIn: Variants = {
 
 interface PostContentProps {
     post: Post;
-    mdxSource: MDXRemoteSerializeResult;
+    body: React.ReactNode;
     relatedPosts: Post[];
 }
 
-export default function PostContent({ post, mdxSource, relatedPosts }: PostContentProps) {
+export default function PostContent({ post, body, relatedPosts }: PostContentProps) {
     const tocEntries = post.content
         ? [...post.content.matchAll(/^## (.+)$/gm)].map((match) => {
             const title = match[1];
@@ -80,8 +84,8 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                             custom={0}
                             className="col-span-12 lg:col-span-7"
                         >
-                            <article className="prose prose-sm md:prose-lg max-w-none">
-                                <MDXRemote {...mdxSource} />
+                            <article className="prose prose-sm md:prose-lg max-w-none" lang="en">
+                                {body}
                             </article>
 
                             {/* Tags */}
@@ -121,7 +125,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                                 className="hidden lg:block lg:col-span-3 lg:col-start-9"
                             >
                                 <div className="sticky top-24">
-                                    <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">Contents</span>
+                                    <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">Inhalt</span>
                                     <nav className="border-t border-fg/10">
                                         {tocEntries.map((entry, index) => (
                                             <a
@@ -152,7 +156,7 @@ export default function PostContent({ post, mdxSource, relatedPosts }: PostConte
                             custom={0}
                             className="mb-12"
                         >
-                            <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40">Related</span>
+                            <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40">Verwandte Beiträge</span>
                         </motion.div>
 
                         <div className="border-t border-fg/10">

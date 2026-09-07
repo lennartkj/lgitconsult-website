@@ -6,37 +6,26 @@ import { track } from "@/lib/track";
 import { BUDGETS, GRANT, INDUSTRIES, PROJECT_TYPES, REGIONS, type RegionValue } from "@/lib/auftritt/offer";
 
 // The Erstgespräch form for /auftritt. Client-only piece of an otherwise
-// server-rendered page. Captures ad attribution (gclid / utm_*) from the URL on
-// first paint, keeps it in sessionStorage across the page, and sends it with the
-// lead so the inbox can count the €500 probe's conversions.
+// server-rendered page. Reads the ad attribution (gclid / utm_*) from the URL
+// on mount and keeps it in component state until the lead is sent, so the
+// inbox can count the €500 probe's conversions. Nothing is written to the
+// visitor's device (no cookie, no sessionStorage — § 25 TDDDG); the ads land on
+// this page, so the URL at mount is the whole attribution.
 
 type Attribution = Record<string, string>;
-const ATTR_KEY = "auftritt_attr";
 const ATTR_PARAMS = ["gclid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
 
 function readAttribution(): Attribution {
   if (typeof window === "undefined") return {};
-  let stored: Attribution = {};
-  try {
-    stored = JSON.parse(sessionStorage.getItem(ATTR_KEY) || "{}") || {};
-  } catch {
-    stored = {};
-  }
   const params = new URLSearchParams(window.location.search);
-  const fresh: Attribution = {};
+  const attr: Attribution = {};
   for (const p of ATTR_PARAMS) {
     const v = params.get(p);
-    if (v) fresh[p] = v.slice(0, 200);
+    if (v) attr[p] = v.slice(0, 200);
   }
-  const merged: Attribution = { ...stored, ...fresh };
-  if (!merged.landing) merged.landing = (window.location.pathname + window.location.search).slice(0, 300);
-  if (!merged.referrer && document.referrer) merged.referrer = document.referrer.slice(0, 300);
-  try {
-    sessionStorage.setItem(ATTR_KEY, JSON.stringify(merged));
-  } catch {
-    // storage may be unavailable; attribution is best-effort
-  }
-  return merged;
+  attr.landing = (window.location.pathname + window.location.search).slice(0, 300);
+  if (document.referrer) attr.referrer = document.referrer.slice(0, 300);
+  return attr;
 }
 
 type Errors = Partial<Record<string, string[]>>;

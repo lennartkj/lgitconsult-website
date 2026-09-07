@@ -4,8 +4,8 @@ import { Resend } from "resend";
 import { rateLimit, clientIp } from "@/lib/ratelimit";
 
 // Lead intake for the /auftritt offer page (the one digital offer on
-// git-consult.group). Pattern copied from /api/waitlist: zod → rate limit →
-// Resend email with a console fallback so a lead is never lost.
+// git-consult.group): zod → rate limit → Resend email, with a console fallback
+// so a lead is never lost.
 //
 // The email body carries the qualifying facts (region, project, budget) AND the
 // ad attribution (gclid / utm_*), because the inbox is the durable conversion

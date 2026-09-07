@@ -1,219 +1,224 @@
+import Link from "next/link";
 
-// Set revalidation time for ISR
+// Allgemeine Geschäftsbedingungen für das Auftritt-Angebot (Websites,
+// Webanwendungen, KI-Integration zum Festpreis, B2B). Sie dürfen /auftritt an
+// keiner Stelle widersprechen: Festpreis per Angebot, Änderungen vorher
+// schriftlich, kein Start vor Bewilligung bei Förderprojekten, kein
+// Fördermittelberater, Nutzungsrechte mit vollständiger Zahlung,
+// Drittkomponenten nach deren Lizenzen, Referenznennung nur mit Zustimmung.
+//
+// ENTWURF, anwaltliche Prüfung ausstehend (Ledger D3). Prüfpunkte als
+// HTML-Kommentare an der Stelle; im Text selbst keine Platzhalter.
 export const revalidate = 3600;
 
-// Generate SEO metadata
 export async function generateMetadata() {
   return {
-    title: 'Privacy Policy | LGIT Consult',
-    description: 'Review the Privacy Policy for using the LGIT Consult website and services, detailing data collection and GDPR rights.',
+    title: 'Allgemeine Geschäftsbedingungen | LGIT Consult',
+    description: 'AGB von LGIT Consult, Leipzig, für Websites, Webanwendungen und KI-Integration zum Festpreis. Gültig für Unternehmer im Sinne von § 14 BGB.',
   };
 }
 
-// Server Component (kein "use client")
-export default function PrivacyPolicyPage() {
-  // Behebung: Unbenutzte Imports entfernen
-  // Behebung: Alle Anführungszeichen/Apostrophe escapen
-
+export default function TermsPage() {
   return (
       <>
-        {/* Hero Section */}
-        <section className="py-16 md:py-24 bg-muted">
+        <section className="py-24 md:py-32 bg-muted">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                Privacy Policy
-              </h1>
-              <p className="text-lg text-fg/70">
-                Last updated: November 15, 2024
-              </p>
+            <div className="grid grid-cols-12">
+              <div className="col-span-12 md:col-span-8">
+                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">Rechtliches</span>
+                <h1 className="text-5xl md:text-6xl font-light tracking-tighter leading-[0.9] mb-6">Allgemeine Geschäftsbedingungen</h1>
+                <p className="text-base text-fg/50 leading-relaxed max-w-lg">
+                  Für Websites, Webanwendungen und KI-Integration von LGIT Consult, Leipzig. Sie gelten gegenüber Unternehmern; Verträge mit Verbrauchern schließen wir nicht.
+                </p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/40 mt-6">Stand: 7. September 2026</p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Content Section */}
-        <section className="py-16">
+        <section className="py-16 md:py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto prose prose-lg">
-              <h2>Introduction</h2>
+            <div className="max-w-3xl prose prose-lg">
+
+              <h2>§ 1 Geltungsbereich</h2>
               <p>
-                LGIT Consult (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
+                (1) Diese Bedingungen gelten für alle Verträge zwischen LGIT Consult, Inhaber Lennart Karl Janis Gründel, Mädler-Passage, Aufgang B, Grimmaische Str. 2-4, 04109 Leipzig (im Folgenden „Auftragnehmer“), und seinen Kunden über die Konzeption und Erstellung von Websites, Webanwendungen und Software-Integrationen einschließlich KI-Komponenten sowie die damit verbundenen Leistungen wie Einrichtung, Dokumentation, Einweisung und Übergabe.
               </p>
               <p>
-                Please read this Privacy Policy carefully. If you do not agree with the terms of this Privacy Policy, please do not access the site.
+                (2) Angebote richten sich ausschließlich an Unternehmer im Sinne von § 14 BGB, einschließlich Freiberufler, sowie an juristische Personen des öffentlichen Rechts und öffentlich-rechtliche Sondervermögen. Verträge mit Verbrauchern werden nicht geschlossen.
+              </p>
+              <p>
+                (3) Abweichende oder ergänzende Bedingungen des Kunden werden nur Vertragsbestandteil, wenn der Auftragnehmer ihnen ausdrücklich in Textform zugestimmt hat.
               </p>
 
-              <h2>Information We Collect</h2>
+              <h2>§ 2 Angebot und Vertragsschluss</h2>
               <p>
-                We may collect information about you in a variety of ways. The information we may collect includes:
+                (1) Das Erstgespräch und das darauf folgende Konzept mit Festpreisangebot sind für den Kunden unverbindlich und kostenfrei.
               </p>
-              <h3>Personal Data</h3>
+              {/* TODO Anwalt: Bindefrist bei Förderprojekten (bis Bewilligungsentscheidung, längstens sechs Monate) angemessen? */}
               <p>
-                While using our service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. This may include, but is not limited to:
-              </p>
-              <ul>
-                <li>Name</li>
-                <li>Email address</li>
-                <li>Phone number</li>
-                <li>Company name</li>
-                <li>Job title</li>
-              </ul>
-
-              <h3>Usage Data</h3>
-              <p>
-                We may also collect information on how the service is accessed and used. This may include:
-              </p>
-              <ul>
-                <li>IP address</li>
-                <li>Browser type</li>
-                <li>Pages visited</li>
-                <li>Time and date of your visit</li>
-                <li>Time spent on pages</li>
-                <li>Unique device identifiers</li>
-              </ul>
-
-              <h2>How We Use Your Information</h2>
-              <p>
-                We may use the information we collect from you for various purposes, including to:
-              </p>
-              <ul>
-                <li>Provide, operate, and maintain our website</li>
-                <li>Improve, personalize, and expand our website</li>
-                <li>Understand and analyze how you use our website</li>
-                <li>Develop new products, services, features, and functionality</li>
-                <li>Communicate with you, either directly or through one of our partners, for customer service, updates, and other information relating to the website</li>
-                <li>Send you emails</li>
-                <li>Find and prevent fraud</li>
-              </ul>
-
-              <h2>Legal Basis for Processing Personal Data Under GDPR</h2>
-              <p>
-                If you are from the European Economic Area (EEA), our legal basis for collecting and using your personal information depends on the specific data and the context in which we collect it. We may process your personal data because:
-              </p>
-              <ul>
-                <li>We need to perform a contract with you (e.g., when you contact us through our contact form)</li>
-                <li>You have given us permission to do so (e.g., when you subscribe to our newsletter)</li>
-                <li>The processing is in our legitimate interests and is not overridden by your rights</li>
-                <li>We need to comply with legal obligations</li>
-              </ul>
-              <p>
-                Specifically, we process your data under the following legal bases from Article 6 of the GDPR:
-              </p>
-              <ul>
-                <li>Art. 6(1)(a) GDPR - Your consent</li>
-                <li>Art. 6(1)(b) GDPR - Performance of a contract</li>
-                <li>Art. 6(1)(c) GDPR - Compliance with a legal obligation</li>
-                <li>Art. 6(1)(f) GDPR - Legitimate interests</li>
-              </ul>
-
-              <h2>Cookies</h2>
-              <p>
-                Our website uses only one strictly necessary cookie called &apos;isPreviewMode&apos;. This cookie is essential for the proper functioning of our content management system&apos;s preview functionality and is only set when using the preview feature. This cookie does not track user activity or collect personal information.
+                (2) Das Festpreisangebot enthält eine Leistungsbeschreibung mit Umfang, Abnahmepunkten, voraussichtlichem Zeitfenster und Preis. Es gilt 30 Tage ab Angebotsdatum, sofern es nichts anderes bestimmt. Beantragt der Kunde für das Vorhaben eine Förderung, gilt das Angebot bis zur Entscheidung der Bewilligungsstelle, längstens sechs Monate ab Angebotsdatum.
               </p>
               <p>
-                As this cookie is strictly necessary for the functioning of our website, it is exempt from the consent requirement under applicable data protection laws. The cookie is automatically removed when you exit the preview mode or expires after 24 hours.
+                (3) Der Vertrag kommt zustande, wenn der Kunde das Angebot in Textform (E-Mail genügt) annimmt oder der Auftragnehmer die Bestellung des Kunden in Textform bestätigt.
               </p>
 
-              <h2>Third-Party Services</h2>
+              <h2>§ 3 Leistungsumfang und Änderungen</h2>
               <p>
-                We may employ third-party companies and individuals due to the following reasons:
+                (1) Umfang und Beschaffenheit der Leistung ergeben sich abschließend aus der Leistungsbeschreibung des Angebots. Nicht aufgeführte Leistungen sind nicht geschuldet.
               </p>
-              <ul>
-                <li>To facilitate our service</li>
-                <li>To provide the service on our behalf</li>
-                <li>To perform service-related services</li>
-                <li>To assist us in analyzing how our service is used</li>
-              </ul>
               <p>
-                These third parties have access to your personal information only to perform these tasks on our behalf and are obligated not to disclose or use it for any other purpose.
+                (2) Wünscht der Kunde nach Vertragsschluss Änderungen oder Erweiterungen, vereinbaren die Parteien diese vor der Umsetzung in Textform, einschließlich der Auswirkungen auf Preis und Zeitfenster. Ohne eine solche Vereinbarung entstehen keine Mehrkosten und keine zusätzlichen Leistungspflichten.
               </p>
-
-              <h2>Data Security</h2>
               <p>
-                The security of your data is important to us, but remember that no method of transmission over the Internet or method of electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your personal information, we cannot guarantee its absolute security.
+                (3) Der Auftragnehmer darf für Teilleistungen, etwa Fotografie oder Text, Subunternehmer einsetzen. Er bleibt für die vertragsgemäße Leistung verantwortlich.
+              </p>
+              <p>
+                (4) Rechtstexte für den Auftritt des Kunden (Impressum, Datenschutzerklärung, eigene Geschäftsbedingungen) sowie die rechtliche Zulässigkeit der vom Kunden beigestellten oder freigegebenen Inhalte, insbesondere nach Heilmittelwerbe-, Berufs-, Marken- und Urheberrecht, liegen in der Verantwortung des Kunden. Der Auftragnehmer bindet die Rechtstexte ein, erbringt aber keine Rechtsberatung.
               </p>
 
-              <h2>Data Retention</h2>
+              <h2>§ 4 Mitwirkung des Kunden</h2>
               <p>
-                We will retain your personal information only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use your information to the extent necessary to comply with our legal obligations, resolve disputes, and enforce our policies.
+                (1) Der Kunde stellt die für die Umsetzung erforderlichen Inhalte (Texte, Bilder, Logos, Daten), Zugänge (Domain, Hosting, Drittsysteme) und Freigaben rechtzeitig bereit und benennt eine Ansprechperson, die Entscheidungen treffen kann.
               </p>
               <p>
-                Specifically, we maintain the following retention periods:
+                (2) Der Kunde sichert zu, an den bereitgestellten Inhalten die für die vereinbarte Nutzung erforderlichen Rechte zu besitzen, und stellt den Auftragnehmer von Ansprüchen Dritter frei, die auf einer Verletzung dieser Zusicherung beruhen.
               </p>
-              <ul>
-                <li>Contact form submissions: 2 years from the date of submission</li>
-                <li>Server logs containing IP addresses and usage data: 90 days</li>
-                <li>Account information (if applicable): For the duration of your account plus 30 days after deletion</li>
-              </ul>
               <p>
-                After the retention period expires, your personal information will be deleted or anonymized. If for technical reasons we cannot completely delete your data, we will ensure it is isolated and no longer processed.
+                (3) Verzögert sich die Mitwirkung, verschieben sich die betroffenen Termine entsprechend. Mehraufwand, der durch verspätete oder unvollständige Mitwirkung entsteht, kann der Auftragnehmer nach vorheriger Ankündigung in Textform gesondert berechnen.
               </p>
 
-              <h2>Your Data Protection Rights</h2>
+              <h2>§ 5 Termine</h2>
               <p>
-                Under the General Data Protection Regulation (GDPR), if you are a resident of the European Economic Area (EEA), you have the following rights regarding your personal data:
+                (1) Zeitfenster im Angebot sind Planungsangaben. Verbindliche Fertigstellungstermine bedürfen einer ausdrücklichen Vereinbarung in Textform.
               </p>
-              <ul>
-                <li><strong>Right to Access (Art. 15 GDPR)</strong>: You have the right to request copies of your personal data. We may charge you a small fee for this service.</li>
-                <li><strong>Right to Rectification (Art. 16 GDPR)</strong>: You have the right to request that we correct any information you believe is inaccurate or complete information you believe is incomplete.</li>
-                <li><strong>Right to Erasure (Art. 17 GDPR)</strong>: You have the right to request that we erase your personal data, under certain conditions.</li>
-                <li><strong>Right to Restrict Processing (Art. 18 GDPR)</strong>: You have the right to request that we restrict the processing of your personal data, under certain conditions.</li>
-                <li><strong>Right to Object to Processing (Art. 21 GDPR)</strong>: You have the right to object to our processing of your personal data, under certain conditions.</li>
-                <li><strong>Right to Data Portability (Art. 20 GDPR)</strong>: You have the right to request that we transfer the data that we have collected to another organization, or directly to you, under certain conditions.</li>
-                <li><strong>Right to Withdraw Consent (Art. 7(3) GDPR)</strong>: If we rely on your consent to process your personal data, you have the right to withdraw that consent at any time.</li>
-              </ul>
               <p>
-                To exercise any of these rights, please contact us using the contact information provided at the end of this Privacy Policy. We will respond to your request within 30 days.
+                (2) Beantragt der Kunde für das Vorhaben eine Förderung, beginnt die Umsetzung erst nach Bewilligung durch die Bewilligungsstelle und Auftragserteilung, sofern die Parteien nichts anderes vereinbaren.
               </p>
 
-              <h2>Supervisory Authority</h2>
+              <h2>§ 6 Abnahme</h2>
               <p>
-                If you are a resident of the European Economic Area (EEA) and you believe we are unlawfully processing your personal data, you have the right to lodge a complaint with your local data protection supervisory authority. In Germany, this is the data protection authority (Datenschutzbehörde) of the federal state (Bundesland) where our company is headquartered or where you reside.
+                (1) Der Auftragnehmer stellt die Leistung zu den vereinbarten Abnahmepunkten (Teilabnahmen) und nach Fertigstellung (Gesamtabnahme) zur Abnahme bereit.
               </p>
               <p>
-                You can find a list of German data protection authorities at: <a href="https://www.bfdi.bund.de/DE/Infothek/Anschriften_Links/anschriften_links-node.html" target="_blank" rel="noopener noreferrer">www.bfdi.bund.de</a>
+                (2) Der Kunde prüft die Leistung innerhalb von 14 Tagen nach Bereitstellung und erklärt die Abnahme oder teilt wesentliche Mängel in Textform mit. Unwesentliche Mängel berechtigen nicht zur Verweigerung der Abnahme; sie werden im Rahmen der Gewährleistung behoben.
               </p>
-
-              <h2>Data Protection Officer</h2>
+              {/* TODO Anwalt: fiktive Abnahme nach § 640 Abs. 2 BGB und produktive Nutzung als Abnahme im B2B-Verhältnis prüfen. */}
               <p>
-                In compliance with German data protection laws, we have appointed a Data Protection Officer (Datenschutzbeauftragter) who can be contacted regarding any questions or concerns about our data processing practices:
-              </p>
-              <ul>
-                <li>Name: Lennart Gründel</li>
-                <li>Email: info@git-consult.group</li>
-                <li>Address: Mädler-Passage, Aufgang B, Grimmaische Str. 2-4, 04109 Leipzig</li>
-              </ul>
-
-              <h2>Automated Decision Making and Profiling</h2>
-              <p>
-                We do not use automated decision-making or profiling techniques that produce legal effects concerning you or similarly significantly affect you. Our website does not make decisions about you using solely automated means without any human involvement.
-              </p>
-              <p>
-                The limited data we collect is used only for the purposes described in this Privacy Policy and is not used for automated profiling or decision-making processes.
+                (3) Die Leistung gilt als abgenommen, wenn der Kunde innerhalb einer vom Auftragnehmer nach Ablauf der Prüffrist gesetzten angemessenen Nachfrist weder die Abnahme erklärt noch einen wesentlichen Mangel benennt, oder wenn der Kunde die Leistung produktiv nutzt.
               </p>
 
-              <h2>Children&apos;s Privacy</h2>
+              <h2>§ 7 Vergütung und Zahlung</h2>
+              {/* TODO Operator/Anwalt: Umsatzsteuer-Status klären (Regelbesteuerung oder § 19 UStG); die Formulierung "zuzüglich gesetzlicher Umsatzsteuer" setzt Regelbesteuerung voraus und muss zum Impressum und zur Angebotsseite passen. */}
               <p>
-                Our service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from children under 13. If you are a parent or guardian and you are aware that your child has provided us with personal data, please contact us.
+                (1) Es gilt der im Angebot genannte Festpreis. Alle Preise verstehen sich netto zuzüglich der gesetzlichen Umsatzsteuer.
+              </p>
+              <p>
+                (2) Der Zahlungsplan ergibt sich aus dem Angebot. Enthält es keinen, wird die Vergütung in drei gleichen Teilen fällig: bei Auftragserteilung, beim ersten vereinbarten Abnahmepunkt und bei Gesamtabnahme. Rechnungen sind innerhalb von 14 Tagen nach Zugang ohne Abzug zahlbar.
+              </p>
+              <p>
+                (3) Laufende Kosten wie Hosting, Domain, Lizenzen Dritter und Wartung sind nicht Teil des Festpreises. Sie werden im Angebot gesondert ausgewiesen oder gesondert vereinbart.
+              </p>
+              <p>
+                (4) Bei Zahlungsverzug gelten die gesetzlichen Verzugszinsen (§ 288 Abs. 2 BGB) und die Verzugspauschale (§ 288 Abs. 5 BGB). Der Kunde kann nur mit unbestrittenen oder rechtskräftig festgestellten Forderungen aufrechnen.
               </p>
 
-              <h2>Changes to This Privacy Policy</h2>
+              <h2>§ 8 Fördermittel</h2>
               <p>
-                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &apos;Last updated&apos; date.
+                (1) Der Auftragnehmer ist kein Fördermittelberater. Er stellt keinen Förderantrag für den Kunden und berät nicht zu Förderrecht. Hinweise auf Förderprogramme auf der Website oder im Angebot sind allgemeine, mit einem Stand-Datum versehene Informationen und keine Zusage einer Förderung.
               </p>
               <p>
-                You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
+                (2) Der Kunde stellt den Förderantrag selbst und vor Projektbeginn. Antrag, Fristen, Vorhabenbeginn, Verwendungsnachweis und die Einhaltung der Förderbedingungen liegen in seiner Verantwortung.
+              </p>
+              <p>
+                (3) Die Vergütung ist unabhängig davon geschuldet, ob eine Förderung bewilligt oder ausgezahlt wird. Der Kunde begleicht die Rechnungen des Auftragnehmers vollständig; die Auszahlung einer Förderung erfolgt durch die Bewilligungsstelle an den Kunden.
+              </p>
+              <p>
+                (4) Wird eine beantragte Förderung abgelehnt, bevor die Umsetzung begonnen hat, kann jede Partei vom Vertrag zurücktreten. Bis dahin gesondert beauftragte und erbrachte Leistungen werden vergütet.
+              </p>
+              <p>
+                (5) Der Auftragnehmer stellt die für Antrag und Verwendungsnachweis üblichen Unterlagen bereit: das Festpreisangebot, die Leistungsbeschreibung sowie Rechnungen mit Leistungszeitraum und Leistungsbeschreibung.
               </p>
 
-              <h2>Contact Us</h2>
+              <h2>§ 9 Nutzungsrechte</h2>
               <p>
-                If you have any questions about this Privacy Policy, please contact us:
+                (1) Mit vollständiger Zahlung der Vergütung erhält der Kunde das ausschließliche, zeitlich und räumlich unbeschränkte, übertragbare Recht, die für ihn individuell erstellten Inhalte (Gestaltung, Texte, Grafiken) und den für ihn individuell erstellten Quellcode zu nutzen, zu vervielfältigen, zu bearbeiten und öffentlich zugänglich zu machen.
               </p>
-              <ul>
-                <li>By email: info@git-consult.group</li>
-                <li>By phone: +49 179 126 7379</li>
-                <li>By mail: Mädler-Passage, Aufgang B, Grimmaische Str. 2-4, 04109 Leipzig</li>
-              </ul>
+              <p>
+                (2) Bis zur vollständigen Zahlung räumt der Auftragnehmer dem Kunden ein einfaches, widerrufliches Nutzungsrecht zu Prüf-, Abnahme- und Betriebszwecken ein.
+              </p>
+              <p>
+                (3) Komponenten Dritter, insbesondere Open-Source-Bibliotheken und Frameworks, Schriften, Bildmaterial und Dienste, unterliegen den Lizenzbedingungen ihrer jeweiligen Rechteinhaber. Der Auftragnehmer benennt sie in der Dokumentation.
+              </p>
+              <p>
+                (4) Der Auftragnehmer darf allgemeine Kenntnisse, Methoden und nicht kundenspezifische, wiederverwendbare Bausteine, die bei der Umsetzung entstehen oder verwendet werden, für andere Projekte weiterverwenden, soweit dadurch keine Geschäftsgeheimnisse des Kunden offenbart werden.
+              </p>
+
+              <h2>§ 10 Gewährleistung</h2>
+              {/* TODO Anwalt: Verkürzung der Gewährleistungsfrist auf zwölf Monate ab Abnahme gegenüber Unternehmern (Werkvertrag, § 634a BGB) prüfen. */}
+              <p>
+                (1) Mängel der abgenommenen Leistung beseitigt der Auftragnehmer zunächst durch Nachbesserung. Schlägt die Nachbesserung zweimal fehl, kann der Kunde die Vergütung mindern oder, bei wesentlichen Mängeln, vom Vertrag zurücktreten. Die Gewährleistungsfrist beträgt zwölf Monate ab Abnahme.
+              </p>
+              <p>
+                (2) Keine Gewährleistung besteht für Mängel, die auf Änderungen durch den Kunden oder Dritte, auf Änderungen von Drittdiensten, Browsern oder Plattformen nach der Abnahme, auf unterlassene Wartung oder auf vom Kunden beigestellte Inhalte zurückgehen. Wartung und Pflege nach der Übergabe sind gesondert zu vereinbaren.
+              </p>
+              <p>
+                (3) Bei KI-Komponenten schuldet der Auftragnehmer die vereinbarte Anbindung und Funktion, nicht die inhaltliche Richtigkeit, Vollständigkeit oder Eignung einzelner Ausgaben eines KI-Modells. Der Kunde prüft solche Ausgaben, bevor er sie verwendet.
+              </p>
+              <p>
+                (4) Ist der Kunde Kaufmann, gilt § 377 HGB: Offensichtliche Mängel sind unverzüglich nach Abnahme, versteckte Mängel unverzüglich nach Entdeckung in Textform anzuzeigen.
+              </p>
+
+              <h2>§ 11 Haftung</h2>
+              <p>
+                (1) Der Auftragnehmer haftet unbeschränkt für Vorsatz und grobe Fahrlässigkeit, für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit, nach dem Produkthaftungsgesetz, bei Übernahme einer Garantie und bei arglistig verschwiegenen Mängeln.
+              </p>
+              {/* TODO Anwalt: Haftungshöchstgrenze (Auftragswert) bei einfacher Fahrlässigkeit im B2B-Verhältnis prüfen. */}
+              <p>
+                (2) Bei einfacher Fahrlässigkeit haftet der Auftragnehmer nur für die Verletzung wesentlicher Vertragspflichten, also solcher Pflichten, deren Erfüllung die ordnungsgemäße Durchführung des Vertrags erst ermöglicht und auf deren Einhaltung der Kunde regelmäßig vertrauen darf. Diese Haftung ist auf den vertragstypischen, bei Vertragsschluss vorhersehbaren Schaden begrenzt, höchstens auf die Vergütung des betroffenen Auftrags.
+              </p>
+              <p>
+                (3) Für den Verlust von Daten haftet der Auftragnehmer im Rahmen von Absatz 2 nur in der Höhe, die bei ordnungsgemäßer, regelmäßiger Datensicherung durch den Kunden zur Wiederherstellung erforderlich wäre.
+              </p>
+              <p>
+                (4) Die Haftungsbeschränkungen gelten auch zugunsten der Mitarbeiter, Erfüllungsgehilfen und Subunternehmer des Auftragnehmers.
+              </p>
+
+              <h2>§ 12 Vertraulichkeit und Datenschutz</h2>
+              <p>
+                (1) Die Parteien behandeln alle im Rahmen des Vertrags erlangten Geschäftsgeheimnisse und als vertraulich gekennzeichneten Informationen der anderen Partei vertraulich. Diese Pflicht gilt drei Jahre über das Vertragsende hinaus.
+              </p>
+              <p>
+                (2) Verarbeitet der Auftragnehmer im Auftrag des Kunden personenbezogene Daten, etwa beim Betrieb einer Anwendung mit Kundendaten, schließen die Parteien vor Beginn der Verarbeitung einen Vertrag zur Auftragsverarbeitung nach Art. 28 DSGVO. Wie der Auftragnehmer Daten auf dieser Website verarbeitet, steht in der{" "}
+                <Link href="/legal/privacy">Datenschutzerklärung</Link>.
+              </p>
+
+              <h2>§ 13 Referenzen</h2>
+              <p>
+                Der Auftragnehmer nennt den Kunden nur mit dessen vorheriger Zustimmung in Textform als Referenz (Name, Logo, Beschreibung des Projekts, Abbildungen). Die Zustimmung kann jederzeit mit Wirkung für die Zukunft widerrufen werden.
+              </p>
+
+              <h2>§ 14 Kündigung</h2>
+              <p>
+                Kündigt der Kunde den Vertrag vor Fertigstellung (§ 648 BGB), werden die bis dahin abgenommenen Abnahmepunkte vollständig und der begonnene Abnahmepunkt nach dem Stand der Arbeiten vergütet; im Übrigen gilt § 648 Satz 2 BGB. Das Recht beider Parteien zur Kündigung aus wichtigem Grund bleibt unberührt.
+              </p>
+
+              <h2>§ 15 Schlussbestimmungen</h2>
+              <p>
+                (1) Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts.
+              </p>
+              <p>
+                (2) Ist der Kunde Kaufmann, juristische Person des öffentlichen Rechts oder öffentlich-rechtliches Sondervermögen, ist Leipzig ausschließlicher Gerichtsstand für alle Streitigkeiten aus dem Vertrag.
+              </p>
+              <p>
+                (3) Änderungen und Ergänzungen des Vertrags bedürfen der Textform. Das gilt auch für die Aufhebung dieses Textformerfordernisses.
+              </p>
+              <p>
+                (4) Sollte eine Bestimmung dieser Bedingungen unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt. Anstelle der unwirksamen Bestimmung gilt die gesetzliche Regelung.
+              </p>
+              <p>
+                Angaben zum Anbieter stehen im <Link href="/legal/impressum">Impressum</Link>.
+              </p>
             </div>
           </div>
         </section>

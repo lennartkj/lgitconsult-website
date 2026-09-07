@@ -6,6 +6,10 @@ import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { Button } from "@repo/ui/ui/Button";
 import { Project } from "@repo/content/types";
 
+// /work: every project is a section on this page, anchored by its slug
+// (there is no /work/<slug> route). The write-ups themselves are in English;
+// the shell is German.
+
 interface WorkContentProps {
     projects: Project[];
 }
@@ -76,7 +80,7 @@ function ProjectShowcase({ project, index, reversed }: { project: Project; index
     const isInDevelopment = project.status === "In Development";
 
     return (
-        <section className="py-0">
+        <section id={project.slug} className="py-0 scroll-mt-12">
             {/* Project image — full bleed with parallax */}
             {project.image && (
                 <ProjectHeroImage src={project.image} alt={project.title} />
@@ -100,7 +104,7 @@ function ProjectShowcase({ project, index, reversed }: { project: Project; index
                             </span>
                             {isInDevelopment && (
                                 <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-accent border border-accent/30 px-2 py-0.5">
-                                    In Development
+                                    In Entwicklung
                                 </span>
                             )}
                         </div>
@@ -109,7 +113,7 @@ function ProjectShowcase({ project, index, reversed }: { project: Project; index
                         </h2>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 mb-6">
                             {project.client && (
-                                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/40">
+                                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/40" lang="en">
                                     {project.client}
                                 </span>
                             )}
@@ -120,7 +124,7 @@ function ProjectShowcase({ project, index, reversed }: { project: Project; index
                             )}
                         </div>
                         {project.services && project.services.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-6">
+                            <div className="flex flex-wrap gap-2 mb-6" lang="en">
                                 {project.services.map((service) => (
                                     <span
                                         key={service}
@@ -138,7 +142,7 @@ function ProjectShowcase({ project, index, reversed }: { project: Project; index
                                     variant="outline"
                                     size="sm"
                                 >
-                                    Visit Site
+                                    Zur Seite
                                 </Button>
                             </div>
                         )}
@@ -153,7 +157,7 @@ function ProjectShowcase({ project, index, reversed }: { project: Project; index
                         custom={1}
                         className={`col-span-12 md:col-span-5 ${reversed ? "md:col-start-1 md:order-1" : "md:col-start-7"}`}
                     >
-                        <div className="border-t border-fg/10 pt-8">
+                        <div className="border-t border-fg/10 pt-8" lang="en">
                             <p className="text-base md:text-lg text-fg/60 leading-relaxed">
                                 {project.description}
                             </p>
@@ -175,7 +179,7 @@ function ProjectShowcase({ project, index, reversed }: { project: Project; index
     );
 }
 
-export default function WorkContent({ projects: initialProjects }: WorkContentProps) {
+export default function WorkContent({ projects }: WorkContentProps) {
     return (
         <>
             {/* Hero Section */}
@@ -189,12 +193,12 @@ export default function WorkContent({ projects: initialProjects }: WorkContentPr
                             custom={0}
                             className="col-span-12 md:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Portfolio</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Projekte</span>
                             <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
-                                Our Work
+                                Projekte
                             </h1>
                             <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
-                                Selected projects across digital products, creative ventures, and things we&apos;re building right now. Full case studies available on request.
+                                Ein Kundenprojekt, das gebaut, abgenommen und in Betrieb ist, und ein eigenes Produkt. Ausführliche Fallstudien zeigen wir im Gespräch.
                             </p>
                         </motion.div>
                     </div>
@@ -202,7 +206,7 @@ export default function WorkContent({ projects: initialProjects }: WorkContentPr
             </section>
 
             {/* Project Showcases */}
-            {initialProjects.map((project, index) => (
+            {projects.map((project, index) => (
                 <ProjectShowcase
                     key={project.slug}
                     project={project}
@@ -228,13 +232,18 @@ export default function WorkContent({ projects: initialProjects }: WorkContentPr
                             custom={0}
                             className="col-span-12 md:col-span-8"
                         >
-                            <h2 className="text-4xl md:text-6xl font-light tracking-tighter mb-6">Interested in the Details?</h2>
+                            <h2 className="text-4xl md:text-6xl font-light tracking-tighter mb-6">Details auf Anfrage.</h2>
                             <p className="text-fg/50 max-w-lg leading-relaxed mb-10">
-                                Full case studies, technical breakdowns, and results — available on request. Get in touch and we&apos;ll walk you through it.
+                                Technische Einblicke, Abläufe und Ergebnisse zeigen wir im Erstgespräch, zugeschnitten auf Ihr Vorhaben.
                             </p>
-                            <Button href="/contact">
-                                Get in Touch
-                            </Button>
+                            <div className="flex flex-wrap gap-4">
+                                <Button href="/auftritt#erstgespraech">
+                                    Erstgespräch anfragen
+                                </Button>
+                                <Button href="/contact" variant="outline">
+                                    Kontakt
+                                </Button>
+                            </div>
                         </motion.div>
                     </div>
                 </div>

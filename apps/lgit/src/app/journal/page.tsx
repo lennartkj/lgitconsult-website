@@ -1,7 +1,6 @@
 import { getAllPosts, getCategories } from "@repo/content";
-// Korrigierter Import: Die Übersichtsseite nutzt JournalContent
 import JournalContent from "@/components/journal/JournalContent";
-import { Post, Category } from "@repo/content/types"; // Importiere Typen, falls benötigt
+import { Post, Category } from "@repo/content/types";
 
 // Set revalidation time for ISR
 export const revalidate = 60;
@@ -9,8 +8,8 @@ export const revalidate = 60;
 // Generate SEO metadata
 export async function generateMetadata() {
   return {
-    title: 'Journal & Insights | LGIT Consult',
-    description: 'Explore our latest articles, case studies, and insights on web development, technology, and design trends.',
+    title: 'Journal | LGIT Consult',
+    description: 'Notizen zu Technik, Gestaltung und Handwerk aus Leipzig. Die Beiträge sind auf Englisch.',
   };
 }
 
@@ -21,14 +20,12 @@ export default async function JournalPage() {
     getCategories(),
   ]);
 
-  // Filtern für den Featured-Bereich
   const featuredPosts = allPosts.filter((post: Post) => post.featured);
 
-  // Übergabe aller Daten an den Client Component.
   return (
       <JournalContent
           featuredPosts={featuredPosts}
-          allPosts={allPosts as Post[]} // Übergabe der gesamten Liste für die client-seitige Filterung
+          allPosts={allPosts as Post[]}
           categories={categories as Category[]}
       />
   );

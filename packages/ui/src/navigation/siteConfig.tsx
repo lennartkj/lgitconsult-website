@@ -3,8 +3,8 @@
 
    The surfaces live on separate domains but the LGIT + Patina apps share the
    Navbar/Footer:
-     · LGIT    → https://git-consult.group   (owns /, /work, /about, /journal,
-                 /coterie, /provenance, /sibyl, /contact, /legal/*, …)
+     · LGIT    → https://git-consult.group   (owns /, /auftritt, /work, /about,
+                 /journal, /contact, /legal/*)
      · Patina  → https://patina.berlin       (owns /patina, /audit/*)
      · Rogue   → https://rogue.berlin         (owns /creative, /services/* — has
                  its OWN chrome now and does not import this Navbar/Footer)

@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import { getPostBySlug, getRelatedPosts, getAllPosts } from "@repo/content";
+import { getAllContent } from "@repo/content/lib";
 import PostContent from "@/components/journal/PostContent";
 
 export async function generateStaticParams() {
@@ -13,8 +15,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!postData) {
     return {
-      title: 'Article Not Found',
-      description: 'The requested article could not be found.',
+      title: 'Beitrag nicht gefunden',
+      description: 'Der angeforderte Beitrag existiert nicht.',
     };
   }
 
@@ -28,19 +30,26 @@ export const revalidate = 60;
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const postWithMdx = await getPostBySlug(slug);
+  const [postData, rawPosts] = await Promise.all([getPostBySlug(slug), getAllContent("posts")]);
 
-  if (!postWithMdx) {
+  if (!postData) {
     notFound();
   }
 
+  // getPostBySlug strips the raw MDX from the post object; the raw item still
+  // carries it. The body is compiled here on the server (next-mdx-remote/rsc)
+  // and handed to the client component as a ready React tree; the raw text
+  // also feeds the table of contents.
+  const raw = rawPosts.find((item) => item.slug === slug);
+  const content = raw?.content ?? "";
+  const post = { ...postData.post, content };
   const relatedPosts = await getRelatedPosts(slug, 3);
-  const { post, mdxSource } = postWithMdx;
+  const body = <MDXRemote source={content} />;
 
   return (
       <PostContent
           post={post}
-          mdxSource={mdxSource}
+          body={body}
           relatedPosts={relatedPosts}
       />
   );

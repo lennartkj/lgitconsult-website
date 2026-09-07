@@ -230,7 +230,7 @@ export default function AuftrittPage() {
                 React und TypeScript, Kotlin auf Spring, Anmeldung über Hochschul-SSO (SAML2) und OAuth2. In
                 Produktion an der HTWK Leipzig.
               </p>
-              <Link href="/work/xte-webcourse" className="ac-link mt-6 inline-block font-mono text-[11px] uppercase tracking-[0.2em]">
+              <Link href="/work#xte-webcourse" className="ac-link mt-6 inline-block font-mono text-[11px] uppercase tracking-[0.2em]">
                 Zum Projekt ▸
               </Link>
             </div>

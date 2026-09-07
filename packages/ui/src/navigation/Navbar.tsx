@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SearchButton } from "../search/SearchButton";
 import { resolveHref, isCrossDomain } from "./siteConfig";
 
 /* Renders a nav link, rewriting cross-app routes to an absolute URL on the
@@ -35,30 +34,16 @@ function NavLink({
   );
 }
 
+// One site, one offer (2026-09-07): the chrome carries the six pages of the
+// digital line and nothing else. The Creative line lives on rogue.berlin and
+// is no longer linked from git-consult.group.
 const navItems = [
-  { name: "Home", href: "/" },
-  { name: "Work", href: "/work" },
-  { name: "About", href: "/about" },
+  { name: "Start", href: "/" },
+  { name: "Angebot", href: "/auftritt" },
+  { name: "Projekte", href: "/work" },
+  { name: "Über uns", href: "/about" },
   { name: "Journal", href: "/journal" },
-  {
-    name: "Services",
-    children: [
-      { name: "Digital", href: "/auftritt", description: "Websites, Webanwendungen, KI-Integration für Leipziger Unternehmen. Derzeit SAB-bezuschussbar (Stand 09/2026)" },
-      { name: "Creative", href: "/creative", description: "Campaigns, photography, music, video, creative direction" },
-    ],
-  },
-  { name: "Contact", href: "/contact" },
-];
-
-// All items flattened for mobile numbering
-const mobileItems = [
-  { name: "Home", href: "/" },
-  { name: "Work", href: "/work" },
-  { name: "About", href: "/about" },
-  { name: "Journal", href: "/journal" },
-  { name: "Digital", href: "/auftritt" },
-  { name: "Creative", href: "/creative" },
-  { name: "Contact", href: "/contact" },
+  { name: "Kontakt", href: "/contact" },
 ];
 
 const staggerContainer = {
@@ -91,59 +76,6 @@ const staggerItem = {
   },
 };
 
-function NavDropdown({ item }: { item: { name: string; children: { name: string; href: string; description: string }[] } }) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <li
-      className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <button
-        className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/50 transition-colors hover:text-fg flex items-center gap-1"
-        onClick={() => setOpen((prev) => !prev)}
-      >
-        {item.name}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className={`h-3 w-3 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-        </svg>
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-full right-0 mt-4 w-72 border border-fg/10 bg-bg"
-          >
-            {item.children.map((child, idx) => (
-              <NavLink
-                key={child.name}
-                href={child.href}
-                className={`block px-6 py-5 transition-colors hover:bg-muted ${idx > 0 ? "border-t border-fg/10" : ""}`}
-                onClick={() => setOpen(false)}
-              >
-                <span className="font-mono text-[11px] uppercase tracking-[0.15em] block mb-1">{child.name}</span>
-                <span className="text-[12px] text-fg/40 leading-relaxed">{child.description}</span>
-              </NavLink>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </li>
-  );
-}
-
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -170,36 +102,25 @@ export default function Navbar() {
             LGIT
           </NavLink>
 
-          <div className="flex items-center gap-6">
-            <nav className="hidden md:block">
-              <ul className="flex items-center gap-8">
-                {navItems.map((item) =>
-                  "children" in item && item.children ? (
-                    <NavDropdown key={item.name} item={item as { name: string; children: { name: string; href: string; description: string }[] }} />
-                  ) : (
-                    <li key={item.name}>
-                      <NavLink
-                        href={(item as { name: string; href: string }).href}
-                        className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/50 transition-colors hover:text-fg"
-                      >
-                        {item.name}
-                      </NavLink>
-                    </li>
-                  )
-                )}
-              </ul>
-            </nav>
+          <nav className="hidden md:block" aria-label="Hauptnavigation">
+            <ul className="flex items-center gap-8">
+              {navItems.map((item) => (
+                <li key={item.name}>
+                  <NavLink
+                    href={item.href}
+                    className="font-mono text-[11px] uppercase tracking-[0.15em] text-fg/50 transition-colors hover:text-fg"
+                  >
+                    {item.name}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-            <div className="hidden md:block">
-              <SearchButton variant="icon" />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 md:hidden">
-            <SearchButton variant="icon" />
-
+          <div className="flex items-center md:hidden">
             <button
-              aria-label="Toggle menu"
+              aria-label="Menü öffnen oder schließen"
+              aria-expanded={mobileOpen}
               onClick={() => setMobileOpen((prev) => !prev)}
               className="relative z-50 w-6 h-6 flex flex-col justify-center items-center"
             >
@@ -233,9 +154,10 @@ export default function Navbar() {
               initial="hidden"
               animate="visible"
               exit="exit"
+              aria-label="Hauptnavigation"
             >
               <ul className="space-y-1">
-                {mobileItems.map((item, index) => (
+                {navItems.map((item, index) => (
                   <motion.li key={item.name} variants={staggerItem}>
                     <NavLink
                       href={item.href}

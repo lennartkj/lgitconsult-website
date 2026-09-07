@@ -30,10 +30,10 @@ const slideFromRight: Variants = {
 
 export default function AboutContent() {
     const values = [
-        { title: "Creative First", number: "01", description: "Every project starts with an idea. Technology is how we bring it to life." },
-        { title: "Leipzig Rooted", number: "02", description: "Local talent, global standards. Our network of Leipzig creatives is what sets us apart." },
-        { title: "Joint Ventures", number: "03", description: "We work with clients, not just for them. Shared vision, shared outcome." },
-        { title: "Craft Over Hype", number: "04", description: "Photography, code, campaigns — everything is built to last." }
+        { title: "Festpreis", number: "01", description: "Sie kennen den Preis, bevor es losgeht. Änderungen am Umfang vereinbaren wir vorher schriftlich, nie hinterher auf der Rechnung." },
+        { title: "Zurückhaltung", number: "02", description: "Das Objekt spricht, die Seite hält den Mund. Keine Effekte, die vom Inhalt ablenken, keine Vorlage, die nach Vorlage aussieht." },
+        { title: "Betrieb statt Demo", number: "03", description: "Was wir bauen, läuft: Hosting, Dokumentation, Einweisung und Übergabe gehören zum Auftrag, nicht zum Kleingedruckten." },
+        { title: "Leipzig", number: "04", description: "Erstgespräch in der Mädler-Passage, feste Abnahmepunkte, kurze Wege. Gebaut und in Betrieb: der XTE Webcourse der HTWK Leipzig." }
     ];
 
     return (
@@ -49,12 +49,12 @@ export default function AboutContent() {
                             custom={0}
                             className="col-span-12 md:col-span-8 lg:col-span-7"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — About</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Über uns</span>
                             <h1 className="text-5xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
                                 LGIT Consult
                             </h1>
                             <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
-                                A Leipzig-based agency at the intersection of technology and creative culture. We build digital products, design campaigns, and work with artists and brands in joint ventures — drawing from a pool of bonafide Leipzig creatives.
+                                Das Büro von Lennart Gründel in der Leipziger Mädler-Passage. Websites, Webanwendungen und KI-Integration für Unternehmen, bei denen der Auftritt das Vertrauenssignal ist. Zum Festpreis, mit festen Abnahmepunkten, in Betrieb übergeben.
                             </p>
                         </motion.div>
                     </div>
@@ -65,7 +65,7 @@ export default function AboutContent() {
             <section className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden img-editorial">
                 <Image
                     src="/images/camera-collection.jpg"
-                    alt="Vintage camera collection — the tools of the craft"
+                    alt="Eine Sammlung alter Kameras"
                     fill
                     className="object-cover img-bw"
                     sizes="100vw"
@@ -84,7 +84,7 @@ export default function AboutContent() {
                             custom={0}
                             className="col-span-12 md:col-span-3"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block">002 — Mission</span>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block">002 — Haltung</span>
                         </motion.div>
                         <motion.div
                             initial="hidden"
@@ -94,9 +94,12 @@ export default function AboutContent() {
                             custom={1}
                             className="col-span-12 md:col-span-7"
                         >
-                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter mb-8">Why We Exist</h2>
+                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter mb-8">Der Auftritt ist das Vertrauenssignal.</h2>
+                            <p className="text-base text-fg/50 leading-relaxed mb-6">
+                                Kanzleien, Praxen, Architekten, Immobilien, Manufakturen: Mandate und Aufträge kommen über Vertrauen, und das erste Vertrauenssignal ist heute die Website. Wir bauen sie so, dass sie zeigt, wie Sie arbeiten. Und wir binden an, was dahinter Zeit frisst: Terminbuchung, Mandantenportal, Bestand, die Dokumente, die ein Sprachmodell besser vorsortiert als ein Postfach.
+                            </p>
                             <p className="text-base text-fg/50 leading-relaxed">
-                                To bridge the gap between creative vision and execution. We bring together technology, design, and Leipzig&apos;s creative scene to help artists, advertisers, and brands turn ideas into reality — from digital platforms to physical media and everything in between.
+                                Für Fotografie und Text holen wir bei Bedarf Partner aus Leipzig dazu. Die Verantwortung für das Ergebnis bleibt bei uns.
                             </p>
                         </motion.div>
                     </div>
@@ -117,7 +120,7 @@ export default function AboutContent() {
                         >
                             <Image
                                 src="/images/leica-engraving.jpg"
-                                alt="Leica — Ernst Leitz Wetzlar"
+                                alt="Gravur einer Leica, Ernst Leitz Wetzlar"
                                 fill
                                 className="object-cover img-bw"
                                 sizes="(max-width: 768px) 100vw, 58vw"
@@ -133,7 +136,7 @@ export default function AboutContent() {
                         >
                             <Image
                                 src="/images/leica-lens.jpg"
-                                alt="Leica lens cap detail"
+                                alt="Objektivdeckel einer Leica"
                                 fill
                                 className="object-cover img-bw"
                                 sizes="(max-width: 768px) 100vw, 42vw"
@@ -155,8 +158,8 @@ export default function AboutContent() {
                             custom={0}
                             className="col-span-12 md:col-span-6"
                         >
-                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">003 — Values</span>
-                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter">What We Stand For</h2>
+                            <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">003 — Arbeitsweise</span>
+                            <h2 className="text-3xl md:text-4xl font-light tracking-tighter">Wofür wir stehen</h2>
                         </motion.div>
                     </div>
 
@@ -199,7 +202,7 @@ export default function AboutContent() {
                         className="grid grid-cols-12"
                     >
                         <p className="col-span-12 md:col-span-8 md:col-start-3 text-2xl md:text-4xl font-light tracking-tight leading-snug text-fg/70">
-                            &ldquo;Restraint as luxury. Systems as aesthetic. The tension between analog and digital — that&apos;s where we live.&rdquo;
+                            &bdquo;Zurückhaltung als Luxus. Systeme als Ästhetik. Die Spannung zwischen analog und digital: dort arbeiten wir.&ldquo;
                         </p>
                     </motion.div>
                 </div>

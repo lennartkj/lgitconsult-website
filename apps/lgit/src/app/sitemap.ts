@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllContent } from "@repo/content/lib";
+import { getAllPosts } from "@repo/content";
 
 export const revalidate = 60;
 
@@ -8,15 +8,19 @@ const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://git-consult.group"
 ).replace(/\/$/, "");
 
-// Public, indexable top-level routes owned by THIS app. /services and /creative
-// belong to the Rogue app (rogue.berlin) and must not be listed on this domain.
+// Public, indexable routes owned by THIS app. Projects are sections on /work
+// (no /work/<slug> pages). /services and /creative belong to the Rogue app
+// (rogue.berlin) and must not be listed on this domain.
 const STATIC_ROUTES = [
   "",
   "/auftritt",
-  "/about",
   "/work",
+  "/about",
   "/journal",
   "/contact",
+  "/legal/impressum",
+  "/legal/privacy",
+  "/legal/terms",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -27,11 +31,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
   }));
 
-  const projects = await getAllContent("projects");
-  const projectEntries: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${BASE_URL}/work/${project.slug}`,
+  const posts = await getAllPosts();
+  const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: `${BASE_URL}/journal/${post.slug}`,
     lastModified: now,
   }));
 
-  return [...staticEntries, ...projectEntries];
+  return [...staticEntries, ...postEntries];
 }

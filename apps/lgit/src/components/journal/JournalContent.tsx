@@ -54,10 +54,10 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                         >
                             <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">001 — Journal</span>
                             <h1 className="text-4xl md:text-6xl lg:text-8xl font-light tracking-tighter leading-[0.9] mb-8">
-                                Thoughts & Work
+                                Journal
                             </h1>
                             <p className="text-base md:text-lg text-fg/50 leading-relaxed max-w-lg">
-                                Notes on technology, creative work, and the intersection of both.
+                                Notizen zu Technik, Gestaltung und Handwerk. Die Beiträge sind auf Englisch.
                             </p>
                         </motion.div>
                     </div>
@@ -77,7 +77,7 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                                 custom={0}
                                 className="col-span-12 md:col-span-6"
                             >
-                                <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">002 — Featured</span>
+                                <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-4">002 — Ausgewählt</span>
                             </motion.div>
                         </div>
 
@@ -127,7 +127,7 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                             custom={0}
                             className="col-span-12 md:col-span-3"
                         >
-                            <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">003 — Archive</span>
+                            <span className="font-mono text-xs md:text-[11px] uppercase tracking-[0.2em] text-fg/40 block mb-6">003 — Archiv</span>
                             <div className="border-t border-fg/10">
                                 {categories.map((category) => (
                                     <button
@@ -139,7 +139,7 @@ export default function JournalContent({ allPosts: initialAll, categories }: Jou
                                                 : "text-fg/40 hover:text-fg/70"
                                         }`}
                                     >
-                                        <span>{category.name}</span>
+                                        <span>{category.name === "All" ? "Alle" : category.name}</span>
                                         <span className="font-mono text-[10px] text-fg/30">{category.count}</span>
                                     </button>
                                 ))}

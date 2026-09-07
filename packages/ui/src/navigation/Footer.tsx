@@ -27,6 +27,9 @@ function FooterLink({
   );
 }
 
+const linkClass = "text-sm text-fg/40 transition-colors hover:text-fg";
+const headingClass = "font-mono text-[10px] uppercase tracking-[0.2em] text-fg/30 block mb-4";
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -37,35 +40,35 @@ export default function Footer() {
           <div className="col-span-12 md:col-span-4">
             <span className="font-mono text-[12px] uppercase tracking-[0.2em] font-medium block mb-4">LGIT Consult</span>
             <p className="text-sm text-fg/40 max-w-xs leading-relaxed">
-              Creative consulting and digital agency based in Leipzig. Technology, campaigns, and joint ventures with artists and brands.
+              Websites, Webanwendungen und KI-Integration zum Festpreis. Für Unternehmen in Leipzig, bei denen der Auftritt das Vertrauenssignal ist.
             </p>
           </div>
 
           <div className="col-span-6 md:col-span-2 md:col-start-7">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/30 block mb-4">Navigation</span>
+            <span className={headingClass}>Seiten</span>
             <ul className="space-y-3">
-              <li><FooterLink href="/" className="text-sm text-fg/40 transition-colors hover:text-fg">Home</FooterLink></li>
-              <li><FooterLink href="/work" className="text-sm text-fg/40 transition-colors hover:text-fg">Work</FooterLink></li>
-              <li><FooterLink href="/about" className="text-sm text-fg/40 transition-colors hover:text-fg">About</FooterLink></li>
-              <li><FooterLink href="/journal" className="text-sm text-fg/40 transition-colors hover:text-fg">Journal</FooterLink></li>
+              <li><FooterLink href="/" className={linkClass}>Start</FooterLink></li>
+              <li><FooterLink href="/work" className={linkClass}>Projekte</FooterLink></li>
+              <li><FooterLink href="/about" className={linkClass}>Über uns</FooterLink></li>
+              <li><FooterLink href="/journal" className={linkClass}>Journal</FooterLink></li>
             </ul>
           </div>
 
           <div className="col-span-6 md:col-span-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/30 block mb-4">Services</span>
+            <span className={headingClass}>Angebot</span>
             <ul className="space-y-3">
-              <li><FooterLink href="/auftritt" className="text-sm text-fg/40 transition-colors hover:text-fg">Digital</FooterLink></li>
-              <li><FooterLink href="/creative" className="text-sm text-fg/40 transition-colors hover:text-fg">Creative</FooterLink></li>
-              <li><FooterLink href="/contact" className="text-sm text-fg/40 transition-colors hover:text-fg">Contact</FooterLink></li>
+              <li><FooterLink href="/auftritt" className={linkClass}>Der Auftritt</FooterLink></li>
+              <li><FooterLink href="/auftritt#erstgespraech" className={linkClass}>Erstgespräch</FooterLink></li>
+              <li><FooterLink href="/contact" className={linkClass}>Kontakt</FooterLink></li>
             </ul>
           </div>
 
           <div className="col-span-12 md:col-span-2">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/30 block mb-4">Legal</span>
+            <span className={headingClass}>Rechtliches</span>
             <ul className="space-y-3">
-              <li><FooterLink href="/legal/privacy" className="text-sm text-fg/40 transition-colors hover:text-fg">Privacy</FooterLink></li>
-              <li><FooterLink href="/legal/terms" className="text-sm text-fg/40 transition-colors hover:text-fg">Terms</FooterLink></li>
-              <li><FooterLink href="/legal/impressum" className="text-sm text-fg/40 transition-colors hover:text-fg">Impressum</FooterLink></li>
+              <li><FooterLink href="/legal/impressum" className={linkClass}>Impressum</FooterLink></li>
+              <li><FooterLink href="/legal/privacy" className={linkClass}>Datenschutz</FooterLink></li>
+              <li><FooterLink href="/legal/terms" className={linkClass}>AGB</FooterLink></li>
             </ul>
           </div>
         </div>
