@@ -61,7 +61,8 @@ export default function AuftrittPage() {
             Für Betriebe in {GRANT.regionsOpen.join(", ")} sind derzeit{" "}
             <strong className="font-medium text-foreground">35 bis 60 % der förderfähigen Kosten</strong> über
             den SAB-Digitalisierungszuschuss bezuschussbar; die Quote hängt von Unternehmensgröße und Projektart
-            ab. Über die Förderung entscheidet allein die SAB, ein Rechtsanspruch besteht nicht. Stand {GRANT.asOf}.
+            ab. Gefördert werden Anwendungen mit unmittelbarem Mehrwert für Ihre Abläufe, keine reine
+            Präsentationsseite. Über die Förderung entscheidet allein die SAB, ein Rechtsanspruch besteht nicht. Stand {GRANT.asOf}.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
             <a href="#erstgespraech" className="ac-btn inline-block text-center font-mono text-[12px] uppercase tracking-[0.2em] px-8 py-4">
@@ -145,6 +146,7 @@ export default function AuftrittPage() {
                     Unverbindliches Rechenbeispiel bei einer Quote von {pct} %: Eigenanteil {o.from ? "ab " : ""}
                     <span className="font-medium tabular-nums">{share(o.price)}</span> auf Basis des Nettopreises
                   </p>
+                  <p className="mt-3 text-[13px] leading-relaxed text-subtle">{o.grantNote}</p>
                 </div>
               </article>
             ))}
@@ -193,8 +195,8 @@ export default function AuftrittPage() {
               <Row k="Förderfähig">{GRANT.eligible.join(" · ")}</Row>
               <Row k="Nicht förderfähig">{GRANT.ineligible.join(" · ")}</Row>
               <Row k="Reihenfolge">
-                Antrag <em>vor</em> Projektbeginn. Erst die Bewilligung, dann der Auftrag. Der Zuschuss wird nach
-                Ihrem Verwendungsnachweis ausgezahlt.
+                Antrag <em>vor</em> Projektbeginn. {GRANT.startRule} Wir empfehlen, die Bewilligung
+                abzuwarten. Der Zuschuss wird nach Ihrem Verwendungsnachweis ausgezahlt.
               </Row>
               <Row k="Unsere Rolle">
                 Wir sind kein Fördermittelberater und stellen keinen Antrag für Sie. Wir liefern die Umsetzung
@@ -245,7 +247,7 @@ export default function AuftrittPage() {
             <Step n="1" t="Erstgespräch">30 Minuten, kostenlos, per Telefon oder in der Mädler-Passage. Wir sagen Ihnen, ob es passt.</Step>
             <Step n="2" t="Konzept und Festpreisangebot">Unverbindlich und kostenfrei, in der Regel innerhalb einer Woche nach dem Erstgespräch. Mit einer Leistungsbeschreibung, die als Antragsanlage taugt.</Step>
             <Step n="3" t="Ihr Antrag bei der SAB">Sie stellen ihn, vor Projektbeginn. Wir liefern unser Festpreisangebot und die Leistungsbeschreibung als Anlage.</Step>
-            <Step n="4" t="Bewilligung, dann Auftrag">Kein Start vor der Bewilligung, wenn Sie fördern lassen. Ohne Förderung: Start nach Auftrag. Änderungen am Umfang vereinbaren wir vorher schriftlich.</Step>
+            <Step n="4" t="Bewilligung, dann Auftrag">Wenn Sie fördern lassen: Start nach der Bewilligung, auf Ihren Wunsch schon nach der Eingangsbestätigung der SAB, dann auf Ihr Förderrisiko. Ohne Förderung: Start nach Auftrag. Änderungen am Umfang vereinbaren wir vorher schriftlich.</Step>
             <Step n="5" t="Umsetzung">Feste Abnahmepunkte. Sie sehen den Stand, nicht nur das Ergebnis.</Step>
             <Step n="6" t="Übergabe und Einweisung">Dokumentation, Schulung, Betrieb. Nach vollständiger Zahlung erhalten Sie die uneingeschränkten, übertragbaren Nutzungsrechte an den für Sie erstellten Inhalten und den Quellcode; Rechte Dritter (Schriften, Bibliotheken, Bildmaterial) richten sich nach deren Lizenzen.</Step>
           </ol>

@@ -24,6 +24,8 @@ export interface Offer {
   /** Net price in EUR. `from` marks an "ab" price. */
   price: number;
   from?: boolean;
+  /** Honest note on SAB eligibility for this format (FAQ on sab.sachsen.de, verified 2026-09-07). */
+  grantNote: string;
 }
 
 export const OFFERS: Offer[] = [
@@ -42,6 +44,8 @@ export const OFFERS: Offer[] = [
     ],
     duration: "4 bis 6 Wochen",
     price: 6900,
+    grantNote:
+      "Förderfähig nur mit funktionaler Anbindung an Ihre Abläufe (Terminbuchung, Kundeneingaben, Schnittstellen). Eine reine Präsentationsseite fördert die SAB nicht.",
   },
   {
     key: "anwendung",
@@ -58,6 +62,7 @@ export const OFFERS: Offer[] = [
     duration: "8 bis 12 Wochen",
     price: 14900,
     from: true,
+    grantNote: "Typischer Fördergegenstand: Digitalisierung eines Geschäftsprozesses mit Anbindung an bestehende Systeme.",
   },
   {
     key: "integration",
@@ -74,6 +79,7 @@ export const OFFERS: Offer[] = [
     duration: "4 bis 8 Wochen",
     price: 9900,
     from: true,
+    grantNote: "Förderfähig als Anbindung an Ihre Systeme; ausschließlich gesetzlich vorgeschriebene Aufgaben fördert die SAB nicht.",
   },
 ];
 
@@ -82,7 +88,10 @@ export const GRANT = {
   authority: "Sächsische Aufbaubank (SAB)",
   url: "https://www.sab.sachsen.de/f%C3%B6rderrichtlinie-digitalisierung-zuschuss-efre-2021-bis-2027",
   /** Date the facts below were last checked on the SAB page. */
-  asOf: "6. September 2026",
+  asOf: "7. September 2026",
+  /** Start rule per the SAB FAQ: nothing before the Eingangsbestätigung of the application. */
+  startRule:
+    "Der Start darf nicht vor der Eingangsbestätigung Ihres Antrags liegen; wer vor der Bewilligung startet, trägt das Förderrisiko selbst.",
   stopSince: "17. Juli 2026",
   regionsOpen: ["Stadt Leipzig", "Landkreis Leipzig", "Landkreis Nordsachsen"],
   /** The rate used for every "Ihr Anteil" example on the page (conservative). */
@@ -116,7 +125,9 @@ export const GRANT = {
     "Schulung und Einführung",
   ],
   ineligible: [
+    "reine Präsentations-Websites ohne funktionale Einbindung in die Abläufe",
     "reine Beratungskosten",
+    "Ausgaben, die ausschließlich gesetzlich vorgeschriebenen Aufgaben dienen",
     "Standard-Bürosoftware und Betriebssysteme",
     "Maschinen und Geräte ohne IT-Charakter",
   ],

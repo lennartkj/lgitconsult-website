@@ -250,7 +250,7 @@ export default function HomeContent({ projects }: HomeContentProps) {
                             Zum Angebot mit Preisen
                         </Button>
                         <p className="text-[13px] text-fg/40 max-w-md leading-relaxed">
-                            Angebot für Unternehmer im Sinne von § 14 BGB. Preise netto zuzüglich gesetzlicher Umsatzsteuer.
+                            Angebot für Unternehmer im Sinne von § 14 BGB. Preise netto zuzüglich gesetzlicher Umsatzsteuer. Die SAB fördert Anwendungen mit unmittelbarem Mehrwert für die betrieblichen Abläufe; eine reine Präsentationsseite fördert sie nicht.
                         </p>
                     </div>
                 </div>
