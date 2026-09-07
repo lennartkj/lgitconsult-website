@@ -10,7 +10,7 @@ export async function generateMetadata() {
   return {
     title: 'LGIT Consult — Websites, Webanwendungen und KI-Integration in Leipzig',
     description:
-      'Websites, Webanwendungen und KI-Integration zum Festpreis für Kanzleien, Praxen, Architekten, Immobilien und Manufakturen in Leipzig. Derzeit mit 35 bis 60 % der förderfähigen Kosten SAB-bezuschussbar, vorbehiltlich Bewilligung.',
+      'Websites, Webanwendungen und KI-Integration zum Festpreis für Kanzleien, Praxen, Architekten, Immobilien und Manufakturen in Leipzig. Derzeit mit 35 bis 60 % der förderfähigen Kosten SAB-bezuschussbar, vorbehaltlich Bewilligung.',
   };
 }
 
