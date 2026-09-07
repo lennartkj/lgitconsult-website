@@ -38,8 +38,9 @@ const leadSchema = z.object({
   // No consent checkbox: contact-form processing runs on Art. 6 (1) b/f DSGVO;
   // the form shows the notice + the link to the Datenschutzerklärung instead
   // (legal-copy pass, 2026-09-07).
-  // Honeypot — real users never fill this.
-  website: z.string().max(0).optional().default(""),
+  // Honeypot — real users never fill this. Accepted (not rejected) so a bot
+  // that fills it gets the fake-success branch below instead of a 400 to retry.
+  website: z.string().max(500).optional().default(""),
   attribution: z
     .object({
       gclid: z.string().max(200).optional(),
