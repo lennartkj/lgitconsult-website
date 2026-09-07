@@ -54,7 +54,7 @@ export default function Footer() {
           <div className="col-span-6 md:col-span-2">
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-fg/30 block mb-4">Services</span>
             <ul className="space-y-3">
-              <li><FooterLink href="/services" className="text-sm text-fg/40 transition-colors hover:text-fg">Digital</FooterLink></li>
+              <li><FooterLink href="/auftritt" className="text-sm text-fg/40 transition-colors hover:text-fg">Digital</FooterLink></li>
               <li><FooterLink href="/creative" className="text-sm text-fg/40 transition-colors hover:text-fg">Creative</FooterLink></li>
               <li><FooterLink href="/contact" className="text-sm text-fg/40 transition-colors hover:text-fg">Contact</FooterLink></li>
             </ul>

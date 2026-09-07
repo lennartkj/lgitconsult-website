@@ -43,7 +43,7 @@ const navItems = [
   {
     name: "Services",
     children: [
-      { name: "Digital", href: "/services", description: "Web development, mobile apps, UI/UX, IT consulting" },
+      { name: "Digital", href: "/auftritt", description: "Websites, Webanwendungen, KI-Integration — für Leipziger Unternehmen, SAB-gefördert" },
       { name: "Creative", href: "/creative", description: "Campaigns, photography, music, video, creative direction" },
     ],
   },
@@ -56,7 +56,7 @@ const mobileItems = [
   { name: "Work", href: "/work" },
   { name: "About", href: "/about" },
   { name: "Journal", href: "/journal" },
-  { name: "Digital", href: "/services" },
+  { name: "Digital", href: "/auftritt" },
   { name: "Creative", href: "/creative" },
   { name: "Contact", href: "/contact" },
 ];

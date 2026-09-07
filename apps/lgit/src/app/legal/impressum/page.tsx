@@ -44,7 +44,7 @@ export default function ImpressumPage() {
                 04109 Leipzig
               </p>
               <p>
-                Wirtschafts-Identifikationsnummer (W-IdNr.): **DE453183691-00001**
+                Wirtschafts-Identifikationsnummer (W-IdNr.): <strong>DE453183691-00001</strong>
               </p>
 
               <h2>Kontakt</h2>
@@ -54,7 +54,7 @@ export default function ImpressumPage() {
               </p>
 
               <p>
-                *Hinweis: Dies ist die gesetzlich vorgeschriebene, ladungsfähige Anschrift.*
+                <em>Hinweis: Dies ist die gesetzlich vorgeschriebene, ladungsfähige Anschrift.</em>
               </p>
             </div>
           </div>

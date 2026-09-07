@@ -8,12 +8,12 @@ const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://git-consult.group"
 ).replace(/\/$/, "");
 
-// Public, indexable top-level routes.
+// Public, indexable top-level routes owned by THIS app. /services and /creative
+// belong to the Rogue app (rogue.berlin) and must not be listed on this domain.
 const STATIC_ROUTES = [
   "",
+  "/auftritt",
   "/about",
-  "/services",
-  "/creative",
   "/work",
   "/journal",
   "/contact",
@@ -27,11 +27,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: now,
   }));
 
-  const services = await getAllContent("services");
-  const serviceEntries: MetadataRoute.Sitemap = services.map((service) => ({
-    url: `${BASE_URL}/services/${service.slug}`,
+  const projects = await getAllContent("projects");
+  const projectEntries: MetadataRoute.Sitemap = projects.map((project) => ({
+    url: `${BASE_URL}/work/${project.slug}`,
     lastModified: now,
   }));
 
-  return [...staticEntries, ...serviceEntries];
+  return [...staticEntries, ...projectEntries];
 }

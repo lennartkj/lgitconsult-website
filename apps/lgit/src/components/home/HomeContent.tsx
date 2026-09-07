@@ -104,9 +104,9 @@ export default function HomeContent({ projects }: HomeContentProps) {
                             <motion.p variants={staggerLine} className="text-base md:text-lg text-fg/50 max-w-lg leading-relaxed mb-10">
                                 Leipzig-based creative consulting and digital agency. We work with artists, brands, and businesses — building campaigns, digital products, and everything in between.
                             </motion.p>
-                            <motion.div variants={staggerLine} className="flex gap-4">
-                                <Button href="/contact" size="lg">
-                                    Get Started
+                            <motion.div variants={staggerLine} className="flex flex-wrap gap-4">
+                                <Button href="/auftritt" size="lg">
+                                    Websites &amp; Software für Leipzig
                                 </Button>
                                 <Button href="/work" variant="outline" size="lg">
                                     View Our Work
@@ -224,13 +224,13 @@ export default function HomeContent({ projects }: HomeContentProps) {
                             className="col-span-12 md:col-span-5"
                         >
                             <div className="border-t border-fg/10 pt-8">
-                                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 block mb-4">Digital</span>
-                                <h3 className="text-xl font-light tracking-tight mb-4">IT Consulting & Web Development</h3>
-                                <p className="text-sm text-fg/50 leading-relaxed mb-6">
-                                    Web platforms, mobile apps, UI/UX design, and technical consulting. The infrastructure that makes everything else possible.
+                                <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-fg/30 block mb-4">Digital · Leipzig</span>
+                                <h3 className="text-xl font-light tracking-tight mb-4" lang="de">Auftritt — Websites, Webanwendungen, KI-Integration</h3>
+                                <p className="text-sm text-fg/50 leading-relaxed mb-6" lang="de">
+                                    Zum Festpreis, für Unternehmen, bei denen der Auftritt das Vertrauenssignal ist. In Stadt Leipzig, Landkreis Leipzig und Nordsachsen derzeit mit 35 bis 60 % der förderfähigen Kosten bezuschussbar; Entscheidung und Quote liegen bei der SAB, ein Rechtsanspruch besteht nicht. Stand 6. September 2026.
                                 </p>
-                                <Button href="/services" variant="outline" size="sm">
-                                    Digital Services
+                                <Button href="/auftritt" variant="outline" size="sm">
+                                    Zum Angebot
                                 </Button>
                             </div>
                         </motion.div>

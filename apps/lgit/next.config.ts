@@ -28,6 +28,19 @@ const nextConfig: NextConfig = createNextConfig({
         destination: "https://patina.berlin/audit",
         permanent: true,
       },
+      {
+        // The XTE case was filed under a misleading slug; keep the old URL alive.
+        source: "/work/e-commerce-platform",
+        destination: "/work/xte-webcourse",
+        permanent: true,
+      },
+      {
+        // The generic "digital services" pages are gone (2026-09-07). The one
+        // digital offer now lives on /auftritt; send old bookmarks there.
+        source: "/services/:slug(web-development|mobile-development|ui-ux-design|it-consulting)",
+        destination: "/auftritt",
+        permanent: true,
+      },
     ];
   },
 });
