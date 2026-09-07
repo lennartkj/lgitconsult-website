@@ -7,8 +7,8 @@ export const revalidate = 60;
 // Generate SEO metadata
 export async function generateMetadata() {
   return {
-    title: 'Our Portfolio | LGIT Consult',
-    description: 'Browse our comprehensive portfolio of successful web development, mobile app, and UI/UX design projects.',
+    title: 'Work | LGIT Consult',
+    description: 'Client work and in-house ventures from LGIT Consult, Leipzig: the XTE Webcourse for HTWK Leipzig, Patina, and the products in development.',
   };
 }
 
